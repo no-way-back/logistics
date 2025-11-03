@@ -1,0 +1,11 @@
+rootProject.name = 'logitics'
+
+include 'discovery'
+include 'gateway'
+include 'hub'
+include 'user'
+include 'company'
+include 'order'
+include 'product'
+include 'delivery'
+include 'message'
