@@ -31,7 +31,7 @@ public enum ApiErrorCode implements ErrorCode {
     }
 
     @Override
-    public org.springframework.http.HttpStatus getStatus() {
+    public HttpStatus getStatus() {
         return status;
     }
 }
