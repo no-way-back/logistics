@@ -7,6 +7,6 @@ services:
       - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: local
-      JWT_SECRET: dev_secret_key
+      JWT_SECRET: abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ12
       JWT_EXPIRATION_MS: 3600000
-
+      EUREKA_CLIENT_ENABLED: false

@@ -1,52 +1,7 @@
-server:
-  port: 8080
-
-spring:
-  application:
-    name: gateway-service
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-  cloud:
-    gateway:
-      server:
-        webflux:
-          routes:
-            - id: user-service
-              uri: lb://USER-SERVICE
-              predicates:
-                - Path=/user/**
-
-            - id: company-service
-              uri: lb://COMPANY-SERVICE
-              predicates:
-                - Path=/company/**
-
-            - id: product-service
-              uri: lb://PRODUCT-SERVICE
-              predicates:
-                - Path=/product/**
-
-            - id: order-service
-              uri: lb://ORDER-SERVICE
-              predicates:
-                - Path=/order/**
-
-            - id: delivery-service
-              uri: lb://DELIVERY-SERVICE
-              predicates:
-                - Path=/delivery/**
-
-            - id: message-service
-              uri: lb://MESSAGE-SERVICE
-              predicates:
-                - Path=/message/**
-
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
 
 jwt:
   secret: ${JWT_SECRET}
@@ -61,4 +16,5 @@ management:
 logging:
   level:
     root: WARN
-    com.logistics.user: INFO
+    org.springframework.cloud.gateway: INFO
+    com.logistics.gateway: INFO

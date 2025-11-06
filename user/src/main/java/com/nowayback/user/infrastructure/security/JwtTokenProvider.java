@@ -11,14 +11,9 @@ import org.springframework.stereotype.Component;
 
 import com.nowayback.user.domain.entity.UserRole;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -48,36 +43,5 @@ public class JwtTokenProvider {
 			.setExpiration(expiryDate)
 			.signWith(secretKey, SignatureAlgorithm.HS256)
 			.compact();
-	}
-
-	public boolean validateToken(String token) {
-		try {
-			Jwts.parserBuilder()
-				.setSigningKey(secretKey)
-				.build()
-				.parseClaimsJws(token);
-			return true;
-		} catch (SecurityException | MalformedJwtException e) {
-			log.error("잘못된 JWT  서명입니다.");
-		} catch (ExpiredJwtException e) {
-			log.error("말료된 JWT 토큰입니다.");
-		} catch (UnsupportedJwtException e) {
-			log.error("지원되지 않는 JWT 토큰입니다.");
-		} catch (IllegalArgumentException e) {
-			log.error("JWT 토큰이 잘못되었습니다.");
-		}
-		return false;
-	}
-
-	public Claims parseClaims(String token) {
-		try {
-			return Jwts.parserBuilder()
-				.setSigningKey(secretKey)
-				.build()
-				.parseClaimsJws(token)
-				.getBody();
-		} catch (ExpiredJwtException e) {
-			return e.getClaims();
-		}
 	}
 }

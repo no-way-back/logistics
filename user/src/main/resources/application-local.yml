@@ -34,7 +34,7 @@ eureka:
 
 jwt:
   # 기본값: 로컬 개발용 시크릿
-  secret: ${JWT_SECRET:local-secret}
+  secret: ${JWT_SECRET:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ12}
   expiration-time: 86400000
 
 management:
