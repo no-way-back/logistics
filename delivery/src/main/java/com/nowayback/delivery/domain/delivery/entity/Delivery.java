@@ -4,6 +4,7 @@ import audit.BaseEntity;
 import com.nowayback.delivery.domain.delivery.exception.DeliveryErrorCode;
 import com.nowayback.delivery.domain.delivery.exception.InvalidHubRouteException;
 import com.nowayback.delivery.domain.delivery.vo.*;
+import com.nowayback.delivery.domain.exception.InvalidObjectException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -59,6 +60,7 @@ public class Delivery extends BaseEntity {
     }
 
     public static Delivery create(OrderId orderId, HubId sourceHubId, HubId destinationHubId, RecipientInfo recipientInfo, DeliveryManagerId companyDeliveryManagerId) {
+        validateOrderId(orderId);
         validateHubRoute(sourceHubId, destinationHubId);
 
         return new Delivery(
@@ -75,5 +77,9 @@ public class Delivery extends BaseEntity {
         if (sourceHubId.equals(destinationHubId)) {
             throw new InvalidHubRouteException(DeliveryErrorCode.INVALID_HUB_ROUTE);
         }
+    }
+
+    private static void validateOrderId(OrderId orderId) {
+        if (orderId == null) { throw new InvalidObjectException(DeliveryErrorCode.NULL_ORDER_ID_OBJECT); }
     }
 }
