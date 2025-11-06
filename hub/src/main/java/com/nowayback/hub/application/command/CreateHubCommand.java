@@ -1,7 +1,6 @@
 package com.nowayback.hub.application.command;
 
 import com.nowayback.hub.presentation.request.CreateHubRequest;
-import jakarta.validation.Valid;
 
 import java.math.BigDecimal;
 
