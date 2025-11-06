@@ -3,6 +3,7 @@ package com.nowayback.delivery.domain.entity;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.exception.InvalidHubRouteException;
 import com.nowayback.delivery.domain.delivery.vo.*;
+import com.nowayback.delivery.domain.exception.InvalidObjectException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +34,28 @@ class DeliveryTest {
 
         /* then */
         assertThat(delivery.getStatus()).isEqualTo(DeliveryStatus.WAITING_AT_HUB);
+    }
+
+    @Test
+    @DisplayName("배송 생성 시 주문 ID는 null일 수 없다.")
+    void createDelivery_ShouldNotAllowNullOrderId() {
+        /* given */
+        OrderId orderId = null;
+        HubId sourceHubId = HubId.of(UUID.randomUUID());
+        HubId destinationHubId = HubId.of(UUID.randomUUID());
+
+        String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
+        String recipientName = "홍길동";
+        String recipientSlackId = "slack_1234";
+        RecipientInfo recipientInfo = RecipientInfo.of(deliveryAddress, recipientName, recipientSlackId);
+
+        DeliveryManagerId companyDeliveryManagerId = DeliveryManagerId.of(UUID.randomUUID());
+
+        /* when */
+        /* then */
+        assertThatThrownBy(() -> {
+            Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+        }).isInstanceOf(InvalidObjectException.class);
     }
 
     @Test
