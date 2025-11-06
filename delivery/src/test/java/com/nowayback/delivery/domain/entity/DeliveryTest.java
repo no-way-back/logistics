@@ -1,8 +1,9 @@
 package com.nowayback.delivery.domain.entity;
 
-import com.nowayback.delivery.domain.exception.InvalidHubRouteException;
-import com.nowayback.delivery.domain.vo.DeliveryStatus;
-import com.nowayback.delivery.domain.vo.RecipientInfo;
+import com.nowayback.delivery.domain.delivery.entity.Delivery;
+import com.nowayback.delivery.domain.delivery.exception.InvalidHubRouteException;
+import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
+import com.nowayback.delivery.domain.delivery.vo.RecipientInfo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,10 +1,10 @@
-package com.nowayback.delivery.domain.entity;
+package com.nowayback.delivery.domain.delivery.entity;
 
 import audit.BaseEntity;
-import com.nowayback.delivery.domain.exception.DeliveryErrorCode;
-import com.nowayback.delivery.domain.exception.InvalidHubRouteException;
-import com.nowayback.delivery.domain.vo.DeliveryStatus;
-import com.nowayback.delivery.domain.vo.RecipientInfo;
+import com.nowayback.delivery.domain.delivery.exception.DeliveryErrorCode;
+import com.nowayback.delivery.domain.delivery.exception.InvalidHubRouteException;
+import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
+import com.nowayback.delivery.domain.delivery.vo.RecipientInfo;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
