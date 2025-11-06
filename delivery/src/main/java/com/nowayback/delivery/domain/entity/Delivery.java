@@ -46,8 +46,7 @@ public class Delivery extends BaseEntity {
     @Column(name = "company_delivery_manager_id", nullable = false)
     private UUID companyDeliveryManagerId;
 
-    private Delivery(UUID id, UUID orderId, DeliveryStatus status, UUID sourceHubId, UUID destinationHubId, RecipientInfo recipientInfo, UUID companyDeliveryManagerId) {
-        this.id = id;
+    private Delivery(UUID orderId, DeliveryStatus status, UUID sourceHubId, UUID destinationHubId, RecipientInfo recipientInfo, UUID companyDeliveryManagerId) {
         this.orderId = orderId;
         this.status = status;
         this.sourceHubId = sourceHubId;
@@ -60,7 +59,6 @@ public class Delivery extends BaseEntity {
         validateHubRoute(sourceHubId, destinationHubId);
 
         return new Delivery(
-                null,
                 orderId,
                 DeliveryStatus.WAITING_AT_HUB,
                 sourceHubId,
