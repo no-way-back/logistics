@@ -79,6 +79,7 @@ public class Delivery extends BaseEntity {
     }
 
     public void updateRecipientInfo(RecipientInfo newRecipientInfo) {
+        validateNotNull(newRecipientInfo, DeliveryErrorCode.NULL_RECIPIENT_INFO_OBJECT);
         this.recipientInfo = newRecipientInfo;
     }
 
