@@ -90,6 +90,9 @@ public class Delivery extends BaseEntity {
     }
 
     public void updateStatus(DeliveryStatus newStatus) {
+        if (!status.canTransitionTo(newStatus)) {
+            throw new InvalidDeliveryStatusException(DeliveryErrorCode.INVALID_DELIVERY_STATUS_TRANSITION);
+        }
         this.status = newStatus;
     }
 
