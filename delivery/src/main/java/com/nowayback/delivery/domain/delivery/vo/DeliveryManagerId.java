@@ -1,5 +1,7 @@
 package com.nowayback.delivery.domain.delivery.vo;
 
+import com.nowayback.delivery.domain.delivery.exception.DeliveryErrorCode;
+import com.nowayback.delivery.domain.exception.InvalidValueException;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -21,6 +23,9 @@ public class DeliveryManagerId {
     }
 
     public static DeliveryManagerId of(UUID id) {
+        if (id == null) {
+            throw new InvalidValueException(DeliveryErrorCode.NULL_DELIVERY_MANAGER_ID_VALUE);
+        }
         return new DeliveryManagerId(id);
     }
 }
