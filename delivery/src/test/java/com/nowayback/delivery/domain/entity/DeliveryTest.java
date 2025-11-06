@@ -239,4 +239,29 @@ class DeliveryTest {
             delivery.updateRecipientInfo(null);
         }).isInstanceOf(InvalidObjectException.class);
     }
+
+    @Test
+    @DisplayName("정상적인 배송 상태 수정 시 성공한다.")
+    void updateDeliveryStatus_success() {
+        /* given */
+        OrderId orderId = OrderId.of(UUID.randomUUID());
+        HubId sourceHubId = HubId.of(UUID.randomUUID());
+        HubId destinationHubId = HubId.of(UUID.randomUUID());
+
+        String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
+        String recipientName = "홍길동";
+        String recipientSlackId = "slack_1234";
+        RecipientInfo recipientInfo = RecipientInfo.of(deliveryAddress, recipientName, recipientSlackId);
+
+        DeliveryManagerId companyDeliveryManagerId = DeliveryManagerId.of(UUID.randomUUID());
+
+        DeliveryStatus newStatus = DeliveryStatus.TRANSIT_BETWEEN_HUBS;
+
+        /* when */
+        Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+        delivery.updateStatus(newStatus);
+
+        /* then */
+        assertThat(delivery.getStatus()).isEqualTo(newStatus);
+    }
 }
