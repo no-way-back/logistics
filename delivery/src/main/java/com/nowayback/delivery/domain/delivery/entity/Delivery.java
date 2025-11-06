@@ -2,6 +2,7 @@ package com.nowayback.delivery.domain.delivery.entity;
 
 import audit.BaseEntity;
 import com.nowayback.delivery.domain.delivery.exception.DeliveryErrorCode;
+import com.nowayback.delivery.domain.delivery.exception.InvalidDeliveryStatusException;
 import com.nowayback.delivery.domain.delivery.exception.InvalidHubRouteException;
 import com.nowayback.delivery.domain.delivery.vo.*;
 import com.nowayback.delivery.domain.exception.InvalidObjectException;
@@ -80,6 +81,11 @@ public class Delivery extends BaseEntity {
 
     public void updateRecipientInfo(RecipientInfo newRecipientInfo) {
         validateNotNull(newRecipientInfo, DeliveryErrorCode.NULL_RECIPIENT_INFO_OBJECT);
+
+        if (!status.canUpdateRecipientInfo()) {
+            throw new InvalidDeliveryStatusException(DeliveryErrorCode.INVALID_DELIVERY_STATUS_FOR_UPDATE);
+        }
+
         this.recipientInfo = newRecipientInfo;
     }
 
