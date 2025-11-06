@@ -38,7 +38,7 @@ public class User extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
-	private UserStatus status = UserStatus.PENDING;
+	private UserStatus status;
 
 	@Column(name = "slack_id", length = 100)
 	private String slackId;
@@ -51,7 +51,27 @@ public class User extends BaseEntity {
 		this.status = UserStatus.PENDING;
 	}
 
+	public static User createUser(String username, String password, UserRole role, String slackId) {
+		return new User(username, password, role, slackId);
+	}
+
 	public void approveSignup() {
 		this.status = UserStatus.APPROVED;
+	}
+
+	public void rejectSignup() {
+		this.status = UserStatus.REJECTED;
+	}
+
+	public void updateStatus(UserStatus status) {
+		this.status = status;
+	}
+
+	public void updateSlackId(String slackId) {
+		this.slackId = slackId;
+	}
+
+	public void updatePassword(String password) {
+		this.password = password;
 	}
 }
