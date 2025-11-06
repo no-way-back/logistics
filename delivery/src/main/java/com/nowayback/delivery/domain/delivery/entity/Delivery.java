@@ -78,6 +78,10 @@ public class Delivery extends BaseEntity {
         );
     }
 
+    public void updateRecipientInfo(RecipientInfo newRecipientInfo) {
+        this.recipientInfo = newRecipientInfo;
+    }
+
     private static void validateHubRoute(HubId sourceHubId, HubId destinationHubId) {
         if (sourceHubId.equals(destinationHubId)) {
             throw new InvalidHubRouteException(DeliveryErrorCode.INVALID_HUB_ROUTE);
