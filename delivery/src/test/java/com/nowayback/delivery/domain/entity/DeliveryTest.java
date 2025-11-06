@@ -188,4 +188,31 @@ class DeliveryTest {
             Delivery.create(orderId, hubId, hubId, recipientInfo, companyDeliveryManagerId);
         });
     }
+
+    @Test
+    @DisplayName("정상적인 배송 수령인 정보 수정 시 성공한다.")
+    void updateRecipientInfo_success () {
+        /* given */
+        OrderId orderId = OrderId.of(UUID.randomUUID());
+        HubId sourceHubId = HubId.of(UUID.randomUUID());
+        HubId destinationHubId = HubId.of(UUID.randomUUID());
+
+        String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
+        String recipientName = "홍길동";
+        String recipientSlackId = "slack_1234";
+        RecipientInfo recipientInfo = RecipientInfo.of(deliveryAddress, recipientName, recipientSlackId);
+
+        String newRecipientName = "김철수";
+        String newRecipientSlackId = "slack_5678";
+        RecipientInfo newRecipientInfo = RecipientInfo.of(deliveryAddress, newRecipientName, newRecipientSlackId);
+
+        DeliveryManagerId companyDeliveryManagerId = DeliveryManagerId.of(UUID.randomUUID());
+
+        /* when */
+        Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+        delivery.updateRecipientInfo(newRecipientInfo);
+
+        /* then */
+        assertThat(delivery.getRecipientInfo()).isEqualTo(newRecipientInfo);
+    }
 }
