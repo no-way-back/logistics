@@ -65,6 +65,7 @@ public class Delivery extends BaseEntity {
         validateDestinationHubId(destinationHubId);
         validateHubRoute(sourceHubId, destinationHubId);
         validateRecipientInfo(recipientInfo);
+        validateCompanyDeliveryManagerId(companyDeliveryManagerId);
 
         return new Delivery(
                 orderId,
@@ -96,5 +97,9 @@ public class Delivery extends BaseEntity {
 
     private static void validateRecipientInfo(RecipientInfo recipientInfo) {
         if (recipientInfo == null) { throw new InvalidObjectException(DeliveryErrorCode.NULL_RECIPIENT_INFO_OBJECT); }
+    }
+
+    private static void validateCompanyDeliveryManagerId(DeliveryManagerId companyDeliveryManagerId) {
+        if (companyDeliveryManagerId == null) { throw new InvalidObjectException(DeliveryErrorCode.NULL_DELIVERY_MANAGER_ID_OBJECT); }
     }
 }

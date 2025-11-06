@@ -11,6 +11,7 @@ public enum DeliveryErrorCode implements ErrorCode {
     NULL_SOURCE_HUB_ID_OBJECT("DELIVERY400", "허브 ID 객체는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
     NULL_DESTINATION_HUB_ID_OBJECT("DELIVERY400", "허브 ID 객체는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
     NULL_RECIPIENT_INFO_OBJECT("DELIVERY400", "수령인 정보는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
+    NULL_DELIVERY_MANAGER_ID_OBJECT("DELIVERY400", "배송 관리자 ID 객체는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
 
     NULL_ORDER_ID_VALUE("DELIVERY400", "주문 ID는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
     NULL_HUB_ID_VALUE("DELIVERY400", "허브 ID는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
