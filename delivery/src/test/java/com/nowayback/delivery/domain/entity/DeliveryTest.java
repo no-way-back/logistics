@@ -1,11 +1,15 @@
 package com.nowayback.delivery.domain.entity;
 
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
+import com.nowayback.delivery.domain.delivery.exception.InvalidDeliveryStatusException;
 import com.nowayback.delivery.domain.delivery.exception.InvalidHubRouteException;
 import com.nowayback.delivery.domain.delivery.vo.*;
 import com.nowayback.delivery.domain.exception.InvalidObjectException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
 
@@ -238,6 +242,36 @@ class DeliveryTest {
         assertThatThrownBy(() -> {
             delivery.updateRecipientInfo(null);
         }).isInstanceOf(InvalidObjectException.class);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = DeliveryStatus.class, names = {"OUT_FOR_DELIVERY", "DELIVERED"})
+    @DisplayName("배송 수령인 정보 수정 시 OUT_FOR_DELIVERY, DELIVERED 상태에서는 수정할 수 없다.")
+    void updateRecipientInfo_ShouldNotAllowUpdateInFinalStatuses(DeliveryStatus status) {
+        /* given */
+        OrderId orderId = OrderId.of(UUID.randomUUID());
+        HubId sourceHubId = HubId.of(UUID.randomUUID());
+        HubId destinationHubId = HubId.of(UUID.randomUUID());
+
+        String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
+        String recipientName = "홍길동";
+        String recipientSlackId = "slack_1234";
+        RecipientInfo recipientInfo = RecipientInfo.of(deliveryAddress, recipientName, recipientSlackId);
+
+        String newRecipientName = "김철수";
+        String newRecipientSlackId = "slack_5678";
+        RecipientInfo newRecipientInfo = RecipientInfo.of(deliveryAddress, newRecipientName, newRecipientSlackId);
+
+        DeliveryManagerId companyDeliveryManagerId = DeliveryManagerId.of(UUID.randomUUID());
+
+        /* when */
+        Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+        delivery.updateStatus(status);
+
+        /* then */
+        assertThatThrownBy(() -> {
+            delivery.updateRecipientInfo(newRecipientInfo);
+        }).isInstanceOf(InvalidDeliveryStatusException.class);
     }
 
     @Test
