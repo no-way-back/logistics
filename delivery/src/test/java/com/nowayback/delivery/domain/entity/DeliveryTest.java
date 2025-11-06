@@ -103,6 +103,23 @@ class DeliveryTest {
     }
 
     @Test
+    @DisplayName("배송 생성 시 수령인 정보는 null일 수 없다.")
+    void createDelivery_ShouldNotAllowNullRecipientInfo() {
+        /* given */
+        OrderId orderId = OrderId.of(UUID.randomUUID());
+        HubId sourceHubId = HubId.of(UUID.randomUUID());
+        HubId destinationHubId = HubId.of(UUID.randomUUID());
+        RecipientInfo recipientInfo = null;
+        DeliveryManagerId companyDeliveryManagerId = DeliveryManagerId.of(UUID.randomUUID());
+
+        /* when */
+        /* then */
+        assertThatThrownBy(() -> {
+            Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+        }).isInstanceOf(InvalidObjectException.class);
+    }
+
+    @Test
     @DisplayName("배송 생성 시 출발 허브와 도착 허브가 같으면 안된다.")
     void createDelivery_ShouldNotAllowSameSourceAndDestinationHub() {
         /* given */
