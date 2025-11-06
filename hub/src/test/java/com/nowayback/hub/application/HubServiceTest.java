@@ -78,7 +78,7 @@ class HubServiceTest {
             // when & then
             assertThatThrownBy(() -> hubService.create(command))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("이미 존재하는 허브 이름입니다");
+                    .hasMessage("이미 존재하는 허브 이름입니다.");
 
             verify(hubRepository, times(1)).existsByName(command.name());
             verify(hubRepository, never()).save(any(HubEntity.class));
@@ -95,14 +95,14 @@ class HubServiceTest {
                     new BigDecimal("126.9780")
             );
 
-            when(hubRepository.existsByAddress(command.name())).thenReturn(true);
+            when(hubRepository.existsByAddress(command.address())).thenReturn(true);
 
             // when & then
             assertThatThrownBy(() -> hubService.create(command))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("이미 존재하는 허브 주소입니다");
+                    .hasMessage("이미 존재하는 허브 주소입니다.");
 
-            verify(hubRepository, times(1)).existsByAddress(command.name());
+            verify(hubRepository, times(1)).existsByAddress(command.address());
             verify(hubRepository, never()).save(any(HubEntity.class));
         }
     }
