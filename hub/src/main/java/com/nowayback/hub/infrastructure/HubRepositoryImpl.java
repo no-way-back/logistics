@@ -17,6 +17,11 @@ public class HubRepositoryImpl implements HubRepository {
     }
 
     @Override
+    public boolean existsByAddress(String address) {
+        return jpaRepository.existsByAddress(address);
+    }
+
+    @Override
     public HubEntity save(HubEntity hubEntity) {
         return jpaRepository.save(hubEntity);
     }
