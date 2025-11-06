@@ -8,12 +8,15 @@ import com.nowayback.delivery.domain.exception.InvalidObjectException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.lang.reflect.Field;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DeliveryTest {
@@ -247,7 +250,7 @@ class DeliveryTest {
     @ParameterizedTest
     @EnumSource(value = DeliveryStatus.class, names = {"OUT_FOR_DELIVERY", "DELIVERED"})
     @DisplayName("배송 수령인 정보 수정 시 OUT_FOR_DELIVERY, DELIVERED 상태에서는 수정할 수 없다.")
-    void updateRecipientInfo_ShouldNotAllowUpdateInFinalStatuses(DeliveryStatus status) {
+    void updateRecipientInfo_ShouldNotAllowUpdateInFinalStatuses(DeliveryStatus status) throws Exception {
         /* given */
         OrderId orderId = OrderId.of(UUID.randomUUID());
         HubId sourceHubId = HubId.of(UUID.randomUUID());
@@ -266,7 +269,9 @@ class DeliveryTest {
 
         /* when */
         Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
-        delivery.updateStatus(status);
+        Field statusField = Delivery.class.getDeclaredField("status");
+        statusField.setAccessible(true);
+        statusField.set(delivery, status);
 
         /* then */
         assertThatThrownBy(() -> {
@@ -297,5 +302,64 @@ class DeliveryTest {
 
         /* then */
         assertThat(delivery.getStatus()).isEqualTo(newStatus);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "WAITING_AT_HUB,        TRANSIT_BETWEEN_HUBS",
+            "TRANSIT_BETWEEN_HUBS,  AT_DESTINATION_HUB",
+            "AT_DESTINATION_HUB,    OUT_FOR_DELIVERY",
+            "OUT_FOR_DELIVERY,      DELIVERED"
+    })
+    @DisplayName("배송 상태 변경 시 다음 상태로만 전이할 수 있다.")
+    void updateDeliveryStatus_ShouldAllowValidTransitions(DeliveryStatus initialStatus, DeliveryStatus newStatus) throws Exception {
+        /* given */
+        OrderId orderId = OrderId.of(UUID.randomUUID());
+        HubId sourceHubId = HubId.of(UUID.randomUUID());
+        HubId destinationHubId = HubId.of(UUID.randomUUID());
+
+        String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
+        String recipientName = "홍길동";
+        String recipientSlackId = "slack_1234";
+        RecipientInfo recipientInfo = RecipientInfo.of(deliveryAddress, recipientName, recipientSlackId);
+
+        DeliveryManagerId companyDeliveryManagerId = DeliveryManagerId.of(UUID.randomUUID());
+
+        /* when */
+        Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+        Field statusField = Delivery.class.getDeclaredField("status");
+        statusField.setAccessible(true);
+        statusField.set(delivery, initialStatus);
+
+        delivery.updateStatus(newStatus);
+
+        /* then */
+        assertThat(delivery.getStatus()).isEqualTo(newStatus);
+    }
+
+    @Test
+    @DisplayName("배송 상태 변경 시 유효하지 않은 상태 전이인 경우 예외가 발생한다.")
+    void updateDeliveryStatus_ShouldNotAllowInvalidTransitions() {
+        /* given */
+        OrderId orderId = OrderId.of(UUID.randomUUID());
+        HubId sourceHubId = HubId.of(UUID.randomUUID());
+        HubId destinationHubId = HubId.of(UUID.randomUUID());
+
+        String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
+        String recipientName = "홍길동";
+        String recipientSlackId = "slack_1234";
+        RecipientInfo recipientInfo = RecipientInfo.of(deliveryAddress, recipientName, recipientSlackId);
+
+        DeliveryManagerId companyDeliveryManagerId = DeliveryManagerId.of(UUID.randomUUID());
+
+        DeliveryStatus newStatus = DeliveryStatus.DELIVERED;
+
+        /* when */
+        Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+
+        /* then */
+        assertThatThrownBy(() -> {
+            delivery.updateStatus(newStatus);
+        }).isInstanceOf(InvalidDeliveryStatusException.class);
     }
 }
