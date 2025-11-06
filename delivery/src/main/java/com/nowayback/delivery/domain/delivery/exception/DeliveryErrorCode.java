@@ -8,6 +8,7 @@ public enum DeliveryErrorCode implements ErrorCode {
     INVALID_HUB_ROUTE("DELIVERY400", "출발 허브와 도착 허브는 같을 수 없습니다.", HttpStatus.BAD_REQUEST),
 
     NULL_ORDER_ID_OBJECT("DELIVERY400", "주문 ID 객체는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
+    NULL_SOURCE_HUB_ID_OBJECT("DELIVERY400", "허브 ID 객체는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
 
     NULL_ORDER_ID_VALUE("DELIVERY400", "주문 ID는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
     NULL_HUB_ID_VALUE("DELIVERY400", "허브 ID는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
