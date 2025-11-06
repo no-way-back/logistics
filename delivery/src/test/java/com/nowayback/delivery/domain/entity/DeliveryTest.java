@@ -15,6 +15,33 @@ import static org.junit.jupiter.api.Assertions.*;
 class DeliveryTest {
 
     @Test
+    @DisplayName("모든 필드가 정상일 경우 배송 생성에 성공한다.")
+    void createDelivery_success () {
+        /* given */
+        OrderId orderId = OrderId.of(UUID.randomUUID());
+        HubId sourceHubId = HubId.of(UUID.randomUUID());
+        HubId destinationHubId = HubId.of(UUID.randomUUID());
+
+        String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
+        String recipientName = "홍길동";
+        String recipientSlackId = "slack_1234";
+        RecipientInfo recipientInfo = RecipientInfo.of(deliveryAddress, recipientName, recipientSlackId);
+
+        DeliveryManagerId companyDeliveryManagerId = DeliveryManagerId.of(UUID.randomUUID());
+
+        /* when */
+        Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+
+        /* then */
+        assertThat(delivery.getOrderId()).isEqualTo(orderId);
+        assertThat(delivery.getSourceHubId()).isEqualTo(sourceHubId);
+        assertThat(delivery.getDestinationHubId()).isEqualTo(destinationHubId);
+        assertThat(delivery.getRecipientInfo()).isEqualTo(recipientInfo);
+        assertThat(delivery.getCompanyDeliveryManagerId()).isEqualTo(companyDeliveryManagerId);
+        assertThat(delivery.getStatus()).isNotNull();
+    }
+
+    @Test
     @DisplayName("배송 생성 시 상태는 WAITING_AT_HUB이다.")
     void createDelivery_ShouldHaveWaitingAtHubStatus() {
         /* given */
