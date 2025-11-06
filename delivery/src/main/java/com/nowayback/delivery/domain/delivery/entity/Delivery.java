@@ -3,8 +3,7 @@ package com.nowayback.delivery.domain.delivery.entity;
 import audit.BaseEntity;
 import com.nowayback.delivery.domain.delivery.exception.DeliveryErrorCode;
 import com.nowayback.delivery.domain.delivery.exception.InvalidHubRouteException;
-import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
-import com.nowayback.delivery.domain.delivery.vo.RecipientInfo;
+import com.nowayback.delivery.domain.delivery.vo.*;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,18 +21,21 @@ public class Delivery extends BaseEntity {
     @Column(name = "delivery_id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "order_id", updatable = false, nullable = false)
-    private UUID orderId;
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "order_id", updatable = false, nullable = false))
+    private OrderId orderId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private DeliveryStatus status;
 
-    @Column(name = "source_hub_id", updatable = false, nullable = false)
-    private UUID sourceHubId;
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "source_hub_id", updatable = false, nullable = false))
+    private HubId sourceHubId;
 
-    @Column(name = "destination_hub_id", updatable = false, nullable = false)
-    private UUID destinationHubId;
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "destination_hub_id", updatable = false, nullable = false))
+    private HubId destinationHubId;
 
     @Embedded
     @AttributeOverrides({
@@ -43,10 +45,11 @@ public class Delivery extends BaseEntity {
     })
     private RecipientInfo recipientInfo;
 
-    @Column(name = "company_delivery_manager_id", nullable = false)
-    private UUID companyDeliveryManagerId;
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "company_delivery_manager_id", nullable = false))
+    private DeliveryManagerId companyDeliveryManagerId;
 
-    private Delivery(UUID orderId, DeliveryStatus status, UUID sourceHubId, UUID destinationHubId, RecipientInfo recipientInfo, UUID companyDeliveryManagerId) {
+    private Delivery(OrderId orderId, DeliveryStatus status, HubId sourceHubId, HubId destinationHubId, RecipientInfo recipientInfo, DeliveryManagerId companyDeliveryManagerId) {
         this.orderId = orderId;
         this.status = status;
         this.sourceHubId = sourceHubId;
@@ -55,7 +58,7 @@ public class Delivery extends BaseEntity {
         this.companyDeliveryManagerId = companyDeliveryManagerId;
     }
 
-    public static Delivery create(UUID orderId, UUID sourceHubId, UUID destinationHubId, RecipientInfo recipientInfo, UUID companyDeliveryManagerId) {
+    public static Delivery create(OrderId orderId, HubId sourceHubId, HubId destinationHubId, RecipientInfo recipientInfo, DeliveryManagerId companyDeliveryManagerId) {
         validateHubRoute(sourceHubId, destinationHubId);
 
         return new Delivery(
@@ -68,7 +71,7 @@ public class Delivery extends BaseEntity {
         );
     }
 
-    private static void validateHubRoute(UUID sourceHubId, UUID destinationHubId) {
+    private static void validateHubRoute(HubId sourceHubId, HubId destinationHubId) {
         if (sourceHubId.equals(destinationHubId)) {
             throw new InvalidHubRouteException(DeliveryErrorCode.INVALID_HUB_ROUTE);
         }
