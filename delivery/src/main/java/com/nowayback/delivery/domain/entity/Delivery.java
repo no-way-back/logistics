@@ -1,6 +1,8 @@
 package com.nowayback.delivery.domain.entity;
 
 import audit.BaseEntity;
+import com.nowayback.delivery.domain.exception.DeliveryErrorCode;
+import com.nowayback.delivery.domain.exception.InvalidHubRouteException;
 import com.nowayback.delivery.domain.vo.DeliveryStatus;
 import com.nowayback.delivery.domain.vo.RecipientInfo;
 import jakarta.persistence.*;
@@ -55,6 +57,8 @@ public class Delivery extends BaseEntity {
     }
 
     public static Delivery create(UUID orderId, UUID sourceHubId, UUID destinationHubId, RecipientInfo recipientInfo, UUID companyDeliveryManagerId) {
+        validateHubRoute(sourceHubId, destinationHubId);
+
         return new Delivery(
                 null,
                 orderId,
@@ -64,5 +68,11 @@ public class Delivery extends BaseEntity {
                 recipientInfo,
                 companyDeliveryManagerId
         );
+    }
+
+    private static void validateHubRoute(UUID sourceHubId, UUID destinationHubId) {
+        if (sourceHubId.equals(destinationHubId)) {
+            throw new InvalidHubRouteException(DeliveryErrorCode.INVALID_HUB_ROUTE);
+        }
     }
 }
