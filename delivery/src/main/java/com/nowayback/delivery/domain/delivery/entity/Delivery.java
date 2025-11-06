@@ -5,6 +5,7 @@ import com.nowayback.delivery.domain.delivery.exception.DeliveryErrorCode;
 import com.nowayback.delivery.domain.delivery.exception.InvalidHubRouteException;
 import com.nowayback.delivery.domain.delivery.vo.*;
 import com.nowayback.delivery.domain.exception.InvalidObjectException;
+import exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -83,23 +84,27 @@ public class Delivery extends BaseEntity {
         }
     }
 
+    private static void validateNotNull(Object object, ErrorCode errorCode) {
+        if (object == null) throw new InvalidObjectException(errorCode);
+    }
+
     private static void validateOrderId(OrderId orderId) {
-        if (orderId == null) { throw new InvalidObjectException(DeliveryErrorCode.NULL_ORDER_ID_OBJECT); }
+        validateNotNull(orderId, DeliveryErrorCode.NULL_ORDER_ID_OBJECT);
     }
 
     private static void validateSourceHubId(HubId sourceHubId) {
-        if (sourceHubId == null) { throw new InvalidObjectException(DeliveryErrorCode.NULL_SOURCE_HUB_ID_OBJECT); }
+        validateNotNull(sourceHubId, DeliveryErrorCode.NULL_SOURCE_HUB_ID_OBJECT);
     }
 
     private static void validateDestinationHubId(HubId destinationHubId) {
-        if (destinationHubId == null) { throw new InvalidObjectException(DeliveryErrorCode.NULL_DESTINATION_HUB_ID_OBJECT); }
+        validateNotNull(destinationHubId, DeliveryErrorCode.NULL_DESTINATION_HUB_ID_OBJECT);
     }
 
     private static void validateRecipientInfo(RecipientInfo recipientInfo) {
-        if (recipientInfo == null) { throw new InvalidObjectException(DeliveryErrorCode.NULL_RECIPIENT_INFO_OBJECT); }
+        validateNotNull(recipientInfo, DeliveryErrorCode.NULL_RECIPIENT_INFO_OBJECT);
     }
 
     private static void validateCompanyDeliveryManagerId(DeliveryManagerId companyDeliveryManagerId) {
-        if (companyDeliveryManagerId == null) { throw new InvalidObjectException(DeliveryErrorCode.NULL_DELIVERY_MANAGER_ID_OBJECT); }
+        validateNotNull(companyDeliveryManagerId, DeliveryErrorCode.NULL_DELIVERY_MANAGER_ID_OBJECT);
     }
 }
