@@ -33,7 +33,7 @@ class HubServiceTest {
     class CreateHub {
 
         @Test
-        @DisplayName("유효한 데이터로 허브를 생성할 수 있다")
+        @DisplayName("유효한 데이터로 허브를 생성할 수 있다.")
         void create_hub_success() {
             // given
             CreateHubCommand command = new CreateHubCommand(
@@ -63,7 +63,7 @@ class HubServiceTest {
         }
 
         @Test
-        @DisplayName("같은 이름의 허브가 이미 존재하면 예외가 발생한다")
+        @DisplayName("같은 이름의 허브가 이미 존재하면 예외가 발생한다.")
         void create_hub_with_duplicate_name_throws_exception() {
             // given
             CreateHubCommand command = new CreateHubCommand(
@@ -81,6 +81,28 @@ class HubServiceTest {
                     .hasMessage("이미 존재하는 허브 이름입니다");
 
             verify(hubRepository, times(1)).existsByName(command.name());
+            verify(hubRepository, never()).save(any(HubEntity.class));
+        }
+
+        @Test
+        @DisplayName("같은 주소의 허브가 이미 존재하면 예외가 발생한다.")
+        void create_hub_with_duplicate_address_throws_exception() {
+            // given
+            CreateHubCommand command = new CreateHubCommand(
+                    "서울특별시 센터",
+                    "서울시 송파구 송파대로 55",
+                    new BigDecimal("37.5665"),
+                    new BigDecimal("126.9780")
+            );
+
+            when(hubRepository.existsByAddress(command.name())).thenReturn(true);
+
+            // when & then
+            assertThatThrownBy(() -> hubService.create(command))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("이미 존재하는 허브 주소입니다");
+
+            verify(hubRepository, times(1)).existsByAddress(command.name());
             verify(hubRepository, never()).save(any(HubEntity.class));
         }
     }

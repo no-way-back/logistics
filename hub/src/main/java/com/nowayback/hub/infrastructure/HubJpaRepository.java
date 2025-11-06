@@ -7,4 +7,6 @@ import java.util.UUID;
 
 public interface HubJpaRepository extends JpaRepository<HubEntity, UUID> {
     boolean existsByName(String name);
+
+    boolean existsByAddress(String address);
 }
