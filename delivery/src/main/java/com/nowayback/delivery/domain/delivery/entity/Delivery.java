@@ -96,6 +96,10 @@ public class Delivery extends BaseEntity {
         this.status = newStatus;
     }
 
+    public void delete(UUID deletedBy) {
+        softDelete(deletedBy);
+    }
+
     private static void validateHubRoute(HubId sourceHubId, HubId destinationHubId) {
         if (sourceHubId.equals(destinationHubId)) {
             throw new InvalidHubRouteException(DeliveryErrorCode.INVALID_HUB_ROUTE);
