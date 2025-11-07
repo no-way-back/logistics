@@ -14,6 +14,7 @@ import com.nowayback.order.domain.vo.SupplierCompanySnapshot;
 import java.math.BigDecimal;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -157,4 +158,78 @@ class OrderTest {
             )
         ).isSameAs(exception);
     }
+
+    @Nested
+    @DisplayName("주문 생성 필수 파라미터 null 검증")
+    class OrderCreateNullValidation {
+
+        @Test
+        @DisplayName("공급업체 ID가 null이면 주문 생성에 실패한다")
+        void createOrder_ShouldThrowWhenSupplierIdIsNull() {
+            // when / then
+        assertThatThrownBy(() ->
+                Order.create(
+                    "req",
+                null,
+                supplierSnapshot,
+                anyReceiverId(),
+                receiverSnapshot,
+                orderItems
+            )
+        ).isInstanceOf(NullPointerException.class)
+                .hasMessage("공급업체 ID는 필수입니다.");
+        }
+
+        @Test
+        @DisplayName("공급업체가 null이면 주문 생성에 실패한다")
+        void createOrder_ShouldThrowWhenSupplierSnapshotIsNull() {
+            // when / then
+        assertThatThrownBy(() ->
+                Order.create(
+                    "req",
+                anySupplierId(),
+                null,
+                anyReceiverId(),
+                receiverSnapshot,
+                orderItems
+            )
+        ).isInstanceOf(NullPointerException.class)
+                .hasMessage("공급업체는 필수입니다.");
+        }
+
+        @Test
+        @DisplayName("수령업체 ID가 null이면 주문 생성에 실패한다")
+        void createOrder_ShouldThrowWhenReceiverIdIsNull() {
+            // when / then
+        assertThatThrownBy(() ->
+                Order.create(
+                    "req",
+                anySupplierId(),
+                supplierSnapshot,
+                null,
+                receiverSnapshot,
+                orderItems
+            )
+        ).isInstanceOf(NullPointerException.class)
+                .hasMessage("수령업체 ID는 필수입니다.");
+        }
+
+        @Test
+        @DisplayName("수령업체가 null이면 주문 생성에 실패한다")
+        void createOrder_ShouldThrowWhenReceiverSnapshotIsNull() {
+            // when / then
+        assertThatThrownBy(() ->
+                Order.create(
+                    "req",
+                anySupplierId(),
+                supplierSnapshot,
+                anyReceiverId(),
+                null,
+                orderItems
+            )
+        ).isInstanceOf(NullPointerException.class)
+                .hasMessage("수령업체는 필수입니다.");
+        }
+    }
+
 }
