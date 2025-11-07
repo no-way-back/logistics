@@ -1,6 +1,6 @@
 package com.nowayback.hub.application.dto;
 
-import com.nowayback.hub.domain.entity.HubEntity;
+import com.nowayback.hub.domain.entity.Hub;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ public record HubResult (
         LocalDateTime createdAt,
         UUID createdBy
 ) {
-    public static HubResult from(HubEntity hub) {
+    public static HubResult from(Hub hub) {
         return new HubResult(
                 hub.getId(),
                 hub.getName(),

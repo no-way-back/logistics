@@ -14,7 +14,7 @@ import java.util.UUID;
 @Table(name = "p_hubs")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class HubEntity extends BaseEntity {
+public class Hub extends BaseEntity {
 
     private static final BigDecimal MIN_LATITUDE = new BigDecimal("-90");
     private static final BigDecimal MAX_LATITUDE = new BigDecimal("90");
@@ -38,15 +38,15 @@ public class HubEntity extends BaseEntity {
     @Column(name = "longitude", precision = 10, scale = 7)
     private BigDecimal longitude;
 
-    public static HubEntity create(CreateHubCommand command) {
+    public static Hub create(CreateHubCommand command) {
         validateCommand(command);
 
-        HubEntity hubEntity = new HubEntity();
-        hubEntity.name = command.name();
-        hubEntity.address = command.address();
-        hubEntity.latitude = command.latitude();
-        hubEntity.longitude = command.longitude();
-        return hubEntity;
+        return new Hub(
+                command.name(),
+                command.address(),
+                command.latitude(),
+                command.longitude()
+        );
     }
 
     /**
@@ -107,4 +107,10 @@ public class HubEntity extends BaseEntity {
         }
     }
 
+    private Hub(String name, String address, BigDecimal latitude, BigDecimal longitude) {
+        this.name = name;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }

@@ -1,6 +1,6 @@
 package com.nowayback.hub.infrastructure;
 
-import com.nowayback.hub.domain.entity.HubEntity;
+import com.nowayback.hub.domain.entity.Hub;
 import com.nowayback.hub.domain.repository.HubRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,7 +22,7 @@ public class HubRepositoryImpl implements HubRepository {
     }
 
     @Override
-    public HubEntity save(HubEntity hubEntity) {
-        return jpaRepository.save(hubEntity);
+    public Hub save(Hub hub) {
+        return jpaRepository.save(hub);
     }
 }
