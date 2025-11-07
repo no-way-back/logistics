@@ -1,0 +1,52 @@
+package com.nowayback.delivery.fixture;
+
+import com.nowayback.delivery.domain.delivery.entity.Delivery;
+import com.nowayback.delivery.domain.delivery.vo.*;
+
+import java.lang.reflect.Field;
+import java.util.UUID;
+
+public class DeliveryFixture {
+
+    public static final OrderId ORDER_ID = OrderId.of(UUID.randomUUID());
+    public static final HubId HUB_ID = HubId.of(UUID.randomUUID());
+    public static final HubId SOURCE_HUB_ID = HubId.of(UUID.randomUUID());
+    public static final HubId DESTINATION_HUB_ID = HubId.of(UUID.randomUUID());
+
+    private static final String DELIVERY_ADDRESS = "서울특별시 중구 다산로46길 17 119호";
+    private static final String RECIPIENT_NAME = "홍길동";
+    private static final String RECIPIENT_SLACK_ID = "slack_1234";
+    public static final RecipientInfo RECIPIENT_INFO = RecipientInfo.of(DELIVERY_ADDRESS, RECIPIENT_NAME, RECIPIENT_SLACK_ID);
+
+    private static final String MODIFIED_DELIVERY_NAME = "김철수";
+    private static final String MODIFIED_DELIVERY_SLACK_ID = "slack_5678";
+    public static final RecipientInfo MODIFIED_RECIPIENT_INFO = RecipientInfo.of(DELIVERY_ADDRESS, MODIFIED_DELIVERY_NAME, MODIFIED_DELIVERY_SLACK_ID);
+
+    public static final DeliveryManagerId COMPANY_DELIVERY_MANAGER_ID = DeliveryManagerId.of(UUID.randomUUID());
+
+    public static Delivery createDelivery() {
+        return Delivery.create(
+                ORDER_ID,
+                SOURCE_HUB_ID,
+                DESTINATION_HUB_ID,
+                RECIPIENT_INFO,
+                COMPANY_DELIVERY_MANAGER_ID
+        );
+    }
+
+    public static Delivery createDeliveryWithStatus(DeliveryStatus status) {
+        Delivery delivery = createDelivery();
+        setPrivateField(delivery, "status", status);
+        return delivery;
+    }
+
+    private static void setPrivateField(Object target, String fieldName, Object value) {
+        try {
+            Field field = target.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(target, value);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
