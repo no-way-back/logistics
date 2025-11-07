@@ -2,7 +2,7 @@ package com.nowayback.order.domain.entity;
 
 import static com.nowayback.order.domain.util.DomainPreconditions.notNull;
 
-import audit.BaseEntity;
+import com.nowayback.common.audit.BaseEntity;
 import com.nowayback.order.domain.exception.OrderDomainErrorCode;
 import com.nowayback.order.domain.exception.OrderDomainException;
 import com.nowayback.order.domain.vo.OrderItems;

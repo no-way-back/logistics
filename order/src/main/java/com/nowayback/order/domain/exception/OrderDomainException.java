@@ -1,7 +1,8 @@
 package com.nowayback.order.domain.exception;
 
-import exception.ErrorCode;
-import exception.GlobalException;
+
+import com.nowayback.common.exception.ErrorCode;
+import com.nowayback.common.exception.GlobalException;
 
 public class OrderDomainException extends GlobalException {
 

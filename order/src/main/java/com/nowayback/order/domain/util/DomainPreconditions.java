@@ -1,7 +1,7 @@
 package com.nowayback.order.domain.util;
 
+import com.nowayback.common.exception.ErrorCode;
 import com.nowayback.order.domain.exception.OrderDomainException;
-import exception.ErrorCode;
 import java.math.BigDecimal;
 import java.util.Collection;
 

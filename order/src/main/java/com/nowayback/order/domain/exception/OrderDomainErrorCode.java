@@ -1,6 +1,6 @@
 package com.nowayback.order.domain.exception;
 
-import exception.ErrorCode;
+import com.nowayback.common.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 public enum OrderDomainErrorCode implements ErrorCode {
