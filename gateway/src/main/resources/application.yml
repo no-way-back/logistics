@@ -10,44 +10,67 @@ spring:
 
   cloud:
     gateway:
+      # ✅ 중요: 헤더가 프록시 과정에서 사라지지 않도록 설정
+      httpserver:
+        wiretap: true
+      httpclient:
+        wiretap: true
+      forwarded:
+        enabled: true
+
+      default-filters:
+        - PreserveHostHeader
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+
       routes:
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/users/**
+          filters:
+            - name: JwtAuthenticationFilter
 
         - id: hub-service
           uri: lb://hub-service
           predicates:
             - Path=/hubs/**
+          filters:
+            - name: JwtAuthenticationFilter
 
         - id: company-service
           uri: lb://company-service
           predicates:
             - Path=/companies/**
+          filters:
+            - name: JwtAuthenticationFilter
 
         - id: order-service
           uri: lb://order-service
           predicates:
             - Path=/orders/**
+          filters:
+            - name: JwtAuthenticationFilter
 
         - id: product-service
           uri: lb://product-service
           predicates:
             - Path=/products/**
+          filters:
+            - name: JwtAuthenticationFilter
 
         - id: delivery-service
           uri: lb://delivery-service
           predicates:
             - Path=/deliveries/**
+          filters:
+            - name: JwtAuthenticationFilter
 
         - id: message-service
           uri: lb://message-service
           predicates:
             - Path=/messages/**
-
-      default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+          filters:
+            - name: JwtAuthenticationFilter
 
       globalcors:
         cors-configurations:
@@ -61,6 +84,7 @@ spring:
               - PATCH
               - OPTIONS
             allowedHeaders: "*"
+            exposedHeaders: "*"
             allowCredentials: true
             maxAge: 3600
 

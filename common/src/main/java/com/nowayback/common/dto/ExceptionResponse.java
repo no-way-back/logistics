@@ -1,8 +1,8 @@
-package dto;
+package com.nowayback.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import exception.ErrorCode;
-import exception.GlobalException;
+import com.nowayback.common.exception.ErrorCode;
+import com.nowayback.common.exception.GlobalException;
 
 import java.util.List;
 

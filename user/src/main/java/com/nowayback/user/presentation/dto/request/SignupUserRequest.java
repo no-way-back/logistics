@@ -1,10 +1,9 @@
 package com.nowayback.user.presentation.dto.request;
 
-import com.nowayback.user.domain.entity.UserRole;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import com.nowayback.common.security.annotation.UserRole;
 
 public record SignupUserRequest(
 	@NotBlank(message = "사용자 이름은 필수입니다")

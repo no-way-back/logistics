@@ -1,6 +1,6 @@
 package com.nowayback.user.application.dto.command;
 
-import com.nowayback.user.domain.entity.UserRole;
+import com.nowayback.common.security.annotation.UserRole;
 
 public record SignupUserCommand(
 	String username,

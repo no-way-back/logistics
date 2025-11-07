@@ -1,4 +1,4 @@
-package security.annotation;
+package com.nowayback.common.security.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

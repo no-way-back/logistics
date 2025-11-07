@@ -2,7 +2,7 @@ package com.nowayback.user.exception;
 
 import org.springframework.http.HttpStatus;
 
-import exception.ErrorCode;
+import com.nowayback.common.exception.ErrorCode;
 
 public enum UserErrorCode implements ErrorCode {
 
@@ -10,7 +10,9 @@ public enum UserErrorCode implements ErrorCode {
 	USER_ALREADY_EXISTS("USER_002", "이미 존재하는 사용자입니다", HttpStatus.CONFLICT),
 	INVALID_PASSWORD("USER_003", "비밀번호가 일치하지 않습니다", HttpStatus.UNAUTHORIZED),
 	USER_NOT_APPROVED("USER_004", "승인되지 않은 사용자입니다", HttpStatus.FORBIDDEN),
-	USER_ALREADY_DELETED("USER_005", "이미 삭제된 사용자입니다", HttpStatus.BAD_REQUEST);
+	USER_ALREADY_DELETED("USER_005", "이미 삭제된 사용자입니다", HttpStatus.BAD_REQUEST),
+	INVALID_USER_STATUS("USER_006", "유효하지 않은 사용자 상태입니다", HttpStatus.BAD_REQUEST),
+	ALREADY_PROCESSED("USER_007", "이미 처리된 회원가입 요청입니다", HttpStatus.BAD_REQUEST);
 
 	private final String code;
 	private final String message;

@@ -1,4 +1,4 @@
-package security.config;
+package com.nowayback.common.security.config;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import security.interceptor.RoleCheckInterceptor;
+import com.nowayback.common.security.interceptor.RoleCheckInterceptor;
 
 @Configuration
 public class CommonWebConfig implements WebMvcConfigurer {
@@ -20,6 +20,6 @@ public class CommonWebConfig implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new RoleCheckInterceptor())
-			.addPathPatterns("/api/**");
+			.addPathPatterns("/**");
 	}
 }

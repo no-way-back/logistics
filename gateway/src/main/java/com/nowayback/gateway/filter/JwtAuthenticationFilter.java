@@ -14,8 +14,10 @@ import org.springframework.web.server.ServerWebExchange;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Component
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
 
@@ -33,11 +35,13 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
 			String path = request.getURI().getPath();
 			if (isPublicPath(path)) {
+				System.out.println("🟢 [Gateway] Public path, skipping JWT check: " + path);
 				return chain.filter(exchange);
 			}
 
 			String authHeader = request.getHeaders().getFirst("Authorization");
 			if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+				System.out.println("🔴 [Gateway] Missing Authorization header");
 				return onError(exchange, "인증 토큰이 없습니다.", HttpStatus.UNAUTHORIZED);
 			}
 
@@ -54,11 +58,20 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 				String username = claims.get("username", String.class);
 				String role = claims.get("role", String.class);
 
+				System.out.println("✅ [Gateway] JWT validated successfully");
+				System.out.println("   ↳ userId = " + userId);
+				System.out.println("   ↳ username = " + username);
+				System.out.println("   ↳ role = " + role);
+				System.out.println("   ↳ forwarding to service: " + request.getURI());
+
 				ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
 					.header(JwtConstants.HEADER_USER_ID, userId)
 					.header(JwtConstants.HEADER_USERNAME, username)
 					.header(JwtConstants.HEADER_ROLE, role)
+					.header("Authorization", authHeader)
 					.build();
+
+				System.out.println("🧩 Forwarding headers: " + mutatedRequest.getHeaders());
 
 				ServerWebExchange mutatedExchange = exchange.mutate()
 					.request(mutatedRequest)
@@ -67,6 +80,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 				return chain.filter(mutatedExchange);
 
 			} catch (Exception e) {
+				System.out.println("❌ [Gateway] Invalid JWT: " + e.getMessage());
 				return onError(exchange, "유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED);
 			}
 		};
@@ -89,6 +103,8 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 		response.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
 
 		String body = String.format("{\"code\":\"UNAUTHORIZED\",\"message\":\"%s\"}", message);
+
+		System.out.println("⚠️ [Gateway] Sending error response: " + message);
 
 		return response.writeWith(
 			Mono.just(response.bufferFactory().wrap(body.getBytes()))

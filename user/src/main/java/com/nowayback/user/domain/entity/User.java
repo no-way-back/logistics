@@ -2,7 +2,7 @@ package com.nowayback.user.domain.entity;
 
 import java.util.UUID;
 
-import audit.BaseEntity;
+import com.nowayback.common.audit.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import com.nowayback.common.security.annotation.UserRole;
 
 @Entity
 @Table(name = "p_users")

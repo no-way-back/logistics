@@ -1,12 +1,13 @@
 package com.nowayback.user.presentation.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import com.nowayback.user.domain.entity.UserStatus;
+
+import jakarta.validation.constraints.NotNull;
 
 public record ApprovalRequest(
-	@NotBlank(message = "상태는 필수입니다.")
-	@Pattern(regexp = "^(APPROVED|REJECTED)$", message = "상태는 APPROVED 또는 REJECTED만 가능합니다.")
-	String status,
+	@NotNull(message = "상태는 필수입니다.")
+	UserStatus status,
 
 	String reason
+
 ) {}

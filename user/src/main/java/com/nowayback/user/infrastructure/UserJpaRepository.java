@@ -9,9 +9,9 @@ import com.nowayback.user.domain.entity.User;
 
 public interface UserJpaRepository extends JpaRepository<User, UUID> {
 
-	boolean existsByUsernameAndDeletedAtIsNull(String username);
+	Optional<User> findByUserIdAndDeletedAtIsNull(UUID userId);
 
 	Optional<User> findByUsernameAndDeletedAtIsNull(String username);
 
-	Optional<User> findByUserIdAndDeletedAtIsNull(UUID userId);
+	boolean existsByUsernameAndDeletedAtIsNull(String username);
 }

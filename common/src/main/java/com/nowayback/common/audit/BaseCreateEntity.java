@@ -1,4 +1,4 @@
-package audit;
+package com.nowayback.common.audit;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

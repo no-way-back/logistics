@@ -1,6 +1,6 @@
-package exception;
+package com.nowayback.common.exception;
 
-import dto.ExceptionResponse;
+import com.nowayback.common.dto.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;

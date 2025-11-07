@@ -1,4 +1,4 @@
-package security.annotation;
+package com.nowayback.common.security.annotation;
 
 public enum UserRole {
 	MASTER,

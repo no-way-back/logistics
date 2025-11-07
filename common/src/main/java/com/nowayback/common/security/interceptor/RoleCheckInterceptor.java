@@ -1,4 +1,4 @@
-package security.interceptor;
+package com.nowayback.common.security.interceptor;
 
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -6,8 +6,8 @@ import java.util.Arrays;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import security.annotation.UserRole;
-import security.annotation.RequireRole;
+import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.common.security.annotation.RequireRole;
 
 public class RoleCheckInterceptor implements HandlerInterceptor {
 
@@ -25,7 +25,6 @@ public class RoleCheckInterceptor implements HandlerInterceptor {
 		RequireRole requireRole = handlerMethod.getMethodAnnotation(RequireRole.class);
 
 		if (requireRole == null) {
-			// 권한 체크가 필요 없는 경우
 			return true;
 		}
 

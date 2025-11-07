@@ -4,8 +4,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.nowayback.user.domain.entity.User;
-import com.nowayback.user.domain.entity.UserRole;
 import com.nowayback.user.domain.entity.UserStatus;
+
+import com.nowayback.common.security.annotation.UserRole;
 
 public record UserResult(
 	UUID userId,

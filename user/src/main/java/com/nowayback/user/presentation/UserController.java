@@ -1,24 +1,35 @@
 package com.nowayback.user.presentation;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nowayback.user.application.UserService;
+import com.nowayback.user.application.dto.command.ApprovalCommand;
 import com.nowayback.user.application.dto.command.LoginUserCommand;
 import com.nowayback.user.application.dto.command.SignupUserCommand;
 import com.nowayback.user.application.dto.result.LoginResult;
 import com.nowayback.user.application.dto.result.UserResult;
+import com.nowayback.user.domain.entity.UserStatus;
 import com.nowayback.user.infrastructure.security.JwtTokenProvider;
+import com.nowayback.user.presentation.dto.request.ApprovalRequest;
 import com.nowayback.user.presentation.dto.request.LoginUserRequest;
 import com.nowayback.user.presentation.dto.request.SignupUserRequest;
 import com.nowayback.user.presentation.dto.response.LoginResponse;
 import com.nowayback.user.presentation.dto.response.UserResponse;
 
 import jakarta.validation.Valid;
+import com.nowayback.common.security.annotation.AuthUser;
+import com.nowayback.common.security.annotation.CurrentUser;
+import com.nowayback.common.security.annotation.RequireRole;
+import com.nowayback.common.security.annotation.UserRole;
 
 @RestController
 @RequestMapping("/users")
@@ -45,7 +56,7 @@ public class UserController {
 
 		UserResult result = userService.signup(command);
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(UserResponse.from(result));
+			.body(UserResponse.withMessage(result, "회원가입 요청이 완료되었습니다. 관리자 승인을 기다려주세요."));
 	}
 
 	@PostMapping("/login")
@@ -66,5 +77,28 @@ public class UserController {
 		);
 
 		return ResponseEntity.ok(LoginResponse.of(token));
+	}
+
+	@PatchMapping("/{userId}/approval")
+	@RequireRole(UserRole.MASTER)
+	public ResponseEntity<UserResponse> approveSignup(
+		@PathVariable UUID userId,
+		@Valid @RequestBody ApprovalRequest request,
+		@CurrentUser AuthUser authUser
+	) {
+		ApprovalCommand command = new ApprovalCommand(
+			userId,
+			request.status(),
+			request.reason(),
+			authUser.userId()
+		);
+
+		UserResult result = userService.approveOrRejectSignup(command);
+
+		String message = request.status() == UserStatus.APPROVED
+			? "회원가입이 승인되었습니다."
+			: "회원가입이 거절되었습니다.";
+
+		return ResponseEntity.ok(UserResponse.withMessage(result, message));
 	}
 }

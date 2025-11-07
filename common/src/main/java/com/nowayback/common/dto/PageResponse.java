@@ -1,4 +1,4 @@
-package dto;
+package com.nowayback.common.dto;
 
 import org.springframework.data.domain.Page;
 

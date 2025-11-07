@@ -1,7 +1,7 @@
 package com.nowayback.user.exception;
 
-import exception.ErrorCode;
-import exception.GlobalException;
+import com.nowayback.common.exception.ErrorCode;
+import com.nowayback.common.exception.GlobalException;
 
 public class UserException extends GlobalException {
 

@@ -18,13 +18,13 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	@Override
-	public boolean existsByUsernameAndDeletedAtNull(String username) {
-		return userJpaRepository.existsByUsernameAndDeletedAtIsNull(username);
+	public User save(User user) {
+		return userJpaRepository.save(user);
 	}
 
 	@Override
-	public boolean existsByUsernameAndDeletedAtIsNull(String username) {
-		return userJpaRepository.existsByUsernameAndDeletedAtIsNull(username);
+	public Optional<User> findByUserIdAndDeletedAtIsNull(UUID userId) {
+		return userJpaRepository.findByUserIdAndDeletedAtIsNull(userId);
 	}
 
 	@Override
@@ -33,12 +33,7 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	@Override
-	public void save(User user) {
-		userJpaRepository.save(user);
-	}
-
-	@Override
-	public Optional<User> findByUserIdAndDeletedAtIsNull(UUID userId) {
-		return userJpaRepository.findByUserIdAndDeletedAtIsNull(userId);
+	public boolean existsByUsernameAndDeletedAtIsNull(String username) {
+		return userJpaRepository.existsByUsernameAndDeletedAtIsNull(username);
 	}
 }

@@ -1,4 +1,4 @@
-package security.config;
+package com.nowayback.common.security.config;
 
 import java.util.UUID;
 
@@ -9,10 +9,10 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import jakarta.servlet.http.HttpServletRequest;
-import security.annotation.AuthUser;
-import security.annotation.CurrentUser;
-import security.annotation.UserRole;
-import security.interceptor.JwtConstants;
+import com.nowayback.common.security.annotation.AuthUser;
+import com.nowayback.common.security.annotation.CurrentUser;
+import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.common.security.interceptor.JwtConstants;
 
 public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
 

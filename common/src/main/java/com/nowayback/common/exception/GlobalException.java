@@ -1,4 +1,4 @@
-package exception;
+package com.nowayback.common.exception;
 
 public class GlobalException extends RuntimeException {
 

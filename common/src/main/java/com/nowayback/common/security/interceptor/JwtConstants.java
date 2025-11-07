@@ -1,4 +1,4 @@
-package security.interceptor;
+package com.nowayback.common.security.interceptor;
 
 public class JwtConstants {
 	public static final String HEADER_USER_ID = "X-User-Id";

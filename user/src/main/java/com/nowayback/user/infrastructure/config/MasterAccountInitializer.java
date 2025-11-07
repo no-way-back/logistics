@@ -6,11 +6,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.nowayback.user.domain.entity.User;
-import com.nowayback.user.domain.entity.UserRole;
 import com.nowayback.user.domain.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.nowayback.common.security.annotation.UserRole;
 
 @Slf4j
 @Component
