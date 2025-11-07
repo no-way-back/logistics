@@ -12,8 +12,8 @@ import com.nowayback.user.application.dto.result.UserResult;
 import com.nowayback.user.domain.entity.User;
 import com.nowayback.user.domain.entity.UserStatus;
 import com.nowayback.user.domain.repository.UserRepository;
-import com.nowayback.user.exception.UserErrorCode;
-import com.nowayback.user.exception.UserException;
+import com.nowayback.user.application.exception.UserApplicationErrorCode;
+import com.nowayback.user.application.exception.UserApplicationException;
 
 @Service
 public class UserService {
@@ -29,7 +29,7 @@ public class UserService {
 	@Transactional
 	public UserResult signup(SignupUserCommand command) {
 		if (userRepository.existsByUsernameAndDeletedAtIsNull(command.username())) {
-			throw new UserException(UserErrorCode.USER_ALREADY_EXISTS);
+			throw new UserApplicationException(UserApplicationErrorCode.USER_ALREADY_EXISTS);
 		}
 
 		User user = User.createUser(
@@ -46,14 +46,14 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public LoginResult login(LoginUserCommand command) {
 		User user = userRepository.findByUsernameAndDeletedAtIsNull(command.username())
-			.orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+			.orElseThrow(() -> new UserApplicationException(UserApplicationErrorCode.USER_NOT_FOUND));
 
 		if (!passwordEncoder.matches(command.password(), user.getPassword())) {
-			throw new UserException(UserErrorCode.INVALID_PASSWORD);
+			throw new UserApplicationException(UserApplicationErrorCode.INVALID_PASSWORD);
 		}
 
 		if (user.getStatus() != UserStatus.APPROVED) {
-			throw new UserException(UserErrorCode.USER_NOT_APPROVED);
+			throw new UserApplicationException(UserApplicationErrorCode.USER_NOT_APPROVED);
 		}
 
 		return LoginResult.from(user);
@@ -62,14 +62,14 @@ public class UserService {
 	@Transactional
 	public UserResult approveOrRejectSignup(ApprovalCommand command) {
 		if (command.status() != UserStatus.APPROVED && command.status() != UserStatus.REJECTED) {
-			throw new UserException(UserErrorCode.INVALID_USER_STATUS);
+			throw new UserApplicationException(UserApplicationErrorCode.INVALID_USER_STATUS);
 		}
 
 		User user = userRepository.findByUserIdAndDeletedAtIsNull(command.userId())
-			.orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+			.orElseThrow(() -> new UserApplicationException(UserApplicationErrorCode.USER_NOT_FOUND));
 
 		if (user.getStatus() != UserStatus.PENDING) {
-			throw new UserException(UserErrorCode.ALREADY_PROCESSED);
+			throw new UserApplicationException(UserApplicationErrorCode.ALREADY_PROCESSED);
 		}
 
 		if (command.status() == UserStatus.APPROVED) {
