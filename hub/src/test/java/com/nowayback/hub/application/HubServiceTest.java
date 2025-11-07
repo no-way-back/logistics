@@ -95,6 +95,7 @@ class HubServiceTest {
                     new BigDecimal("126.9780")
             );
 
+            when(hubRepository.existsByName(command.name())).thenReturn(false);
             when(hubRepository.existsByAddress(command.address())).thenReturn(true);
 
             // when & then
@@ -102,6 +103,7 @@ class HubServiceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("이미 존재하는 허브 주소입니다.");
 
+            verify(hubRepository, times(1)).existsByName(command.name());
             verify(hubRepository, times(1)).existsByAddress(command.address());
             verify(hubRepository, never()).save(any(Hub.class));
         }
