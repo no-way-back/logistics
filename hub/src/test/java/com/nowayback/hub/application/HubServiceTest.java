@@ -2,6 +2,7 @@ package com.nowayback.hub.application;
 
 import com.nowayback.hub.application.command.CreateHubCommand;
 import com.nowayback.hub.application.dto.HubResult;
+import com.nowayback.hub.application.exception.HubApplicationException;
 import com.nowayback.hub.domain.entity.Hub;
 import com.nowayback.hub.domain.repository.HubRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -77,7 +78,7 @@ class HubServiceTest {
 
             // when & then
             assertThatThrownBy(() -> hubService.create(command))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(HubApplicationException.class)
                     .hasMessage("이미 존재하는 허브 이름입니다.");
 
             verify(hubRepository, times(1)).existsByName(command.name());
@@ -100,7 +101,7 @@ class HubServiceTest {
 
             // when & then
             assertThatThrownBy(() -> hubService.create(command))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(HubApplicationException.class)
                     .hasMessage("이미 존재하는 허브 주소입니다.");
 
             verify(hubRepository, times(1)).existsByName(command.name());
