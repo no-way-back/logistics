@@ -1,7 +1,7 @@
 package com.nowayback.delivery.domain.delivery.entity;
 
 import audit.BaseEntity;
-import com.nowayback.delivery.domain.delivery.exception.DeliveryErrorCode;
+import com.nowayback.delivery.domain.exception.DeliveryDomainErrorCode;
 import com.nowayback.delivery.domain.delivery.exception.InvalidDeliveryStatusException;
 import com.nowayback.delivery.domain.delivery.exception.InvalidHubRouteException;
 import com.nowayback.delivery.domain.delivery.vo.*;
@@ -71,10 +71,10 @@ public class Delivery extends BaseEntity {
     }
 
     public void updateRecipientInfo(RecipientInfo newRecipientInfo) {
-        validateNotNull(newRecipientInfo, DeliveryErrorCode.NULL_RECIPIENT_INFO_OBJECT);
+        validateNotNull(newRecipientInfo, DeliveryDomainErrorCode.NULL_RECIPIENT_INFO_OBJECT);
 
         if (!status.canUpdateRecipientInfo()) {
-            throw new InvalidDeliveryStatusException(DeliveryErrorCode.INVALID_DELIVERY_STATUS_FOR_UPDATE);
+            throw new InvalidDeliveryStatusException(DeliveryDomainErrorCode.INVALID_DELIVERY_STATUS_FOR_UPDATE);
         }
 
         this.recipientInfo = newRecipientInfo;
@@ -82,21 +82,21 @@ public class Delivery extends BaseEntity {
 
     public void updateStatus(DeliveryStatus newStatus) {
         if (!status.canTransitionTo(newStatus)) {
-            throw new InvalidDeliveryStatusException(DeliveryErrorCode.INVALID_DELIVERY_STATUS_TRANSITION);
+            throw new InvalidDeliveryStatusException(DeliveryDomainErrorCode.INVALID_DELIVERY_STATUS_TRANSITION);
         }
         this.status = newStatus;
     }
 
     public void delete(UUID deletedBy) {
         if (!status.canBeDeleted()) {
-            throw new InvalidDeliveryStatusException(DeliveryErrorCode.INVALID_DELIVERY_STATUS_FOR_DELETE);
+            throw new InvalidDeliveryStatusException(DeliveryDomainErrorCode.INVALID_DELIVERY_STATUS_FOR_DELETE);
         }
         softDelete(deletedBy);
     }
 
     private static void validateHubRoute(HubId sourceHubId, HubId destinationHubId) {
         if (sourceHubId.equals(destinationHubId)) {
-            throw new InvalidHubRouteException(DeliveryErrorCode.INVALID_HUB_ROUTE);
+            throw new InvalidHubRouteException(DeliveryDomainErrorCode.INVALID_HUB_ROUTE);
         }
     }
 
@@ -105,23 +105,23 @@ public class Delivery extends BaseEntity {
     }
 
     private static void validateOrderId(OrderId orderId) {
-        validateNotNull(orderId, DeliveryErrorCode.NULL_ORDER_ID_OBJECT);
+        validateNotNull(orderId, DeliveryDomainErrorCode.NULL_ORDER_ID_OBJECT);
     }
 
     private static void validateSourceHubId(HubId sourceHubId) {
-        validateNotNull(sourceHubId, DeliveryErrorCode.NULL_SOURCE_HUB_ID_OBJECT);
+        validateNotNull(sourceHubId, DeliveryDomainErrorCode.NULL_SOURCE_HUB_ID_OBJECT);
     }
 
     private static void validateDestinationHubId(HubId destinationHubId) {
-        validateNotNull(destinationHubId, DeliveryErrorCode.NULL_DESTINATION_HUB_ID_OBJECT);
+        validateNotNull(destinationHubId, DeliveryDomainErrorCode.NULL_DESTINATION_HUB_ID_OBJECT);
     }
 
     private static void validateRecipientInfo(RecipientInfo recipientInfo) {
-        validateNotNull(recipientInfo, DeliveryErrorCode.NULL_RECIPIENT_INFO_OBJECT);
+        validateNotNull(recipientInfo, DeliveryDomainErrorCode.NULL_RECIPIENT_INFO_OBJECT);
     }
 
     private static void validateCompanyDeliveryManagerId(DeliveryManagerId companyDeliveryManagerId) {
-        validateNotNull(companyDeliveryManagerId, DeliveryErrorCode.NULL_DELIVERY_MANAGER_ID_OBJECT);
+        validateNotNull(companyDeliveryManagerId, DeliveryDomainErrorCode.NULL_DELIVERY_MANAGER_ID_OBJECT);
     }
 
     private Delivery(OrderId orderId, DeliveryStatus status, HubId sourceHubId, HubId destinationHubId, RecipientInfo recipientInfo, DeliveryManagerId companyDeliveryManagerId) {

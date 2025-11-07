@@ -1,9 +1,9 @@
-package com.nowayback.delivery.domain.delivery.exception;
+package com.nowayback.delivery.domain.exception;
 
 import exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 
-public enum DeliveryErrorCode implements ErrorCode {
+public enum DeliveryDomainErrorCode implements ErrorCode {
 
     INVALID_HUB_ROUTE("DELIVERY001", "출발 허브와 도착 허브는 같을 수 없습니다.", HttpStatus.BAD_REQUEST),
     INVALID_DELIVERY_STATUS_FOR_UPDATE("DELIVERY002", "배송이 진행 중이거나 완료된 경우에는 배송 정보를 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
@@ -30,7 +30,7 @@ public enum DeliveryErrorCode implements ErrorCode {
     private final String message;
     private final HttpStatus httpStatus;
 
-    DeliveryErrorCode(String code, String message, HttpStatus httpStatus) {
+    DeliveryDomainErrorCode(String code, String message, HttpStatus httpStatus) {
         this.code = code;
         this.message = message;
         this.httpStatus = httpStatus;
