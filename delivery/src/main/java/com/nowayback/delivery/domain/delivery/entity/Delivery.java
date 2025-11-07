@@ -52,15 +52,6 @@ public class Delivery extends BaseEntity {
     @AttributeOverride(name = "id", column = @Column(name = "company_delivery_manager_id", nullable = false))
     private DeliveryManagerId companyDeliveryManagerId;
 
-    private Delivery(OrderId orderId, DeliveryStatus status, HubId sourceHubId, HubId destinationHubId, RecipientInfo recipientInfo, DeliveryManagerId companyDeliveryManagerId) {
-        this.orderId = orderId;
-        this.status = status;
-        this.sourceHubId = sourceHubId;
-        this.destinationHubId = destinationHubId;
-        this.recipientInfo = recipientInfo;
-        this.companyDeliveryManagerId = companyDeliveryManagerId;
-    }
-
     public static Delivery create(OrderId orderId, HubId sourceHubId, HubId destinationHubId, RecipientInfo recipientInfo, DeliveryManagerId companyDeliveryManagerId) {
         validateOrderId(orderId);
         validateSourceHubId(sourceHubId);
@@ -131,5 +122,14 @@ public class Delivery extends BaseEntity {
 
     private static void validateCompanyDeliveryManagerId(DeliveryManagerId companyDeliveryManagerId) {
         validateNotNull(companyDeliveryManagerId, DeliveryErrorCode.NULL_DELIVERY_MANAGER_ID_OBJECT);
+    }
+
+    private Delivery(OrderId orderId, DeliveryStatus status, HubId sourceHubId, HubId destinationHubId, RecipientInfo recipientInfo, DeliveryManagerId companyDeliveryManagerId) {
+        this.orderId = orderId;
+        this.status = status;
+        this.sourceHubId = sourceHubId;
+        this.destinationHubId = destinationHubId;
+        this.recipientInfo = recipientInfo;
+        this.companyDeliveryManagerId = companyDeliveryManagerId;
     }
 }
