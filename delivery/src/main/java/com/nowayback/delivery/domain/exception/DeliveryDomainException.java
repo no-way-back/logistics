@@ -1,7 +1,7 @@
 package com.nowayback.delivery.domain.exception;
 
-import exception.ErrorCode;
-import exception.GlobalException;
+import com.nowayback.common.exception.ErrorCode;
+import com.nowayback.common.exception.GlobalException;
 
 public class DeliveryDomainException extends GlobalException {
 

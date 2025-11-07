@@ -1,6 +1,6 @@
 package com.nowayback.delivery.domain.exception;
 
-import exception.ErrorCode;
+import com.nowayback.common.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 
 public enum DeliveryDomainErrorCode implements ErrorCode {

@@ -1,10 +1,9 @@
 package com.nowayback.delivery.domain.delivery.entity;
 
-import audit.BaseEntity;
+import com.nowayback.common.audit.BaseEntity;
 import com.nowayback.delivery.domain.exception.DeliveryDomainErrorCode;
 import com.nowayback.delivery.domain.delivery.vo.*;
 import com.nowayback.delivery.domain.exception.DeliveryDomainException;
-import exception.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -98,7 +97,7 @@ public class Delivery extends BaseEntity {
         }
     }
 
-    private static void validateNotNull(Object object, ErrorCode errorCode) {
+    private static void validateNotNull(Object object, DeliveryDomainErrorCode errorCode) {
         if (object == null) throw new DeliveryDomainException(errorCode);
     }
 
