@@ -1,12 +1,15 @@
 package com.nowayback.order.domain.entity;
 
 import audit.BaseEntity;
+import com.nowayback.order.domain.exception.OrderDomainErrorCode;
+import com.nowayback.order.domain.exception.OrderDomainException;
 import com.nowayback.order.domain.vo.OrderItems;
 import com.nowayback.order.domain.vo.OrderStatus;
 import com.nowayback.order.domain.vo.ReceiverCompanyId;
 import com.nowayback.order.domain.vo.ReceiverCompanySnapshot;
 import com.nowayback.order.domain.vo.SupplierCompanyId;
 import com.nowayback.order.domain.vo.SupplierCompanySnapshot;
+import exception.ErrorCode;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -133,9 +136,18 @@ public class Order extends BaseEntity {
         ReceiverCompanyId receiverCompanyId,
         ReceiverCompanySnapshot receiver
     ) {
+        notNull(supplierCompanyId, OrderDomainErrorCode.NULL_SUPPLIER_COMPANY_ID);
+        notNull(supplier, OrderDomainErrorCode.NULL_SUPPLIER_COMPANY);
+        notNull(receiverCompanyId, OrderDomainErrorCode.NULL_RECEIVER_COMPANY_ID);
+        notNull(receiver, OrderDomainErrorCode.NULL_RECEIVER_COMPANY);
     }
 
     private static void validateOrderItems(OrderItems orderItems) {
         orderItems.validate();
+    }
+
+    public static <T> T notNull(T value, ErrorCode code) {
+        if (value == null) throw new OrderDomainException(code);
+        return value;
     }
 }
