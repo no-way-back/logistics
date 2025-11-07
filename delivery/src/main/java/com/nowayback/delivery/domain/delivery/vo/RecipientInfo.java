@@ -1,7 +1,7 @@
 package com.nowayback.delivery.domain.delivery.vo;
 
 import com.nowayback.delivery.domain.exception.DeliveryDomainErrorCode;
-import com.nowayback.delivery.domain.exception.InvalidValueException;
+import com.nowayback.delivery.domain.exception.DeliveryDomainException;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -34,19 +34,19 @@ public class RecipientInfo {
 
     private static void validateAddress(String address) {
         if (address == null || address.trim().isEmpty()) {
-            throw new InvalidValueException(DeliveryDomainErrorCode.INVALID_RECIPIENT_ADDRESS);
+            throw new DeliveryDomainException(DeliveryDomainErrorCode.INVALID_RECIPIENT_ADDRESS);
         }
     }
 
     private static void validateName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new InvalidValueException(DeliveryDomainErrorCode.INVALID_RECIPIENT_NAME);
+            throw new DeliveryDomainException(DeliveryDomainErrorCode.INVALID_RECIPIENT_NAME);
         }
     }
 
     private static void validateSlackId(String slackId) {
         if (slackId == null || slackId.trim().isEmpty()) {
-            throw new InvalidValueException(DeliveryDomainErrorCode.INVALID_RECIPIENT_SLACK_ID);
+            throw new DeliveryDomainException(DeliveryDomainErrorCode.INVALID_RECIPIENT_SLACK_ID);
         }
     }
 }

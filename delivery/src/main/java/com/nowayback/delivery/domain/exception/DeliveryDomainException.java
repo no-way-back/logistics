@@ -3,9 +3,9 @@ package com.nowayback.delivery.domain.exception;
 import exception.ErrorCode;
 import exception.GlobalException;
 
-public class InvalidObjectException extends GlobalException {
+public class DeliveryDomainException extends GlobalException {
 
-    public InvalidObjectException(ErrorCode errorCode) {
+    public DeliveryDomainException(ErrorCode errorCode) {
         super(errorCode);
     }
 }
