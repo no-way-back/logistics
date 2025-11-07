@@ -1,5 +1,7 @@
 package com.nowayback.user.application;
 
+import java.util.UUID;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,11 +11,11 @@ import com.nowayback.user.application.dto.command.LoginUserCommand;
 import com.nowayback.user.application.dto.command.SignupUserCommand;
 import com.nowayback.user.application.dto.result.LoginResult;
 import com.nowayback.user.application.dto.result.UserResult;
+import com.nowayback.user.application.exception.UserApplicationErrorCode;
+import com.nowayback.user.application.exception.UserApplicationException;
 import com.nowayback.user.domain.entity.User;
 import com.nowayback.user.domain.entity.UserStatus;
 import com.nowayback.user.domain.repository.UserRepository;
-import com.nowayback.user.application.exception.UserApplicationErrorCode;
-import com.nowayback.user.application.exception.UserApplicationException;
 
 @Service
 public class UserService {
@@ -28,16 +30,14 @@ public class UserService {
 
 	@Transactional
 	public UserResult signup(SignupUserCommand command) {
-		if (userRepository.existsByUsernameAndDeletedAtIsNull(command.username())) {
-			throw new UserApplicationException(UserApplicationErrorCode.USER_ALREADY_EXISTS);
-		}
+		validateUsernameNotDuplicated(command.username());
 
 		User user = User.createUser(
 			command.username(),
 			passwordEncoder.encode(command.password()),
 			command.role(),
 			command.slackId()
-			);
+		);
 
 		User savedUser = userRepository.save(user);
 		return UserResult.from(savedUser);
@@ -45,32 +45,20 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public LoginResult login(LoginUserCommand command) {
-		User user = userRepository.findByUsernameAndDeletedAtIsNull(command.username())
-			.orElseThrow(() -> new UserApplicationException(UserApplicationErrorCode.USER_NOT_FOUND));
+		User user = findActiveUserByUsername(command.username());
 
-		if (!passwordEncoder.matches(command.password(), user.getPassword())) {
-			throw new UserApplicationException(UserApplicationErrorCode.INVALID_PASSWORD);
-		}
+		validatePassword(command.password(), user.getPassword());
 
-		if (user.getStatus() != UserStatus.APPROVED) {
-			throw new UserApplicationException(UserApplicationErrorCode.USER_NOT_APPROVED);
-		}
+		user.validateCanLogin();
 
 		return LoginResult.from(user);
 	}
 
 	@Transactional
 	public UserResult approveOrRejectSignup(ApprovalCommand command) {
-		if (command.status() != UserStatus.APPROVED && command.status() != UserStatus.REJECTED) {
-			throw new UserApplicationException(UserApplicationErrorCode.INVALID_USER_STATUS);
-		}
+		validateApprovalStatus(command.status());
 
-		User user = userRepository.findByUserIdAndDeletedAtIsNull(command.userId())
-			.orElseThrow(() -> new UserApplicationException(UserApplicationErrorCode.USER_NOT_FOUND));
-
-		if (user.getStatus() != UserStatus.PENDING) {
-			throw new UserApplicationException(UserApplicationErrorCode.ALREADY_PROCESSED);
-		}
+		User user = findActiveUserById(command.userId());
 
 		if (command.status() == UserStatus.APPROVED) {
 			user.approveSignup();
@@ -79,7 +67,36 @@ public class UserService {
 		}
 
 		User savedUser = userRepository.save(user);
-
 		return UserResult.from(savedUser);
+	}
+
+	// ========== Private Helper Methods ==========
+
+	private User findActiveUserById(UUID userId) {
+		return userRepository.findByUserIdAndDeletedAtIsNull(userId)
+			.orElseThrow(() -> new UserApplicationException(UserApplicationErrorCode.USER_NOT_FOUND));
+	}
+
+	private User findActiveUserByUsername(String username) {
+		return userRepository.findByUsernameAndDeletedAtIsNull(username)
+			.orElseThrow(() -> new UserApplicationException(UserApplicationErrorCode.USER_NOT_FOUND));
+	}
+
+	private void validateUsernameNotDuplicated(String username) {
+		if (userRepository.existsByUsernameAndDeletedAtIsNull(username)) {
+			throw new UserApplicationException(UserApplicationErrorCode.USER_ALREADY_EXISTS);
+		}
+	}
+
+	private void validatePassword(String rawPassword, String encodedPassword) {
+		if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
+			throw new UserApplicationException(UserApplicationErrorCode.INVALID_PASSWORD);
+		}
+	}
+
+	private void validateApprovalStatus(UserStatus status) {
+		if (status != UserStatus.APPROVED && status != UserStatus.REJECTED) {
+			throw new UserApplicationException(UserApplicationErrorCode.INVALID_APPROVAL_STATUS);
+		}
 	}
 }

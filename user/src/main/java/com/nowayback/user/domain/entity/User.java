@@ -1,5 +1,6 @@
 package com.nowayback.user.domain.entity;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.nowayback.common.audit.BaseEntity;
@@ -15,6 +16,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.user.domain.exception.UserDomainErrorCode;
+import com.nowayback.user.domain.exception.UserDomainException;
 
 @Entity
 @Table(name = "p_users")
@@ -57,22 +60,22 @@ public class User extends BaseEntity {
 	}
 
 	public void approveSignup() {
+		if (this.status != UserStatus.PENDING) {
+			throw new UserDomainException(UserDomainErrorCode.ALREADY_PROCESSED);
+		}
 		this.status = UserStatus.APPROVED;
 	}
 
 	public void rejectSignup() {
+		if (this.status != UserStatus.PENDING) {
+			throw new UserDomainException(UserDomainErrorCode.ALREADY_PROCESSED);
+		}
 		this.status = UserStatus.REJECTED;
 	}
 
-	public void updateStatus(UserStatus status) {
-		this.status = status;
-	}
-
-	public void updateSlackId(String slackId) {
-		this.slackId = slackId;
-	}
-
-	public void updatePassword(String password) {
-		this.password = password;
+	public void validateCanLogin() {
+		if (this.status != UserStatus.APPROVED) {
+			throw new UserDomainException(UserDomainErrorCode.INVALID_USER_STATUS);
+		}
 	}
 }
