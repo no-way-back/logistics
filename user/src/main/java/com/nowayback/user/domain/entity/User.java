@@ -44,7 +44,7 @@ public class User extends BaseEntity {
 	@Column(name = "slack_id", length = 100)
 	private String slackId;
 
-	public User(String username, String password, UserRole role, String slackId) {
+	private User(String username, String password, UserRole role, String slackId) {
 		this.username = username;
 		this.password = password;
 		this.role = role;

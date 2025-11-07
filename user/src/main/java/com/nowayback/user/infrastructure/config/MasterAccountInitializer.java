@@ -27,14 +27,13 @@ public class MasterAccountInitializer implements ApplicationRunner {
 		if (!userRepository.existsByUsernameAndDeletedAtIsNull(masterUsername)) {
 			String encodedPassword = passwordEncoder.encode("Master123!");
 
-			User master = new User(
+			User master = User.createUser(
 				masterUsername,
 				encodedPassword,
 				UserRole.MASTER,
 				null
 			);
 
-			// 마스터는 바로 승인
 			master.approveSignup();
 
 			userRepository.save(master);
