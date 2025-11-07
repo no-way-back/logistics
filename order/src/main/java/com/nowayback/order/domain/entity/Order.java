@@ -1,5 +1,7 @@
 package com.nowayback.order.domain.entity;
 
+import static com.nowayback.order.domain.util.DomainPreconditions.notNull;
+
 import audit.BaseEntity;
 import com.nowayback.order.domain.exception.OrderDomainErrorCode;
 import com.nowayback.order.domain.exception.OrderDomainException;
@@ -9,7 +11,6 @@ import com.nowayback.order.domain.vo.ReceiverCompanyId;
 import com.nowayback.order.domain.vo.ReceiverCompanySnapshot;
 import com.nowayback.order.domain.vo.SupplierCompanyId;
 import com.nowayback.order.domain.vo.SupplierCompanySnapshot;
-import exception.ErrorCode;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -80,7 +81,7 @@ public class Order extends BaseEntity {
     @Embedded
     private OrderItems orderItems;
 
-    public Order(
+    private Order(
         SupplierCompanyId supplierCompanyId,
         SupplierCompanySnapshot supplierCompanySnapshot,
         ReceiverCompanyId receiverCompanyId,
@@ -126,6 +127,21 @@ public class Order extends BaseEntity {
         );
     }
 
+    public void completeCreation() {
+        if (!this.status.canTransitionTo(OrderStatus.CREATED)) {
+            throw new OrderDomainException(OrderDomainErrorCode.INVALID_ORDER_STATUS_TRANSITION);
+        }
+
+        this.status = OrderStatus.CREATED;
+    }
+    public void cancel() {
+        if (!this.status.canBeDeleted()) {
+            throw new OrderDomainException(OrderDomainErrorCode.INVALID_ORDER_STATUS_TRANSITION);
+        }
+
+        this.status = OrderStatus.CANCELED;
+    }
+
     public List<OrderItem> getOrderItems() {
         return orderItems.asReadOnly();
     }
@@ -146,8 +162,5 @@ public class Order extends BaseEntity {
         orderItems.validate();
     }
 
-    public static <T> T notNull(T value, ErrorCode code) {
-        if (value == null) throw new OrderDomainException(code);
-        return value;
-    }
+
 }

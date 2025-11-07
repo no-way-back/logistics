@@ -1,6 +1,9 @@
 package com.nowayback.order.domain.vo;
 
+import static com.nowayback.order.domain.util.DomainPreconditions.nonEmpty;
+
 import com.nowayback.order.domain.entity.OrderItem;
+import com.nowayback.order.domain.exception.OrderDomainErrorCode;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
@@ -20,25 +23,33 @@ public class OrderItems {
     @JoinColumn(name = "order_id")
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    public void add(OrderItem item) { orderItems.add(item); }
-    public void remove(OrderItem item) { orderItems.remove(item); }
+    public static OrderItems of(List<OrderItem> items) {
+        OrderItems orderItems = new OrderItems();
+        if (items != null && !items.isEmpty()) {
+            orderItems.orderItems.addAll(items);
+        }
+        return orderItems;
+    }
+
+    public void add(OrderItem item) { this.orderItems.add(item); }
+    public void remove(OrderItem item) { this.orderItems.remove(item); }
 
     public BigDecimal getTotalPrice() {
-        return orderItems.stream()
+        return this.orderItems.stream()
             .map(i -> i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public String getItemsName() {
-        int size = orderItems.size();
+        int size = this.orderItems.size();
         if (size == 0) {
             return "";
         }
         if (size == 1) {
-            return orderItems.get(0).getName();
+            return this.orderItems.get(0).getName();
         }
         return new StringBuilder()
-            .append(orderItems.get(0).getName())
+            .append(this.orderItems.get(0).getName())
             .append("외 ")
             .append(size - 1)
             .append("건")
@@ -50,16 +61,7 @@ public class OrderItems {
     }
 
     public void validate() {
-        if (orderItems == null || orderItems.isEmpty()) {
-            throw new IllegalArgumentException("주문 항목은 최소 1개 이상이어야 합니다");
-        }
-
-        boolean hasQuantity = orderItems.stream()
-            .allMatch(item -> item.getQuantity() > 0);
-
-        if (!hasQuantity) {
-            throw new IllegalArgumentException("수량은 1 이상이어야 합니다");
-        }
+        nonEmpty(this.orderItems, OrderDomainErrorCode.MISSING_ORDER_ITEM_NAME);
     }
 
     public String getOrderName() {
