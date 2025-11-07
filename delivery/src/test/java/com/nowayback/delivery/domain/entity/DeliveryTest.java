@@ -268,6 +268,8 @@ class DeliveryTest {
 
         /* when */
         Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+
+        // 배송 상태 강제 변경을 위해 리플렉션 사용
         Field statusField = Delivery.class.getDeclaredField("status");
         statusField.setAccessible(true);
         statusField.set(delivery, status);
@@ -326,6 +328,8 @@ class DeliveryTest {
 
         /* when */
         Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+
+        // 배송 상태 강제 변경을 위해 리플렉션 사용
         Field statusField = Delivery.class.getDeclaredField("status");
         statusField.setAccessible(true);
         statusField.set(delivery, initialStatus);
@@ -408,6 +412,8 @@ class DeliveryTest {
 
         /* when */
         Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+
+        // 배송 상태 강제 변경을 위해 리플렉션 사용
         Field statusField = Delivery.class.getDeclaredField("status");
         statusField.setAccessible(true);
         statusField.set(delivery, status);
@@ -439,6 +445,8 @@ class DeliveryTest {
 
         /* when */
         Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+
+        // 배송 상태 강제 변경을 위해 리플렉션 사용
         Field statusField = Delivery.class.getDeclaredField("status");
         statusField.setAccessible(true);
         statusField.set(delivery, status);
