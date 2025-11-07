@@ -97,6 +97,9 @@ public class Delivery extends BaseEntity {
     }
 
     public void delete(UUID deletedBy) {
+        if (!status.canBeDeleted()) {
+            throw new InvalidDeliveryStatusException(DeliveryErrorCode.INVALID_DELIVERY_STATUS_FOR_DELETE);
+        }
         softDelete(deletedBy);
     }
 

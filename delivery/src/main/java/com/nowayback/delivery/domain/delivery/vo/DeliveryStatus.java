@@ -47,4 +47,8 @@ public enum DeliveryStatus {
     public boolean canUpdateRecipientInfo() {
         return this != OUT_FOR_DELIVERY && this != DELIVERED;
     }
+
+    public boolean canBeDeleted() {
+        return this == WAITING_AT_HUB || this == DELIVERED;
+    }
 }

@@ -8,6 +8,7 @@ public enum DeliveryErrorCode implements ErrorCode {
     INVALID_HUB_ROUTE("DELIVERY400", "출발 허브와 도착 허브는 같을 수 없습니다.", HttpStatus.BAD_REQUEST),
     INVALID_DELIVERY_STATUS_FOR_UPDATE("DELIVERY400", "배송이 진행 중이거나 완료된 경우에는 배송 정보를 변경할 수 없습니다.", HttpStatus.BAD_REQUEST),
     INVALID_DELIVERY_STATUS_TRANSITION("DELIVERY400", "유효하지 않은 배송 상태 전환입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_DELIVERY_STATUS_FOR_DELETE("DELIVERY400", "배송이 진행 중인 경우에는 배송을 삭제할 수 없습니다.", HttpStatus.BAD_REQUEST),
 
     NULL_ORDER_ID_OBJECT("DELIVERY400", "주문 ID 객체는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
     NULL_SOURCE_HUB_ID_OBJECT("DELIVERY400", "허브 ID 객체는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
