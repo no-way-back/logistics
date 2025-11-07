@@ -1,7 +1,7 @@
 package com.nowayback.hub.domain;
 
 import com.nowayback.hub.application.command.CreateHubCommand;
-import com.nowayback.hub.domain.entity.HubEntity;
+import com.nowayback.hub.domain.entity.Hub;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class HubEntityTest {
             );
 
             // when
-            HubEntity hub = HubEntity.create(command);
+            Hub hub = Hub.create(command);
 
             // then
             assertThat(hub).isNotNull();
@@ -59,7 +59,7 @@ class HubEntityTest {
                 );
 
                 // when & then
-                assertThatThrownBy(() -> HubEntity.create(command))
+                assertThatThrownBy(() -> Hub.create(command))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("허브 이름은 필수입니다");
             }
@@ -76,7 +76,7 @@ class HubEntityTest {
                 );
 
                 // when & then
-                assertThatThrownBy(() -> HubEntity.create(command))
+                assertThatThrownBy(() -> Hub.create(command))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("허브 이름은 필수입니다");
             }
@@ -98,7 +98,7 @@ class HubEntityTest {
                 );
 
                 // when & then
-                assertThatThrownBy(() -> HubEntity.create(command))
+                assertThatThrownBy(() -> Hub.create(command))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("주소는 필수입니다");
             }
@@ -115,7 +115,7 @@ class HubEntityTest {
                 );
 
                 // when & then
-                assertThatThrownBy(() -> HubEntity.create(command))
+                assertThatThrownBy(() -> Hub.create(command))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("주소는 필수입니다");
             }
@@ -137,7 +137,7 @@ class HubEntityTest {
                 );
 
                 // when & then
-                assertThatThrownBy(() -> HubEntity.create(command))
+                assertThatThrownBy(() -> Hub.create(command))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("위도는 필수입니다");
             }
@@ -154,7 +154,7 @@ class HubEntityTest {
                 );
 
                 // when & then
-                assertThatThrownBy(() -> HubEntity.create(command))
+                assertThatThrownBy(() -> Hub.create(command))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("위도는 -90 이상 90 이하여야 합니다");
             }
@@ -171,7 +171,7 @@ class HubEntityTest {
                 );
 
                 // when & then
-                assertThatThrownBy(() -> HubEntity.create(command))
+                assertThatThrownBy(() -> Hub.create(command))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("위도는 -90 이상 90 이하여야 합니다");
             }
@@ -193,7 +193,7 @@ class HubEntityTest {
                 );
 
                 // when & then
-                assertThatThrownBy(() -> HubEntity.create(command))
+                assertThatThrownBy(() -> Hub.create(command))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("경도는 필수입니다");
             }
@@ -210,7 +210,7 @@ class HubEntityTest {
                 );
 
                 // when & then
-                assertThatThrownBy(() -> HubEntity.create(command))
+                assertThatThrownBy(() -> Hub.create(command))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("경도는 -180 이상 180 이하여야 합니다");
             }
@@ -227,7 +227,7 @@ class HubEntityTest {
                 );
 
                 // when & then
-                assertThatThrownBy(() -> HubEntity.create(command))
+                assertThatThrownBy(() -> Hub.create(command))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessage("경도는 -180 이상 180 이하여야 합니다");
             }

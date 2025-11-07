@@ -2,7 +2,7 @@ package com.nowayback.hub.application;
 
 import com.nowayback.hub.application.command.CreateHubCommand;
 import com.nowayback.hub.application.dto.HubResult;
-import com.nowayback.hub.domain.entity.HubEntity;
+import com.nowayback.hub.domain.entity.Hub;
 import com.nowayback.hub.domain.repository.HubRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,9 +17,9 @@ public class HubService {
         validateDuplicateName(command.name());
         validateDuplicateAddress(command.address());
 
-        HubEntity hubEntity = HubEntity.create(command);
+        Hub hub = Hub.create(command);
 
-        return HubResult.from(hubRepository.save(hubEntity));
+        return HubResult.from(hubRepository.save(hub));
     }
 
     private void validateDuplicateName(String name) {

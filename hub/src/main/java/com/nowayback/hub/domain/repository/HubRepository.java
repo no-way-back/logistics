@@ -1,9 +1,9 @@
 package com.nowayback.hub.domain.repository;
 
-import com.nowayback.hub.domain.entity.HubEntity;
+import com.nowayback.hub.domain.entity.Hub;
 
 public interface HubRepository {
     boolean existsByName(String name);
     boolean existsByAddress(String name);
-    HubEntity save(HubEntity any);
+    Hub save(Hub hub);
 }

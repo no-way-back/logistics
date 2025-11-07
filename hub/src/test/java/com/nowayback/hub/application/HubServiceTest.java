@@ -2,7 +2,7 @@ package com.nowayback.hub.application;
 
 import com.nowayback.hub.application.command.CreateHubCommand;
 import com.nowayback.hub.application.dto.HubResult;
-import com.nowayback.hub.domain.entity.HubEntity;
+import com.nowayback.hub.domain.entity.Hub;
 import com.nowayback.hub.domain.repository.HubRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,10 +43,10 @@ class HubServiceTest {
                     new BigDecimal("126.9780")
             );
 
-            HubEntity savedHub = HubEntity.create(command);
+            Hub savedHub = Hub.create(command);
 
             when(hubRepository.existsByName(command.name())).thenReturn(false);
-            when(hubRepository.save(any(HubEntity.class))).thenReturn(savedHub);
+            when(hubRepository.save(any(Hub.class))).thenReturn(savedHub);
 
             // when
             HubResult result = hubService.create(command);
@@ -59,7 +59,7 @@ class HubServiceTest {
             assertThat(result.longitude()).isEqualByComparingTo("126.9780");
 
             verify(hubRepository, times(1)).existsByName(command.name());
-            verify(hubRepository, times(1)).save(any(HubEntity.class));
+            verify(hubRepository, times(1)).save(any(Hub.class));
         }
 
         @Test
@@ -81,7 +81,7 @@ class HubServiceTest {
                     .hasMessage("이미 존재하는 허브 이름입니다.");
 
             verify(hubRepository, times(1)).existsByName(command.name());
-            verify(hubRepository, never()).save(any(HubEntity.class));
+            verify(hubRepository, never()).save(any(Hub.class));
         }
 
         @Test
@@ -103,7 +103,7 @@ class HubServiceTest {
                     .hasMessage("이미 존재하는 허브 주소입니다.");
 
             verify(hubRepository, times(1)).existsByAddress(command.address());
-            verify(hubRepository, never()).save(any(HubEntity.class));
+            verify(hubRepository, never()).save(any(Hub.class));
         }
     }
 }
