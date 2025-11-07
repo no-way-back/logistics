@@ -4,13 +4,13 @@ public enum OrderStatus {
     CREATE_PENDING("주문 생성 대기") {
         @Override
         public boolean canTransitionTo(OrderStatus newStatus) {
-            return newStatus == CREATED;
+            return newStatus == CREATED || newStatus == CANCELED;
         }
     },
-    CREATED("주문 생성") {
+    CREATED("배송 준비 중") {
         @Override
         public boolean canTransitionTo(OrderStatus newStatus) {
-            return newStatus == DELIVERING;
+            return newStatus == DELIVERING || newStatus == CANCELED;
         }
     },
     DELIVERING("주문 배송 중") {
@@ -30,8 +30,7 @@ public enum OrderStatus {
         public boolean canTransitionTo(OrderStatus newStatus) {
             return false;
         }
-    }
-    ;
+    };
 
     private final String description;
 
