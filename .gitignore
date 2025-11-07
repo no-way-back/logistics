@@ -38,3 +38,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# 환경변수 (전체 프로젝트)
+.env
+*.env
+!.env.example
