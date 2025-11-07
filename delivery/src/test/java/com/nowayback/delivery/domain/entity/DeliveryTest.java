@@ -387,4 +387,65 @@ class DeliveryTest {
         assertThat(delivery.getDeletedAt()).isNotNull();
         assertThat(delivery.getDeletedBy()).isEqualTo(actorId);
     }
+
+    @ParameterizedTest
+    @EnumSource(value = DeliveryStatus.class, names = {"WAITING_AT_HUB", "DELIVERED"})
+    @DisplayName("배송 삭제 시 상태가 WAITING_AT_HUB, DELIVERED인 경우에만 가능하다.")
+    void deleteDelivery_ShouldAllowOnlyInSpecificStatuses(DeliveryStatus status) throws Exception {
+        /* given */
+        OrderId orderId = OrderId.of(UUID.randomUUID());
+        HubId sourceHubId = HubId.of(UUID.randomUUID());
+        HubId destinationHubId = HubId.of(UUID.randomUUID());
+
+        String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
+        String recipientName = "홍길동";
+        String recipientSlackId = "slack_1234";
+        RecipientInfo recipientInfo = RecipientInfo.of(deliveryAddress, recipientName, recipientSlackId);
+
+        DeliveryManagerId companyDeliveryManagerId = DeliveryManagerId.of(UUID.randomUUID());
+
+        UUID actorId = UUID.randomUUID();
+
+        /* when */
+        Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+        Field statusField = Delivery.class.getDeclaredField("status");
+        statusField.setAccessible(true);
+        statusField.set(delivery, status);
+
+        delivery.delete(actorId);
+
+        /* then */
+        assertThat(delivery.getDeletedAt()).isNotNull();
+        assertThat(delivery.getDeletedBy()).isEqualTo(actorId);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = DeliveryStatus.class, names = {"TRANSIT_BETWEEN_HUBS", "AT_DESTINATION_HUB", "OUT_FOR_DELIVERY"})
+    @DisplayName("배송 삭제 시 상태가 WAITING_AT_HUB, DELIVERED외 경우에 불가능하다.")
+    void deleteDelivery_ShouldNotAllowInOtherStatuses(DeliveryStatus status) throws Exception {
+        /* given */
+        OrderId orderId = OrderId.of(UUID.randomUUID());
+        HubId sourceHubId = HubId.of(UUID.randomUUID());
+        HubId destinationHubId = HubId.of(UUID.randomUUID());
+
+        String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
+        String recipientName = "홍길동";
+        String recipientSlackId = "slack_1234";
+        RecipientInfo recipientInfo = RecipientInfo.of(deliveryAddress, recipientName, recipientSlackId);
+
+        DeliveryManagerId companyDeliveryManagerId = DeliveryManagerId.of(UUID.randomUUID());
+
+        UUID actorId = UUID.randomUUID();
+
+        /* when */
+        Delivery delivery = Delivery.create(orderId, sourceHubId, destinationHubId, recipientInfo, companyDeliveryManagerId);
+        Field statusField = Delivery.class.getDeclaredField("status");
+        statusField.setAccessible(true);
+        statusField.set(delivery, status);
+
+        /* then */
+        assertThatThrownBy(() -> {
+            delivery.delete(actorId);
+        }).isInstanceOf(InvalidDeliveryStatusException.class);
+    }
 }
