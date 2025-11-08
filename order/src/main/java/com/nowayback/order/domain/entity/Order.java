@@ -127,13 +127,13 @@ public class Order extends BaseEntity {
         );
     }
 
-    public void completeCreation(OrderStatusTransitionPolicy policy) {
-        policy.assertCanTransition(this, OrderStatus.CREATED);
+    public void completeCreation() {
+        OrderStatusTransitionPolicy.assertCanTransition(this, OrderStatus.CREATED);
 
         this.status = OrderStatus.CREATED;
     }
-    public void cancel(OrderStatusTransitionPolicy policy) {
-        policy.assertCanCancel(this, OrderStatus.CANCELED);
+    public void cancel() {
+        OrderStatusTransitionPolicy.assertCanCancel(this, OrderStatus.CANCELED);
 
         this.status = OrderStatus.CANCELED;
     }

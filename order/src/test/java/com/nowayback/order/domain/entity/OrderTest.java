@@ -196,7 +196,7 @@ class OrderTest {
             Order order = createOrderWithStatus(OrderStatus.CREATE_PENDING);
 
             // when
-            order.completeCreation(policy);
+            order.completeCreation();
 
             // then
             assertThat(order.getStatus()).isEqualTo(OrderStatus.CREATED);
@@ -211,7 +211,7 @@ class OrderTest {
 
             // when / then
             assertThatThrownBy(() -> {
-                order.completeCreation(policy);
+                order.completeCreation();
             }).isInstanceOf(OrderDomainException.class);
         }
 
@@ -228,7 +228,7 @@ class OrderTest {
             Order order = createOrderWithStatus(status);
 
             // when
-            order.cancel(policy);
+            order.cancel();
 
             //then
             assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELED);
@@ -247,7 +247,7 @@ class OrderTest {
 
             // when / then
             assertThatThrownBy(() -> {
-                order.cancel(policy);
+                order.cancel();
             }).isInstanceOf(OrderDomainException.class);
         }
 
