@@ -1,6 +1,7 @@
 package com.nowayback.hub.domain;
 
 import com.nowayback.hub.application.command.CreateHubCommand;
+import com.nowayback.hub.application.command.UpdateHubCommand;
 import com.nowayback.hub.domain.entity.Hub;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -37,6 +38,40 @@ class HubEntityTest {
             assertThat(hub.getLatitude()).isEqualByComparingTo("37.5665");
             assertThat(hub.getLongitude()).isEqualByComparingTo("126.9780");
         }
+    }
+
+    @Nested
+    @DisplayName("허브 업데이터 성공 테스트")
+    class HubUpdateSuccess {
+
+        @Test
+        @DisplayName("유효한 값으로 허브의 정보를 수정할 수 있다")
+        void update_hub_success() {
+            // given
+            Hub hub = Hub.create(new CreateHubCommand(
+                    "서울특별시 센터",
+                    "서울시 송파구 송파대로 55",
+                    new BigDecimal("37.5665"),
+                    new BigDecimal("126.9780")
+            ));
+
+            UpdateHubCommand command = new UpdateHubCommand(
+                    "서울특별시 센터 (수정)",
+                    "서울시 강남구 테헤란로 123",
+                    new BigDecimal("37.5000"),
+                    new BigDecimal("127.0000")
+            );
+
+            // when
+            hub.update(command);
+
+            // then
+            assertThat(hub.getName()).isEqualTo("서울특별시 센터 (수정)");
+            assertThat(hub.getAddress()).isEqualTo("서울시 강남구 테헤란로 123");
+            assertThat(hub.getLatitude()).isEqualByComparingTo("37.5000");
+            assertThat(hub.getLongitude()).isEqualByComparingTo("127.0000");
+        }
+
     }
 
     @Nested
