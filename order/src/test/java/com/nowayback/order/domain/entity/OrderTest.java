@@ -6,10 +6,12 @@ import static com.nowayback.order.fixture.OrderFixture.RECEIVER_COMPANY_SNAPSHOT
 import static com.nowayback.order.fixture.OrderFixture.REQUEST;
 import static com.nowayback.order.fixture.OrderFixture.SUPPLIER_COMPANY_ID;
 import static com.nowayback.order.fixture.OrderFixture.SUPPLIER_COMPANY_SNAPSHOT;
+import static com.nowayback.order.fixture.OrderFixture.createOrderWithStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.nowayback.order.domain.exception.OrderDomainException;
+import com.nowayback.order.domain.policy.OrderStatusTransitionPolicy;
 import com.nowayback.order.domain.vo.OrderItems;
 import com.nowayback.order.domain.vo.OrderStatus;
 import com.nowayback.order.domain.vo.ProductId;
@@ -20,11 +22,18 @@ import com.nowayback.order.domain.vo.SupplierCompanySnapshot;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
 
 class OrderTest {
+
+    @Mock
+    OrderStatusTransitionPolicy policy;
 
     @Test
     @DisplayName("모든 필드가 정상일 경우 주문 생성에 성공한다.")
@@ -174,11 +183,76 @@ class OrderTest {
                 )
             ).isInstanceOf(OrderDomainException.class);
         }
+    }
 
-        @Nested
-        @DisplayName("주문 상태 변경 검증")
-        class OrderStatusTransition {
+    @Nested
+    @DisplayName("주문 상태 변경 검증")
+    class OrderStatusTransition {
 
+        @Test
+        @DisplayName("CreatePending 상태에서는 Created 상태로 변경할 수 있다.")
+        void completeCreation_ShouldChangeStatusFromCreatePendingToCreated() {
+            // given
+            Order order = createOrderWithStatus(OrderStatus.CREATE_PENDING);
+
+            // when
+            order.completeCreation(policy);
+
+            // then
+            assertThat(order.getStatus()).isEqualTo(OrderStatus.CREATED);
+        }
+
+        @ParameterizedTest
+        @MethodSource("excludeCreatePending")
+        @DisplayName("CreatePending이 아닌 상태에서는 Created 상태로 변경하면 예외가 발생한다.")
+        void completeCreation_ShouldThrowWhenNotCreatedPending(OrderStatus status) {
+            // given
+            Order order = createOrderWithStatus(status);
+
+            // when / then
+            assertThatThrownBy(() -> {
+                order.completeCreation(policy);
+            }).isInstanceOf(OrderDomainException.class);
+        }
+
+        static Stream<OrderStatus> excludeCreatePending() {
+            return Stream.of(OrderStatus.values())
+                .filter(status -> status != OrderStatus.CREATE_PENDING);
+        }
+
+        @ParameterizedTest
+        @MethodSource("cancelAllowedStatus")
+        @DisplayName("주문 취소는 CREATE_PENDING, CREATE에서 할 수 있다")
+        void cancelOrder_ShouldOnlyHasCreatePendingAndCreated(OrderStatus status) {
+            // given
+            Order order = createOrderWithStatus(status);
+
+            // when
+            order.cancel(policy);
+
+            //then
+            assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELED);
+        }
+
+        static Stream<OrderStatus> cancelAllowedStatus() {
+            return Stream.of(OrderStatus.CREATE_PENDING, OrderStatus.CREATED);
+        }
+
+        @ParameterizedTest
+        @MethodSource("cancelNotAllowedStatus")
+        @DisplayName("주문 취소가 불가능한 상태에서는 예외가 발생한다.")
+        void cancelOrder_shouldThrowWhenDidNotCancelStatus(OrderStatus status) {
+            // given
+            Order order = createOrderWithStatus(status);
+
+            // when / then
+            assertThatThrownBy(() -> {
+                order.cancel(policy);
+            }).isInstanceOf(OrderDomainException.class);
+        }
+
+        static Stream<OrderStatus> cancelNotAllowedStatus() {
+            return Stream.of(OrderStatus.DELIVERING, OrderStatus.COMPLETED, OrderStatus.CANCELED);
         }
     }
 }
