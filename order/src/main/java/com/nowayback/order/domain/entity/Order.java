@@ -4,7 +4,7 @@ import static com.nowayback.order.domain.util.DomainPreconditions.notNull;
 
 import com.nowayback.common.audit.BaseEntity;
 import com.nowayback.order.domain.exception.OrderDomainErrorCode;
-import com.nowayback.order.domain.exception.OrderDomainException;
+import com.nowayback.order.domain.policy.OrderStatusTransitionPolicy;
 import com.nowayback.order.domain.vo.OrderItems;
 import com.nowayback.order.domain.vo.OrderStatus;
 import com.nowayback.order.domain.vo.ReceiverCompanyId;
@@ -127,17 +127,13 @@ public class Order extends BaseEntity {
         );
     }
 
-    public void completeCreation() {
-        if (!this.status.canTransitionTo(OrderStatus.CREATED)) {
-            throw new OrderDomainException(OrderDomainErrorCode.INVALID_ORDER_STATUS_TRANSITION);
-        }
+    public void completeCreation(OrderStatusTransitionPolicy policy) {
+        policy.assertCanTransition(this, OrderStatus.CREATED);
 
         this.status = OrderStatus.CREATED;
     }
-    public void cancel() {
-        if (!this.status.canBeDeleted()) {
-            throw new OrderDomainException(OrderDomainErrorCode.INVALID_ORDER_STATUS_TRANSITION);
-        }
+    public void cancel(OrderStatusTransitionPolicy policy) {
+        policy.assertCanCancel(this, OrderStatus.CANCELED);
 
         this.status = OrderStatus.CANCELED;
     }
