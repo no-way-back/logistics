@@ -100,7 +100,6 @@ class DeliveryServiceTest {
             String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
             String recipientName = "홍길동";
             String recipientSlackId = "slack_1234";
-            UUID companyDeliveryManagerId = UUID.randomUUID();
 
             CreateDeliveryCommand command = new CreateDeliveryCommand(
                     orderId,
@@ -112,6 +111,68 @@ class DeliveryServiceTest {
             );
 
             when(deliveryRepository.existsByOrderId(any(OrderId.class))).thenReturn(true);
+
+            /* when */
+            /* then */
+            assertThatThrownBy(() -> {
+                deliveryService.createDelivery(command);
+            }).isInstanceOf(DeliveryApplicationException.class);
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 출발 허브 ID로 배송을 생성하면 예외가 발생한다.")
+        void createDelivery_WithNonExistentSourceHubId_throwsException() {
+            /* given */
+            UUID orderId = UUID.randomUUID();
+            UUID sourceHubId = UUID.randomUUID();
+            UUID destinationHubId = UUID.randomUUID();
+            String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
+            String recipientName = "홍길동";
+            String recipientSlackId = "slack_1234";
+
+            CreateDeliveryCommand command = new CreateDeliveryCommand(
+                    orderId,
+                    sourceHubId,
+                    destinationHubId,
+                    deliveryAddress,
+                    recipientName,
+                    recipientSlackId
+            );
+
+            when(deliveryRepository.existsByOrderId(any(OrderId.class))).thenReturn(false);
+            when(hubClient.existsById(sourceHubId)).thenReturn(false);
+
+            /* when */
+            /* then */
+            assertThatThrownBy(() -> {
+                deliveryService.createDelivery(command);
+            }).isInstanceOf(DeliveryApplicationException.class);
+        }
+
+
+        @Test
+        @DisplayName("존재하지 않는 도착 허브 ID로 배송을 생성하면 예외가 발생한다.")
+        void createDelivery_WithNonExistentDestinationHubId_throwsException() {
+            /* given */
+            UUID orderId = UUID.randomUUID();
+            UUID sourceHubId = UUID.randomUUID();
+            UUID destinationHubId = UUID.randomUUID();
+            String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
+            String recipientName = "홍길동";
+            String recipientSlackId = "slack_1234";
+
+            CreateDeliveryCommand command = new CreateDeliveryCommand(
+                    orderId,
+                    sourceHubId,
+                    destinationHubId,
+                    deliveryAddress,
+                    recipientName,
+                    recipientSlackId
+            );
+
+            when(deliveryRepository.existsByOrderId(any(OrderId.class))).thenReturn(false);
+            when(hubClient.existsById(sourceHubId)).thenReturn(true);
+            when(hubClient.existsById(destinationHubId)).thenReturn(false);
 
             /* when */
             /* then */
