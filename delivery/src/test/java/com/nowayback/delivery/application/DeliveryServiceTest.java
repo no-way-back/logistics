@@ -148,5 +148,20 @@ class DeliveryServiceTest {
             assertThat(result.recipientSlackId()).isEqualTo(RECIPIENT_SLACK_ID);
             assertThat(result.companyDeliveryManagerId()).isEqualTo(COMPANY_DELIVERY_MANAGER_UUID);
         }
+
+        @Test
+        @DisplayName("존재하지 않는 ID로 배송을 조회하면 예외가 발생한다.")
+        void getDelivery_WithNonExistentId_throwsException() {
+            /* given */
+            UUID deliveryId = DELIVERY_UUID;
+
+            when(deliveryRepository.findById(deliveryId)).thenReturn(Optional.empty());
+
+            /* when */
+            /* then */
+            assertThatThrownBy(() -> {
+                deliveryService.getDelivery(deliveryId);
+            }).isInstanceOf(DeliveryApplicationException.class);
+        }
     }
 }
