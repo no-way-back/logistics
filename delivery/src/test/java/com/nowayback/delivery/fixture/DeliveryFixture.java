@@ -1,6 +1,7 @@
 package com.nowayback.delivery.fixture;
 
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
+import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.vo.*;
 import org.springframework.data.domain.Page;
@@ -31,8 +32,8 @@ public class DeliveryFixture {
     public static final String RECIPIENT_SLACK_ID = "slack_1234";
     public static final RecipientInfo RECIPIENT_INFO = RecipientInfo.of(DELIVERY_ADDRESS, RECIPIENT_NAME, RECIPIENT_SLACK_ID);
 
-    private static final String MODIFIED_DELIVERY_NAME = "김철수";
-    private static final String MODIFIED_DELIVERY_SLACK_ID = "slack_5678";
+    public static final String MODIFIED_DELIVERY_NAME = "김철수";
+    public static final String MODIFIED_DELIVERY_SLACK_ID = "slack_5678";
     public static final RecipientInfo MODIFIED_RECIPIENT_INFO = RecipientInfo.of(DELIVERY_ADDRESS, MODIFIED_DELIVERY_NAME, MODIFIED_DELIVERY_SLACK_ID);
 
     public static final DeliveryManagerId COMPANY_DELIVERY_MANAGER_ID = DeliveryManagerId.of(COMPANY_DELIVERY_MANAGER_UUID);
@@ -73,6 +74,12 @@ public class DeliveryFixture {
             DELIVERY_ADDRESS,
             RECIPIENT_NAME,
             RECIPIENT_SLACK_ID
+    );
+
+    public static final UpdateDeliveryRecipientInfoCommand UPDATE_DELIVERY_RECIPIENT_INFO_COMMAND = new UpdateDeliveryRecipientInfoCommand(
+            DELIVERY_ADDRESS,
+            MODIFIED_DELIVERY_NAME,
+            MODIFIED_DELIVERY_SLACK_ID
     );
 
     private static void setPrivateField(Object target, String fieldName, Object value) {

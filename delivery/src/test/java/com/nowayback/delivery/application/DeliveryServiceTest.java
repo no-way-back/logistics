@@ -1,6 +1,7 @@
 package com.nowayback.delivery.application;
 
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
+import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
 import com.nowayback.delivery.application.dto.DeliveryResult;
 import com.nowayback.delivery.application.exception.DeliveryApplicationException;
 import com.nowayback.delivery.application.service.HubClient;
@@ -186,6 +187,28 @@ class DeliveryServiceTest {
             /* then */
             assertThat(result.getTotalElements()).isEqualTo(DELIVERY_PAGE.getTotalElements());
             assertThat(result.getContent().size()).isEqualTo(DELIVERY_PAGE.getContent().size());
+        }
+    }
+
+    @Nested
+    @DisplayName("배송 수령인 정보 수정")
+    class UpdateRecipientInfo {
+
+        @Test
+        @DisplayName("유효한 정보로 배송 수령인 정보를 수정하면 정보가 변경된다.")
+        void updateRecipientInfo_success() {
+            /* given */
+            UpdateDeliveryRecipientInfoCommand command = UPDATE_DELIVERY_RECIPIENT_INFO_COMMAND;
+
+            when(deliveryRepository.findById(DELIVERY_UUID)).thenReturn(Optional.of(createDelivery()));
+
+            /* when */
+            DeliveryResult result = deliveryService.updateRecipientInfo(DELIVERY_UUID, command);
+
+            /* then */
+            assertThat(result.deliveryAddress()).isEqualTo(DELIVERY_ADDRESS);
+            assertThat(result.recipientName()).isEqualTo(MODIFIED_DELIVERY_NAME);
+            assertThat(result.recipientSlackId()).isEqualTo(MODIFIED_DELIVERY_SLACK_ID);
         }
     }
 }
