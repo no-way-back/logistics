@@ -43,7 +43,7 @@ class HubControllerTest {
     class CreateHub {
 
         @Nested
-        @DisplayName("POST /hubs - 허브 생성 성공 테스트")
+        @DisplayName("허브 생성 성공 테스트")
         class HubCreateSuccess {
 
             @Test
@@ -83,7 +83,7 @@ class HubControllerTest {
         }
 
         @Nested
-        @DisplayName("POST /hubs - 허브 생성 실패 테스트")
+        @DisplayName("허브 생성 실패 테스트")
         class HubCreateFailure {
 
             @Test
@@ -136,49 +136,93 @@ class HubControllerTest {
         }
     }
 
-    @Test
-    @DisplayName("유효한 요청으로 허브를 수정할 수 있다")
-    void update_hub_success() throws Exception {
-        // given
-        UUID hubId = UUID.randomUUID();
-        UUID updatedBy = UUID.randomUUID();
-        LocalDateTime updateAt = LocalDateTime.now();
+    @Nested
+    @DisplayName("PUT /hubs/{hubId} - 허브 수정 테스트")
+    class UpdateHub {
 
-        String requestBody = """
-        {
-            "name": "서울특별시 센터 (수정)",
-            "address": "서울시 강남구 테헤란로 123",
-            "latitude": 37.5000,
-            "longitude": 127.0000
+        @Nested
+        @DisplayName("허브 수정 성공 테스트")
+        class HubUpdateSuccess {
+
+            @Test
+            @DisplayName("유효한 요청으로 허브를 수정할 수 있다")
+            void update_hub_success() throws Exception {
+                // given
+                UUID hubId = UUID.randomUUID();
+                UUID updatedBy = UUID.randomUUID();
+                LocalDateTime updateAt = LocalDateTime.now();
+
+                String requestBody = """
+                        {
+                            "name": "서울특별시 센터 (수정)",
+                            "address": "서울시 강남구 테헤란로 123",
+                            "latitude": 37.5000,
+                            "longitude": 127.0000
+                        }
+                        """;
+
+                UpdateHubResult updateHubResult = new UpdateHubResult(
+                        hubId,
+                        "서울특별시 센터 (수정)",
+                        "서울시 강남구 테헤란로 123",
+                        new BigDecimal("37.5000"),
+                        new BigDecimal("127.0000"),
+                        updateAt,
+                        updatedBy
+                );
+
+                when(hubService.update(eq(hubId), any(UpdateHubCommand.class)))
+                        .thenReturn(updateHubResult);
+
+                // when & then
+                mockMvc.perform(put("/hubs/{hubId}", hubId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestBody))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.hubId").value(hubId.toString()))
+                        .andExpect(jsonPath("$.name").value("서울특별시 센터 (수정)"))
+                        .andExpect(jsonPath("$.address").value("서울시 강남구 테헤란로 123"))
+                        .andExpect(jsonPath("$.latitude").value(37.5000))
+                        .andExpect(jsonPath("$.longitude").value(127.0000))
+                        .andExpect(jsonPath("$.updateAt").exists())
+                        .andExpect(jsonPath("$.updatedBy").value(updatedBy.toString()));
+
+                verify(hubService, times(1))
+                        .update(eq(hubId), any(UpdateHubCommand.class));
+            }
         }
-        """;
 
-        UpdateHubResult updateHubResult = new UpdateHubResult(
-                hubId,
-                "서울특별시 센터 (수정)",
-                "서울시 강남구 테헤란로 123",
-                new BigDecimal("37.5000"),
-                new BigDecimal("127.0000"),
-                updateAt,
-                updatedBy
-        );
+        @Nested
+        @DisplayName("허브 수정 실패 테스트")
+        class HubUpdateFailure {
 
-        when(hubService.update(eq(hubId), any(UpdateHubCommand.class)))
-                .thenReturn(updateHubResult);
+            @Test
+            @DisplayName("존재하지 않는 hubId일 경우 404 에러를 반환한다")
+            void update_hub_with_non_existent_id_returns_not_found() throws Exception {
+                // given
+                UUID hubId = UUID.randomUUID();
 
-        // when & then
-        mockMvc.perform(put("/hubs/{hubId}", hubId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.hubId").value(hubId.toString()))
-                .andExpect(jsonPath("$.name").value("서울특별시 센터 (수정)"))
-                .andExpect(jsonPath("$.address").value("서울시 강남구 테헤란로 123"))
-                .andExpect(jsonPath("$.latitude").value(37.5000))
-                .andExpect(jsonPath("$.longitude").value(127.0000))
-                .andExpect(jsonPath("$.updateAt").exists())
-                .andExpect(jsonPath("$.updatedBy").value(updatedBy.toString()));
+                String requestBody = """
+                        {
+                            "name": "서울특별시 센터 (수정)",
+                            "address": "서울시 강남구 테헤란로 123",
+                            "latitude": 37.5000,
+                            "longitude": 127.0000
+                        }
+                        """;
 
-        verify(hubService, times(1)).update(eq(hubId), any(UpdateHubCommand.class));
+                when(hubService.update(eq(hubId), any(UpdateHubCommand.class)))
+                        .thenThrow(new HubApplicationException(HUB_NOT_FOUND_EXCEPTION));
+
+                // when & then
+                mockMvc.perform(put("/hubs/{hubId}", hubId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestBody))
+                        .andExpect(status().isNotFound());
+
+                verify(hubService, times(1))
+                        .update(eq(hubId), any(UpdateHubCommand.class));
+            }
+        }
     }
 }
