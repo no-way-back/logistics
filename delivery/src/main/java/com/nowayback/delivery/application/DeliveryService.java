@@ -60,7 +60,7 @@ public class DeliveryService {
 
     private void validateHubExists(UUID hubId) {
         if (!hubClient.existsById(hubId)) {
-            throw new IllegalArgumentException("Hub id " + hubId + " does not exist");
+            throw new DeliveryApplicationException(DeliveryApplicationErrorCode.NON_EXISTENT_HUB);
         }
     }
 }

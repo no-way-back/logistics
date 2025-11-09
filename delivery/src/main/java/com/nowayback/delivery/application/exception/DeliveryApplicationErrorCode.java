@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 public enum DeliveryApplicationErrorCode implements ErrorCode {
 
     DUPLICATE_ORDER_ID("DELIVERY2001", "해당 주문에 대한 배송이 이미 존재합니다.", HttpStatus.CONFLICT),
+    NON_EXISTENT_HUB("DELIVERY2002", "해당 허브가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     ;
 
     private final String code;
