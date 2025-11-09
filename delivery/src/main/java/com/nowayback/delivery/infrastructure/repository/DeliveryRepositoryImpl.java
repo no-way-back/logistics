@@ -6,6 +6,9 @@ import com.nowayback.delivery.domain.delivery.vo.OrderId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Repository
 @RequiredArgsConstructor
 public class DeliveryRepositoryImpl implements DeliveryRepository {
@@ -20,5 +23,10 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     @Override
     public boolean existsByOrderId(OrderId orderId) {
         return deliveryJpaRepository.existsByOrderIdAndDeletedAtIsNull(orderId);
+    }
+
+    @Override
+    public Optional<Delivery> findById(UUID deliveryId) {
+        return deliveryJpaRepository.findByIdAndDeletedAtIsNull(deliveryId);
     }
 }
