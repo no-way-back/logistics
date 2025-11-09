@@ -2,6 +2,7 @@ package com.nowayback.delivery.application;
 
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
 import com.nowayback.delivery.application.dto.DeliveryResult;
+import com.nowayback.delivery.application.exception.DeliveryApplicationException;
 import com.nowayback.delivery.application.service.HubClient;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.repository.DeliveryRepository;
@@ -87,6 +88,36 @@ class DeliveryServiceTest {
             verify(hubClient, times(1)).existsById(sourceHubId);
             verify(hubClient, times(1)).existsById(destinationHubId);
             verify(deliveryRepository).save(any(Delivery.class));
+        }
+
+        @Test
+        @DisplayName("중복된 주문 ID로 배송을 생성하면 예외가 발생한다.")
+        void createDelivery_WithDuplicateOrderId_throwsException() {
+            /* given */
+            UUID orderId = UUID.randomUUID();
+            UUID sourceHubId = UUID.randomUUID();
+            UUID destinationHubId = UUID.randomUUID();
+            String deliveryAddress = "서울특별시 중구 다산로46길 17 119호";
+            String recipientName = "홍길동";
+            String recipientSlackId = "slack_1234";
+            UUID companyDeliveryManagerId = UUID.randomUUID();
+
+            CreateDeliveryCommand command = new CreateDeliveryCommand(
+                    orderId,
+                    sourceHubId,
+                    destinationHubId,
+                    deliveryAddress,
+                    recipientName,
+                    recipientSlackId
+            );
+
+            when(deliveryRepository.existsByOrderId(any(OrderId.class))).thenReturn(true);
+
+            /* when */
+            /* then */
+            assertThatThrownBy(() -> {
+                deliveryService.createDelivery(command);
+            }).isInstanceOf(DeliveryApplicationException.class);
         }
     }
 }
