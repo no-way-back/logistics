@@ -9,6 +9,8 @@ import java.util.UUID;
 
 public class DeliveryFixture {
 
+    public static final UUID DELIVERY_UUID = UUID.randomUUID();
+
     public static final UUID ORDER_UUID = UUID.randomUUID();
     private static final UUID HUB_UUID = UUID.randomUUID();
     public static final UUID SOURCE_HUB_UUID = UUID.randomUUID();

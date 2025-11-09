@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.nowayback.delivery.fixture.DeliveryFixture.*;
@@ -119,6 +120,33 @@ class DeliveryServiceTest {
             assertThatThrownBy(() -> {
                 deliveryService.createDelivery(command);
             }).isInstanceOf(DeliveryApplicationException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("배송 단일 조회")
+    class GetDelivery {
+
+        @Test
+        @DisplayName("유효한 ID로 배송을 조회하면 해당 배송 정보가 반환된다.")
+        void getDelivery_success() {
+            /* given */
+            Delivery delivery = createDelivery();
+
+            when(deliveryRepository.findById(DELIVERY_UUID)).thenReturn(Optional.of(delivery));
+
+            /* when */
+            DeliveryResult result = deliveryService.getDelivery(DELIVERY_UUID);
+
+            /* then */
+            assertThat(result.orderId()).isEqualTo(ORDER_UUID);
+            assertThat(result.status()).isEqualTo(DeliveryStatus.WAITING_AT_HUB);
+            assertThat(result.sourceHubId()).isEqualTo(SOURCE_HUB_UUID);
+            assertThat(result.destinationHubId()).isEqualTo(DESTINATION_HUB_UUID);
+            assertThat(result.deliveryAddress()).isEqualTo(DELIVERY_ADDRESS);
+            assertThat(result.recipientName()).isEqualTo(RECIPIENT_NAME);
+            assertThat(result.recipientSlackId()).isEqualTo(RECIPIENT_SLACK_ID);
+            assertThat(result.companyDeliveryManagerId()).isEqualTo(COMPANY_DELIVERY_MANAGER_UUID);
         }
     }
 }
