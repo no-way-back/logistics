@@ -9,6 +9,8 @@ import com.nowayback.order.application.client.response.CreateDeliveryResponse;
 import com.nowayback.order.application.client.response.DecreaseStockResponse;
 import com.nowayback.order.application.command.CreateOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand.CreateOrderItem;
+import com.nowayback.order.application.exception.OrderApplicationErrorCode;
+import com.nowayback.order.application.exception.OrderApplicationException;
 import com.nowayback.order.domain.entity.Order;
 import com.nowayback.order.domain.repository.OrderRepository;
 import java.util.List;
@@ -49,7 +51,7 @@ public class OrderService {
         );
 
         if (!decreaseStockResponse.success()) {
-            throw new IllegalStateException("재고 차감 실패");
+            throw new OrderApplicationException(OrderApplicationErrorCode.NOT_ENOUGH_STOCK);
         }
     }
 
@@ -67,7 +69,7 @@ public class OrderService {
         );
 
         if (!response.success()) {
-            throw new IllegalStateException("배송 생성 실패");
+            throw new OrderApplicationException(OrderApplicationErrorCode.DELIVERY_CREATION_FAILED);
         }
     }
 }
