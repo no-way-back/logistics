@@ -52,6 +52,17 @@ public class DeliveryService {
         return DeliveryResult.from(savedDelivery);
     }
 
+    @Transactional(readOnly = true)
+    public DeliveryResult getDelivery(UUID deliveryId) {
+        Delivery delivery = getDeliveryById(deliveryId);
+        return DeliveryResult.from(delivery);
+    }
+
+    private Delivery getDeliveryById(UUID deliveryId) {
+        return deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new DeliveryApplicationException(DeliveryApplicationErrorCode.NOT_FOUND_DELIVERY));
+    }
+
     private void validateDuplicateOrderId(UUID orderId) {
         if (deliveryRepository.existsByOrderId(OrderId.of(orderId))) {
             throw new DeliveryApplicationException(DeliveryApplicationErrorCode.DUPLICATE_ORDER_ID);
