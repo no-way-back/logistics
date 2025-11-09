@@ -2,6 +2,7 @@ package com.nowayback.delivery.fixture;
 
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
 import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
+import com.nowayback.delivery.application.command.UpdateDeliveryStatusCommand;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.vo.*;
 import org.springframework.data.domain.Page;
@@ -80,6 +81,10 @@ public class DeliveryFixture {
             DELIVERY_ADDRESS,
             MODIFIED_DELIVERY_NAME,
             MODIFIED_DELIVERY_SLACK_ID
+    );
+
+    public static final UpdateDeliveryStatusCommand UPDATE_DELIVERY_STATUS_COMMAND = new UpdateDeliveryStatusCommand(
+            DeliveryStatus.TRANSIT_BETWEEN_HUBS
     );
 
     private static void setPrivateField(Object target, String fieldName, Object value) {

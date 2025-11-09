@@ -2,6 +2,7 @@ package com.nowayback.delivery.application;
 
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
 import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
+import com.nowayback.delivery.application.command.UpdateDeliveryStatusCommand;
 import com.nowayback.delivery.application.dto.DeliveryResult;
 import com.nowayback.delivery.application.exception.DeliveryApplicationException;
 import com.nowayback.delivery.application.service.HubClient;
@@ -222,6 +223,26 @@ class DeliveryServiceTest {
             assertThatThrownBy(() -> {
                 deliveryService.updateRecipientInfo(DELIVERY_UUID, UPDATE_DELIVERY_RECIPIENT_INFO_COMMAND);
             }).isInstanceOf(DeliveryApplicationException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("배송 상태 수정")
+    class UpdateDeliveryStatus {
+
+        @Test
+        @DisplayName("유효한 정보로 배송 상태를 수정하면 상태가 변경된다.")
+        void updateDeliveryStatus_success() {
+            /* given */
+            UpdateDeliveryStatusCommand command = UPDATE_DELIVERY_STATUS_COMMAND;
+
+            when(deliveryRepository.findById(DELIVERY_UUID)).thenReturn(Optional.of(createDelivery()));
+
+            /* when */
+            DeliveryResult result = deliveryService.updateDeliveryStatus(DELIVERY_UUID, command);
+
+            /* then */
+            assertThat(result.status()).isEqualTo(command.status());
         }
     }
 }
