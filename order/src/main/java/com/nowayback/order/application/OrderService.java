@@ -4,7 +4,7 @@ import com.nowayback.order.application.client.DeliveryClient;
 import com.nowayback.order.application.client.ProductClient;
 import com.nowayback.order.application.client.request.CreateDeliveryRequest;
 import com.nowayback.order.application.client.request.DecreaseStockRequest;
-import com.nowayback.order.application.client.request.DecreaseStockRequest.StockItem;
+import com.nowayback.order.application.client.request.DecreaseStockRequest.DecreaseStockItem;
 import com.nowayback.order.application.client.response.CreateDeliveryResponse;
 import com.nowayback.order.application.client.response.DecreaseStockResponse;
 import com.nowayback.order.application.command.CreateOrderCommand;
@@ -45,7 +45,7 @@ public class OrderService {
         DecreaseStockResponse decreaseStockResponse = productClient.decreaseStocks(
             DecreaseStockRequest.of(
                 createOrderItems.stream()
-                    .map(item -> StockItem.of(item.productId(), item.quantity()))
+                    .map(item -> DecreaseStockItem.of(item.productId(), item.quantity()))
                     .toList()
             )
         );

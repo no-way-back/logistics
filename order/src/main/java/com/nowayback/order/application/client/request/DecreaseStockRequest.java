@@ -4,18 +4,18 @@ import java.util.List;
 import java.util.UUID;
 
 public record DecreaseStockRequest(
-    List<StockItem> items
+    List<DecreaseStockItem> items
 ) {
-    public static DecreaseStockRequest of(List<StockItem> items) {
+    public static DecreaseStockRequest of(List<DecreaseStockItem> items) {
         return new DecreaseStockRequest(items);
     }
 
-    public record StockItem(
-        UUID id,
+    public record DecreaseStockItem(
+        UUID productId,
         Integer quantity
     ) {
-        public static StockItem of(UUID id, Integer quantity) {
-            return new StockItem(id, quantity);
+        public static DecreaseStockItem of(UUID productId, Integer quantity) {
+            return new DecreaseStockItem(productId, quantity);
         }
     }
 }
