@@ -1,7 +1,7 @@
 package com.nowayback.delivery.infrastructure.repository;
 
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
-import com.nowayback.delivery.fixture.DeliveryFixture;
+import com.nowayback.delivery.domain.delivery.repository.DeliveryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(DeliveryRepositoryImpl.class)
 @Testcontainers
 class DeliveryRepositoryTest {
 
@@ -28,7 +30,7 @@ class DeliveryRepositoryTest {
     static PostgreSQLContainer<?> postgre = new PostgreSQLContainer<>("postgres:15");
 
     @Autowired
-    private DeliveryJpaRepository deliveryJpaRepository;
+    private DeliveryRepository deliveryRepository;
 
     @Autowired
     private TestEntityManager entityManager;
@@ -44,7 +46,7 @@ class DeliveryRepositoryTest {
             Delivery delivery = createDelivery();
 
             /* when */
-            Delivery savedDelivery = deliveryJpaRepository.save(delivery);
+            Delivery savedDelivery = deliveryRepository.save(delivery);
 
             /* then */
             assertThat(savedDelivery.getId()).isNotNull();
@@ -66,7 +68,7 @@ class DeliveryRepositoryTest {
             entityManager.flush();
 
             /* when */
-            boolean exists = deliveryJpaRepository.existsByOrderIdAndDeletedAtIsNull(activeDelivery.getOrderId());
+            boolean exists = deliveryRepository.existsByOrderId(activeDelivery.getOrderId());
 
             /* then */
             assertThat(exists).isTrue();
@@ -77,7 +79,7 @@ class DeliveryRepositoryTest {
         void existsByOrderId_shouldReturnFalseIfNotExists() {
             /* given */
             /* when */
-            boolean exists = deliveryJpaRepository.existsByOrderIdAndDeletedAtIsNull(ORDER_ID);
+            boolean exists = deliveryRepository.existsByOrderId(ORDER_ID);
 
             /* then */
             assertThat(exists).isFalse();
@@ -94,7 +96,7 @@ class DeliveryRepositoryTest {
             entityManager.flush();
 
             /* when */
-            boolean exists = deliveryJpaRepository.existsByOrderIdAndDeletedAtIsNull(deletedDelivery.getOrderId());
+            boolean exists = deliveryRepository.existsByOrderId(deletedDelivery.getOrderId());
 
             /* then */
             assertThat(exists).isFalse();
@@ -115,7 +117,7 @@ class DeliveryRepositoryTest {
             entityManager.flush();
 
             /* when */
-            Optional<Delivery> foundDelivery = deliveryJpaRepository.findByIdAndDeletedAtIsNull(delivery.getId());
+            Optional<Delivery> foundDelivery = deliveryRepository.findById(delivery.getId());
 
             /* then */
             assertThat(foundDelivery).isPresent();
@@ -128,7 +130,7 @@ class DeliveryRepositoryTest {
             UUID deliveryId = UUID.randomUUID();
 
             /* when */
-            Optional<Delivery> foundDelivery = deliveryJpaRepository.findByIdAndDeletedAtIsNull(deliveryId);
+            Optional<Delivery> foundDelivery = deliveryRepository.findById(deliveryId);
 
             /* then */
             assertThat(foundDelivery).isNotPresent();
@@ -145,7 +147,7 @@ class DeliveryRepositoryTest {
             entityManager.flush();
 
             /* when */
-            Optional<Delivery> foundDelivery = deliveryJpaRepository.findByIdAndDeletedAtIsNull(deletedDelivery.getId());
+            Optional<Delivery> foundDelivery = deliveryRepository.findById(deletedDelivery.getId());
 
             /* then */
             assertThat(foundDelivery).isNotPresent();
