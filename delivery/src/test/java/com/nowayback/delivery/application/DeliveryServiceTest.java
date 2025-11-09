@@ -244,5 +244,18 @@ class DeliveryServiceTest {
             /* then */
             assertThat(result.status()).isEqualTo(command.status());
         }
+
+        @Test
+        @DisplayName("존재하지 않는 ID로 배송 상태를 수정하면 예외가 발생한다.")
+        void updateDeliveryStatus_WithNonExistentId_throwsException() {
+            /* given */
+            when(deliveryRepository.findById(DELIVERY_UUID)).thenReturn(Optional.empty());
+
+            /* when */
+            /* then */
+            assertThatThrownBy(() -> {
+                deliveryService.updateDeliveryStatus(DELIVERY_UUID, UPDATE_DELIVERY_STATUS_COMMAND);
+            }).isInstanceOf(DeliveryApplicationException.class);
+        }
     }
 }
