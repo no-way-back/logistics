@@ -7,11 +7,9 @@ import com.nowayback.delivery.application.exception.DeliveryApplicationException
 import com.nowayback.delivery.application.service.HubClient;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.repository.DeliveryRepository;
-import com.nowayback.delivery.domain.delivery.vo.DeliveryManagerId;
-import com.nowayback.delivery.domain.delivery.vo.HubId;
-import com.nowayback.delivery.domain.delivery.vo.OrderId;
-import com.nowayback.delivery.domain.delivery.vo.RecipientInfo;
+import com.nowayback.delivery.domain.delivery.vo.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +54,12 @@ public class DeliveryService {
     public DeliveryResult getDelivery(UUID deliveryId) {
         Delivery delivery = getDeliveryById(deliveryId);
         return DeliveryResult.from(delivery);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<DeliveryResult> searchDeliveries(UUID orderId, UUID sourceHubId, UUID destinationHubId, DeliveryStatus status, int page, int size) {
+        Page<Delivery> deliveries = deliveryRepository.searchDeliveries(OrderId.of(orderId), HubId.of(sourceHubId), HubId.of(destinationHubId), status, page, size);
+        return deliveries.map(DeliveryResult::from);
     }
 
     private Delivery getDeliveryById(UUID deliveryId) {
