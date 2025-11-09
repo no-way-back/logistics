@@ -86,6 +86,14 @@ public class DeliveryService {
         return DeliveryResult.from(delivery);
     }
 
+    @Transactional
+    public void deleteDelivery(UUID deliveryId) {
+        Delivery delivery = getDeliveryById(deliveryId);
+
+        // TODO: 배송 삭제자 기록 필요
+        delivery.delete(UUID.randomUUID());
+    }
+
     private Delivery getDeliveryById(UUID deliveryId) {
         return deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new DeliveryApplicationException(DeliveryApplicationErrorCode.NOT_FOUND_DELIVERY));
