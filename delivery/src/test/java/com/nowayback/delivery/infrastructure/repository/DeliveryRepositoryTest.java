@@ -13,6 +13,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.nowayback.delivery.fixture.DeliveryFixture.*;
@@ -97,6 +98,57 @@ class DeliveryRepositoryTest {
 
             /* then */
             assertThat(exists).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("배송 ID에 대한 배송 조회")
+    class FindById {
+
+        @Test
+        @DisplayName("배송 ID에 대한 배송이 존재하면 배송 객체를 반환한다.")
+        void findById_shouldReturnDeliveryIfExists() {
+            /* given */
+            Delivery delivery = createDelivery();
+
+            entityManager.persist(delivery);
+            entityManager.flush();
+
+            /* when */
+            Optional<Delivery> foundDelivery = deliveryJpaRepository.findByIdAndDeletedAtIsNull(delivery.getId());
+
+            /* then */
+            assertThat(foundDelivery).isPresent();
+        }
+
+        @Test
+        @DisplayName("배송 ID에 대한 배송이 존재하지 않으면 빈 Optional을 반환한다.")
+        void findById_shouldReturnEmptyIfNotExists() {
+            /* given */
+            UUID deliveryId = UUID.randomUUID();
+
+            /* when */
+            Optional<Delivery> foundDelivery = deliveryJpaRepository.findByIdAndDeletedAtIsNull(deliveryId);
+
+            /* then */
+            assertThat(foundDelivery).isNotPresent();
+        }
+
+        @Test
+        @DisplayName("배송 ID에 대한 배송이 삭제된 경우 빈 Optional을 반환한다.")
+        void findById_shouldReturnEmptyIfDeleted() {
+            /* given */
+            Delivery deletedDelivery = createDelivery();
+            deletedDelivery.delete(UUID.randomUUID());
+
+            entityManager.persist(deletedDelivery);
+            entityManager.flush();
+
+            /* when */
+            Optional<Delivery> foundDelivery = deliveryJpaRepository.findByIdAndDeletedAtIsNull(deletedDelivery.getId());
+
+            /* then */
+            assertThat(foundDelivery).isNotPresent();
         }
     }
 }
