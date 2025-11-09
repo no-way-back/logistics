@@ -27,10 +27,10 @@ public class Hub extends BaseEntity {
     @Column(name = "hub_id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "name", length = 100)
+    @Column(name = "name", length = 100, unique = true, nullable = false)
     private String name;
 
-    @Column(name = "address", length = 500)
+    @Column(name = "address", length = 500, unique = true, nullable = false)
     private String address;
 
     @Column(name = "latitude", precision = 10, scale = 7)
