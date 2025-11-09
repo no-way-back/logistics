@@ -66,7 +66,7 @@ class HubEntityTest {
                     // when & then
                     assertThatThrownBy(() -> Hub.create(command))
                             .isInstanceOf(IllegalArgumentException.class)
-                            .hasMessage("허브 이름은 필수입니다");
+                            .hasMessage("허브 이름은 필수입니다.");
                 }
 
                 @Test
@@ -83,7 +83,7 @@ class HubEntityTest {
                     // when & then
                     assertThatThrownBy(() -> Hub.create(command))
                             .isInstanceOf(IllegalArgumentException.class)
-                            .hasMessage("허브 이름은 필수입니다");
+                            .hasMessage("허브 이름은 필수입니다.");
                 }
             }
 
@@ -105,7 +105,7 @@ class HubEntityTest {
                     // when & then
                     assertThatThrownBy(() -> Hub.create(command))
                             .isInstanceOf(IllegalArgumentException.class)
-                            .hasMessage("주소는 필수입니다");
+                            .hasMessage("주소는 필수입니다.");
                 }
 
                 @Test
@@ -122,7 +122,7 @@ class HubEntityTest {
                     // when & then
                     assertThatThrownBy(() -> Hub.create(command))
                             .isInstanceOf(IllegalArgumentException.class)
-                            .hasMessage("주소는 필수입니다");
+                            .hasMessage("주소는 필수입니다.");
                 }
             }
 
@@ -144,7 +144,7 @@ class HubEntityTest {
                     // when & then
                     assertThatThrownBy(() -> Hub.create(command))
                             .isInstanceOf(IllegalArgumentException.class)
-                            .hasMessage("위도는 필수입니다");
+                            .hasMessage("위도는 필수입니다.");
                 }
 
                 @Test
@@ -161,7 +161,7 @@ class HubEntityTest {
                     // when & then
                     assertThatThrownBy(() -> Hub.create(command))
                             .isInstanceOf(IllegalArgumentException.class)
-                            .hasMessage("위도는 -90 이상 90 이하여야 합니다");
+                            .hasMessage("위도는 -90 이상 90 이하여야 합니다.");
                 }
 
                 @Test
@@ -178,7 +178,7 @@ class HubEntityTest {
                     // when & then
                     assertThatThrownBy(() -> Hub.create(command))
                             .isInstanceOf(IllegalArgumentException.class)
-                            .hasMessage("위도는 -90 이상 90 이하여야 합니다");
+                            .hasMessage("위도는 -90 이상 90 이하여야 합니다.");
                 }
             }
 
@@ -200,7 +200,7 @@ class HubEntityTest {
                     // when & then
                     assertThatThrownBy(() -> Hub.create(command))
                             .isInstanceOf(IllegalArgumentException.class)
-                            .hasMessage("경도는 필수입니다");
+                            .hasMessage("경도는 필수입니다.");
                 }
 
                 @Test
@@ -217,7 +217,7 @@ class HubEntityTest {
                     // when & then
                     assertThatThrownBy(() -> Hub.create(command))
                             .isInstanceOf(IllegalArgumentException.class)
-                            .hasMessage("경도는 -180 이상 180 이하여야 합니다");
+                            .hasMessage("경도는 -180 이상 180 이하여야 합니다.");
                 }
 
                 @Test
@@ -234,7 +234,7 @@ class HubEntityTest {
                     // when & then
                     assertThatThrownBy(() -> Hub.create(command))
                             .isInstanceOf(IllegalArgumentException.class)
-                            .hasMessage("경도는 -180 이상 180 이하여야 합니다");
+                            .hasMessage("경도는 -180 이상 180 이하여야 합니다.");
                 }
             }
 
