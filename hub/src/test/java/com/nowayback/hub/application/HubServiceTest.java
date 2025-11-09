@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.nowayback.hub.application.exception.HubApplicationErrorCode.HUB_NOT_FOUND_EXCEPTION;
+import static com.nowayback.hub.application.exception.HubApplicationErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -94,7 +94,7 @@ class HubServiceTest {
                 // when & then
                 assertThatThrownBy(() -> hubService.create(command))
                         .isInstanceOf(HubApplicationException.class)
-                        .hasMessage("이미 존재하는 허브 이름입니다.");
+                        .hasFieldOrPropertyWithValue("errorCode", HUB_NAME_ALREADY_EXISTS_EXCEPTION);
 
                 verify(hubRepository, times(1)).existsByName(command.name());
                 verify(hubRepository, never()).save(any(Hub.class));
@@ -117,7 +117,7 @@ class HubServiceTest {
                 // when & then
                 assertThatThrownBy(() -> hubService.create(command))
                         .isInstanceOf(HubApplicationException.class)
-                        .hasMessage("이미 존재하는 허브 주소입니다.");
+                        .hasFieldOrPropertyWithValue("errorCode", HUB_ADDRESS_ALREADY_EXISTS_EXCEPTION);
 
                 verify(hubRepository, times(1)).existsByName(command.name());
                 verify(hubRepository, times(1)).existsByAddress(command.address());
