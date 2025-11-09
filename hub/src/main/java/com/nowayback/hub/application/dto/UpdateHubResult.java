@@ -15,7 +15,7 @@ public record UpdateHubResult (
         LocalDateTime updateAt,
         UUID updatedBy
 ) {
-    public static UpdateHubResult from(Hub hub) {
+    public static UpdateHubResult of(Hub hub) {
         return new UpdateHubResult(
                 hub.getId(),
                 hub.getName(),

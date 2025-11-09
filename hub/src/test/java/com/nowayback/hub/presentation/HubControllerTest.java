@@ -59,7 +59,7 @@ class HubControllerTest {
                         }
                         """;
 
-                CreateHubResult hubResult = CreateHubResult.from(
+                CreateHubResult hubResult = CreateHubResult.of(
                         Hub.create(new CreateHubCommand(
                                 "서울특별시 센터",
                                 "서울시 송파구 송파대로 55",

@@ -15,7 +15,7 @@ public record CreateHubResult(
         LocalDateTime createdAt,
         UUID createdBy
 ) {
-    public static CreateHubResult from(Hub hub) {
+    public static CreateHubResult of(Hub hub) {
         return new CreateHubResult(
                 hub.getId(),
                 hub.getName(),

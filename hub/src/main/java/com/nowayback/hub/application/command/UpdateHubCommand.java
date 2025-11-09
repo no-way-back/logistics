@@ -1,5 +1,7 @@
 package com.nowayback.hub.application.command;
 
+import com.nowayback.hub.presentation.request.UpdateHubRequest;
+
 import java.math.BigDecimal;
 
 public record UpdateHubCommand(
@@ -8,7 +10,12 @@ public record UpdateHubCommand(
         BigDecimal latitude,
         BigDecimal longitude
 ) {
-    public static UpdateHubCommand of(String name, String address, BigDecimal latitude, BigDecimal longitude) {
-        return new UpdateHubCommand(name, address, latitude, longitude);
+    public static UpdateHubCommand from(UpdateHubRequest request) {
+        return new UpdateHubCommand(
+                request.name(),
+                request.address(),
+                request.latitude(),
+                request.longitude()
+        );
     }
 }

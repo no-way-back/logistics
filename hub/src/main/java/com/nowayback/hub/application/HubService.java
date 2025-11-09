@@ -4,7 +4,6 @@ import com.nowayback.hub.application.command.CreateHubCommand;
 import com.nowayback.hub.application.command.UpdateHubCommand;
 import com.nowayback.hub.application.dto.CreateHubResult;
 import com.nowayback.hub.application.dto.UpdateHubResult;
-import com.nowayback.hub.application.exception.HubApplicationErrorCode;
 import com.nowayback.hub.application.exception.HubApplicationException;
 import com.nowayback.hub.domain.entity.Hub;
 import com.nowayback.hub.domain.repository.HubRepository;
@@ -30,7 +29,7 @@ public class HubService {
         validateDuplicateNameAndAddress(command.name(), command.address());
         Hub hub = Hub.create(command);
 
-        return CreateHubResult.from(hubRepository.save(hub));
+        return CreateHubResult.of(hubRepository.save(hub));
     }
 
     /**
@@ -52,7 +51,7 @@ public class HubService {
 
         hub.update(command);
 
-        return UpdateHubResult.from(hub);
+        return UpdateHubResult.of(hub);
     }
 
     private void validateDuplicateNameAndAddress(String name, String address) {
