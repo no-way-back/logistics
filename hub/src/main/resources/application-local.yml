@@ -30,11 +30,6 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
 
-jwt:
-  # 기본값: 로컬 개발용 시크릿
-  secret: ${JWT_SECRET:local-secret}
-  expiration-time: 86400000
-
 management:
   endpoints:
     web:
