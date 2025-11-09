@@ -174,5 +174,35 @@ class HubServiceTest {
                 verify(hubRepository, times(1)).existsByAddress("서울시 강남구 테헤란로 123");
             }
         }
+
+        @Nested
+        @DisplayName("허브 수정 실패 테스트")
+        class UpdateHubFailure {
+
+            @Test
+            @DisplayName("존재하지 않는 허브 ID로 수정 시도하면 예외가 발생한다")
+            void update_hub_with_non_existent_id_throws_exception() {
+                // given
+                UUID hubId = UUID.randomUUID();
+
+                UpdateHubCommand command = new UpdateHubCommand(
+                        "서울특별시 센터 (수정)",
+                        "서울시 강남구 테헤란로 123",
+                        new BigDecimal("37.5000"),
+                        new BigDecimal("127.0000")
+                );
+
+                when(hubRepository.findById(hubId)).thenReturn(Optional.empty());
+
+                // when & then
+                assertThatThrownBy(() -> hubService.update(hubId, command))
+                        .isInstanceOf(HubApplicationException.class)
+                        .hasFieldOrPropertyWithValue("errorCode", HUB_NOT_FOUND_EXCEPTION);
+
+                verify(hubRepository, times(1)).findById(hubId);
+                verify(hubRepository, never()).existsByName(any());
+                verify(hubRepository, never()).existsByAddress(any());
+            }
+        }
     }
 }
