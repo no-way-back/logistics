@@ -30,10 +30,6 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
 
-jwt:
-  secret: ${JWT_SECRET}
-  expiration-time: 3600000
-
 management:
   endpoints:
     web:

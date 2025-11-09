@@ -1,10 +1,8 @@
 package com.nowayback.delivery.domain.entity;
 
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
-import com.nowayback.delivery.domain.delivery.exception.InvalidDeliveryStatusException;
-import com.nowayback.delivery.domain.delivery.exception.InvalidHubRouteException;
 import com.nowayback.delivery.domain.delivery.vo.*;
-import com.nowayback.delivery.domain.exception.InvalidObjectException;
+import com.nowayback.delivery.domain.exception.DeliveryDomainException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -67,7 +65,7 @@ class DeliveryTest {
             /* then */
             assertThatThrownBy(() -> {
                 Delivery.create(null, SOURCE_HUB_ID, DESTINATION_HUB_ID, RECIPIENT_INFO, COMPANY_DELIVERY_MANAGER_ID);
-            }).isInstanceOf(InvalidObjectException.class);
+            }).isInstanceOf(DeliveryDomainException.class);
         }
 
         @Test
@@ -78,7 +76,7 @@ class DeliveryTest {
             /* then */
             assertThatThrownBy(() -> {
                 Delivery.create(ORDER_ID, null, DESTINATION_HUB_ID, RECIPIENT_INFO, COMPANY_DELIVERY_MANAGER_ID);
-            }).isInstanceOf(InvalidObjectException.class);
+            }).isInstanceOf(DeliveryDomainException.class);
         }
 
         @Test
@@ -89,7 +87,7 @@ class DeliveryTest {
             /* then */
             assertThatThrownBy(() -> {
                 Delivery.create(ORDER_ID, SOURCE_HUB_ID, null, RECIPIENT_INFO, COMPANY_DELIVERY_MANAGER_ID);
-            }).isInstanceOf(InvalidObjectException.class);
+            }).isInstanceOf(DeliveryDomainException.class);
         }
 
         @Test
@@ -100,7 +98,7 @@ class DeliveryTest {
             /* then */
             assertThatThrownBy(() -> {
                 Delivery.create(ORDER_ID, SOURCE_HUB_ID, DESTINATION_HUB_ID, null, COMPANY_DELIVERY_MANAGER_ID);
-            }).isInstanceOf(InvalidObjectException.class);
+            }).isInstanceOf(DeliveryDomainException.class);
         }
 
         @Test
@@ -111,7 +109,7 @@ class DeliveryTest {
             /* then */
             assertThatThrownBy(() -> {
                 Delivery.create(ORDER_ID, SOURCE_HUB_ID, DESTINATION_HUB_ID, RECIPIENT_INFO, null);
-            }).isInstanceOf(InvalidObjectException.class);
+            }).isInstanceOf(DeliveryDomainException.class);
         }
 
         @Test
@@ -120,7 +118,7 @@ class DeliveryTest {
             /* given */
             /* when */
             /* then */
-            assertThrows(InvalidHubRouteException.class, () -> {
+            assertThrows(DeliveryDomainException.class, () -> {
                 Delivery.create(ORDER_ID, HUB_ID, HUB_ID, RECIPIENT_INFO, COMPANY_DELIVERY_MANAGER_ID);
             });
         }
@@ -154,7 +152,7 @@ class DeliveryTest {
             /* then */
             assertThatThrownBy(() -> {
                 delivery.updateRecipientInfo(null);
-            }).isInstanceOf(InvalidObjectException.class);
+            }).isInstanceOf(DeliveryDomainException.class);
         }
 
         @ParameterizedTest
@@ -168,7 +166,7 @@ class DeliveryTest {
             /* then */
             assertThatThrownBy(() -> {
                 delivery.updateRecipientInfo(MODIFIED_RECIPIENT_INFO);
-            }).isInstanceOf(InvalidDeliveryStatusException.class);
+            }).isInstanceOf(DeliveryDomainException.class);
         }
     }
 
@@ -220,7 +218,7 @@ class DeliveryTest {
             /* then */
             assertThatThrownBy(() -> {
                 delivery.updateStatus(newStatus);
-            }).isInstanceOf(InvalidDeliveryStatusException.class);
+            }).isInstanceOf(DeliveryDomainException.class);
         }
     }
 
@@ -272,7 +270,7 @@ class DeliveryTest {
             /* then */
             assertThatThrownBy(() -> {
                 delivery.delete(actorId);
-            }).isInstanceOf(InvalidDeliveryStatusException.class);
+            }).isInstanceOf(DeliveryDomainException.class);
         }
     }
 }
