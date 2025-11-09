@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record HubResult (
+public record CreateHubResult(
         UUID hubId,
         String name,
         String address,
@@ -15,8 +15,8 @@ public record HubResult (
         LocalDateTime createdAt,
         UUID createdBy
 ) {
-    public static HubResult from(Hub hub) {
-        return new HubResult(
+    public static CreateHubResult from(Hub hub) {
+        return new CreateHubResult(
                 hub.getId(),
                 hub.getName(),
                 hub.getAddress(),

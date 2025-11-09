@@ -2,7 +2,7 @@ package com.nowayback.hub.presentation;
 
 import com.nowayback.hub.application.HubService;
 import com.nowayback.hub.application.command.CreateHubCommand;
-import com.nowayback.hub.application.dto.HubResult;
+import com.nowayback.hub.application.dto.CreateHubResult;
 import com.nowayback.hub.application.exception.HubApplicationException;
 import com.nowayback.hub.domain.entity.Hub;
 import org.junit.jupiter.api.DisplayName;
@@ -50,7 +50,7 @@ class HubControllerTest {
                 }
                 """;
 
-            HubResult hubResult = HubResult.from(
+            CreateHubResult hubResult = CreateHubResult.from(
                     Hub.create(new CreateHubCommand(
                             "서울특별시 센터",
                             "서울시 송파구 송파대로 55",
@@ -114,7 +114,7 @@ class HubControllerTest {
         """;
 
             when(hubService.create(any(CreateHubCommand.class)))
-                    .thenThrow(new HubApplicationException(HUB_ADDRESS_ALEADY_EXISTS_EXCEPTION));
+                    .thenThrow(new HubApplicationException(HUB_ADDRESS_ALREADY_EXISTS_EXCEPTION));
 
             // when & then
             mockMvc.perform(post("/hubs")

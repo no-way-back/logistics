@@ -1,6 +1,6 @@
 package com.nowayback.hub.presentation.response;
 
-import com.nowayback.hub.application.dto.HubResult;
+import com.nowayback.hub.application.dto.CreateHubResult;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ public record CreateHubResponse(
         LocalDateTime createdAt,
         UUID createdBy
 ) {
-    public static CreateHubResponse of(HubResult result) {
+    public static CreateHubResponse of(CreateHubResult result) {
         return new CreateHubResponse(
                 result.hubId(),
                 result.name(),
