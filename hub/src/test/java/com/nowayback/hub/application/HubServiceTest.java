@@ -1,7 +1,9 @@
 package com.nowayback.hub.application;
 
 import com.nowayback.hub.application.command.CreateHubCommand;
-import com.nowayback.hub.application.dto.HubResult;
+import com.nowayback.hub.application.command.UpdateHubCommand;
+import com.nowayback.hub.application.dto.CreateHubResult;
+import com.nowayback.hub.application.dto.UpdateHubResult;
 import com.nowayback.hub.application.exception.HubApplicationException;
 import com.nowayback.hub.domain.entity.Hub;
 import com.nowayback.hub.domain.repository.HubRepository;
@@ -14,7 +16,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.Optional;
+import java.util.UUID;
 
+import static com.nowayback.hub.application.exception.HubApplicationErrorCode.HUB_NOT_FOUND_EXCEPTION;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -33,80 +38,141 @@ class HubServiceTest {
     @DisplayName("허브 생성")
     class CreateHub {
 
-        @Test
-        @DisplayName("유효한 데이터로 허브를 생성할 수 있다.")
-        void create_hub_success() {
-            // given
-            CreateHubCommand command = new CreateHubCommand(
-                    "서울특별시 센터",
-                    "서울시 송파구 송파대로 55",
-                    new BigDecimal("37.5665"),
-                    new BigDecimal("126.9780")
-            );
+        @Nested
+        @DisplayName("허브 생성 성공 테스트")
+        class CreateHubSuccess {
 
-            Hub savedHub = Hub.create(command);
+            @Test
+            @DisplayName("유효한 데이터로 허브를 생성할 수 있다.")
+            void create_hub_success() {
+                // given
+                CreateHubCommand command = new CreateHubCommand(
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780")
+                );
 
-            when(hubRepository.existsByName(command.name())).thenReturn(false);
-            when(hubRepository.save(any(Hub.class))).thenReturn(savedHub);
+                Hub savedHub = Hub.create(command);
 
-            // when
-            HubResult result = hubService.create(command);
+                when(hubRepository.existsByName(command.name())).thenReturn(false);
+                when(hubRepository.save(any(Hub.class))).thenReturn(savedHub);
 
-            // then
-            assertThat(result).isNotNull();
-            assertThat(result.name()).isEqualTo("서울특별시 센터");
-            assertThat(result.address()).isEqualTo("서울시 송파구 송파대로 55");
-            assertThat(result.latitude()).isEqualByComparingTo("37.5665");
-            assertThat(result.longitude()).isEqualByComparingTo("126.9780");
+                // when
+                CreateHubResult result = hubService.create(command);
 
-            verify(hubRepository, times(1)).existsByName(command.name());
-            verify(hubRepository, times(1)).save(any(Hub.class));
+                // then
+                assertThat(result).isNotNull();
+                assertThat(result.name()).isEqualTo("서울특별시 센터");
+                assertThat(result.address()).isEqualTo("서울시 송파구 송파대로 55");
+                assertThat(result.latitude()).isEqualByComparingTo("37.5665");
+                assertThat(result.longitude()).isEqualByComparingTo("126.9780");
+
+                verify(hubRepository, times(1)).existsByName(command.name());
+                verify(hubRepository, times(1)).save(any(Hub.class));
+            }
+
         }
 
-        @Test
-        @DisplayName("같은 이름의 허브가 이미 존재하면 예외가 발생한다.")
-        void create_hub_with_duplicate_name_throws_exception() {
-            // given
-            CreateHubCommand command = new CreateHubCommand(
-                    "서울특별시 센터",
-                    "서울시 송파구 송파대로 55",
-                    new BigDecimal("37.5665"),
-                    new BigDecimal("126.9780")
-            );
+        @Nested
+        @DisplayName("허브 생성 실패 테스트")
+        class CreateHubFailure {
 
-            when(hubRepository.existsByName(command.name())).thenReturn(true);
+            @Test
+            @DisplayName("같은 이름의 허브가 이미 존재하면 예외가 발생한다.")
+            void create_hub_with_duplicate_name_throws_exception() {
+                // given
+                CreateHubCommand command = new CreateHubCommand(
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780")
+                );
 
-            // when & then
-            assertThatThrownBy(() -> hubService.create(command))
-                    .isInstanceOf(HubApplicationException.class)
-                    .hasMessage("이미 존재하는 허브 이름입니다.");
+                when(hubRepository.existsByName(command.name())).thenReturn(true);
 
-            verify(hubRepository, times(1)).existsByName(command.name());
-            verify(hubRepository, never()).save(any(Hub.class));
+                // when & then
+                assertThatThrownBy(() -> hubService.create(command))
+                        .isInstanceOf(HubApplicationException.class)
+                        .hasMessage("이미 존재하는 허브 이름입니다.");
+
+                verify(hubRepository, times(1)).existsByName(command.name());
+                verify(hubRepository, never()).save(any(Hub.class));
+            }
+
+            @Test
+            @DisplayName("같은 주소의 허브가 이미 존재하면 예외가 발생한다.")
+            void create_hub_with_duplicate_address_throws_exception() {
+                // given
+                CreateHubCommand command = new CreateHubCommand(
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780")
+                );
+
+                when(hubRepository.existsByName(command.name())).thenReturn(false);
+                when(hubRepository.existsByAddress(command.address())).thenReturn(true);
+
+                // when & then
+                assertThatThrownBy(() -> hubService.create(command))
+                        .isInstanceOf(HubApplicationException.class)
+                        .hasMessage("이미 존재하는 허브 주소입니다.");
+
+                verify(hubRepository, times(1)).existsByName(command.name());
+                verify(hubRepository, times(1)).existsByAddress(command.address());
+                verify(hubRepository, never()).save(any(Hub.class));
+            }
         }
+    }
 
-        @Test
-        @DisplayName("같은 주소의 허브가 이미 존재하면 예외가 발생한다.")
-        void create_hub_with_duplicate_address_throws_exception() {
-            // given
-            CreateHubCommand command = new CreateHubCommand(
-                    "서울특별시 센터",
-                    "서울시 송파구 송파대로 55",
-                    new BigDecimal("37.5665"),
-                    new BigDecimal("126.9780")
-            );
 
-            when(hubRepository.existsByName(command.name())).thenReturn(false);
-            when(hubRepository.existsByAddress(command.address())).thenReturn(true);
+    @Nested
+    @DisplayName("허브 수정")
+    class UpdateHub {
 
-            // when & then
-            assertThatThrownBy(() -> hubService.create(command))
-                    .isInstanceOf(HubApplicationException.class)
-                    .hasMessage("이미 존재하는 허브 주소입니다.");
+        @Nested
+        @DisplayName("허브 수정 성공 테스트")
+        class UpdateHubSuccess {
 
-            verify(hubRepository, times(1)).existsByName(command.name());
-            verify(hubRepository, times(1)).existsByAddress(command.address());
-            verify(hubRepository, never()).save(any(Hub.class));
+            @Test
+            @DisplayName("유효한 데이터로 허브를 수정할 수 있다")
+            void update_hub_success() {
+                // given
+                UUID hubId = UUID.randomUUID();
+
+                Hub existingHub = Hub.create(new CreateHubCommand(
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780")
+                ));
+
+                UpdateHubCommand command = new UpdateHubCommand(
+                        "서울특별시 센터 (수정)",
+                        "서울시 강남구 테헤란로 123",
+                        new BigDecimal("37.5000"),
+                        new BigDecimal("127.0000")
+                );
+
+                when(hubRepository.findById(hubId)).thenReturn(Optional.of(existingHub));
+                when(hubRepository.existsByName("서울특별시 센터 (수정)")).thenReturn(false);
+                when(hubRepository.existsByAddress("서울시 강남구 테헤란로 123")).thenReturn(false);
+
+                // when
+                UpdateHubResult result = hubService.update(hubId, command);
+
+                // then
+                assertThat(result).isNotNull();
+                assertThat(result.name()).isEqualTo("서울특별시 센터 (수정)");
+                assertThat(result.address()).isEqualTo("서울시 강남구 테헤란로 123");
+                assertThat(result.latitude()).isEqualByComparingTo("37.5000");
+                assertThat(result.longitude()).isEqualByComparingTo("127.0000");
+
+                verify(hubRepository, times(1)).findById(hubId);
+                verify(hubRepository, times(1)).existsByName("서울특별시 센터 (수정)");
+                verify(hubRepository, times(1)).existsByAddress("서울시 강남구 테헤란로 123");
+            }
         }
     }
 }
