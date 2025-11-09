@@ -2,6 +2,7 @@ package com.nowayback.delivery.application;
 
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
 import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
+import com.nowayback.delivery.application.command.UpdateDeliveryStatusCommand;
 import com.nowayback.delivery.application.dto.DeliveryResult;
 import com.nowayback.delivery.application.exception.DeliveryApplicationErrorCode;
 import com.nowayback.delivery.application.exception.DeliveryApplicationException;
@@ -72,6 +73,15 @@ public class DeliveryService {
                 command.recipientName(),
                 command.recipientSlackId()
         ));
+
+        return DeliveryResult.from(delivery);
+    }
+
+    @Transactional
+    public DeliveryResult updateDeliveryStatus(UUID deliveryId, UpdateDeliveryStatusCommand command) {
+        Delivery delivery = getDeliveryById(deliveryId);
+
+        delivery.updateStatus(command.status());
 
         return DeliveryResult.from(delivery);
     }
