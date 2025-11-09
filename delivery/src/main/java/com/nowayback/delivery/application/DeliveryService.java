@@ -2,6 +2,8 @@ package com.nowayback.delivery.application;
 
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
 import com.nowayback.delivery.application.dto.DeliveryResult;
+import com.nowayback.delivery.application.exception.DeliveryApplicationErrorCode;
+import com.nowayback.delivery.application.exception.DeliveryApplicationException;
 import com.nowayback.delivery.application.service.HubClient;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.repository.DeliveryRepository;
@@ -52,7 +54,7 @@ public class DeliveryService {
 
     private void validateDuplicateOrderId(UUID orderId) {
         if (deliveryRepository.existsByOrderId(OrderId.of(orderId))) {
-            throw new IllegalArgumentException("Order id " + orderId + " already exists");
+            throw new DeliveryApplicationException(DeliveryApplicationErrorCode.DUPLICATE_ORDER_ID);
         }
     }
 
