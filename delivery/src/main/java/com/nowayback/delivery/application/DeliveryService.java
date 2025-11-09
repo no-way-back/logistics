@@ -1,6 +1,7 @@
 package com.nowayback.delivery.application;
 
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
+import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
 import com.nowayback.delivery.application.dto.DeliveryResult;
 import com.nowayback.delivery.application.exception.DeliveryApplicationErrorCode;
 import com.nowayback.delivery.application.exception.DeliveryApplicationException;
@@ -60,6 +61,19 @@ public class DeliveryService {
     public Page<DeliveryResult> searchDeliveries(UUID orderId, UUID sourceHubId, UUID destinationHubId, DeliveryStatus status, int page, int size) {
         Page<Delivery> deliveries = deliveryRepository.searchDeliveries(OrderId.of(orderId), HubId.of(sourceHubId), HubId.of(destinationHubId), status, page, size);
         return deliveries.map(DeliveryResult::from);
+    }
+
+    @Transactional
+    public DeliveryResult updateRecipientInfo(UUID deliveryId, UpdateDeliveryRecipientInfoCommand command) {
+        Delivery delivery = getDeliveryById(deliveryId);
+
+        delivery.updateRecipientInfo(RecipientInfo.of(
+                command.deliveryAddress(),
+                command.recipientName(),
+                command.recipientSlackId()
+        ));
+
+        return DeliveryResult.from(delivery);
     }
 
     private Delivery getDeliveryById(UUID deliveryId) {
