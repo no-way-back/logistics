@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  user-postgres:
+  order-postgres:
     image: postgres:16-alpine
     container_name: order-postgres
     environment:
@@ -13,42 +13,41 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - user-postgres-data:/var/lib/postgresql/data
+      - order-postgres-data:/var/lib/postgresql/data
     networks:
-      - user-network
+      - order-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d user_db"]
+      test: ["CMD-SHELL", "pg_isready -U order -d order_db"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  user-service:
+  order-service:
     build:
       context: ..
-      dockerfile: user/Dockerfile
-    container_name: user-service
+      dockerfile: order/Dockerfile
+    container_name: order-service
     environment:
       SPRING_PROFILES_ACTIVE: local
-      USER_SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/user_db
+      USER_SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/order_db
       USER_SPRING_DATASOURCE_USERNAME: user
       USER_SPRING_DATASOURCE_PASSWORD: 1234
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://localhost:8761/eureka/
-      JWT_SECRET: local-secret
     ports:
       - "18081:18081"
     depends_on:
-      user-postgres:
+      order-postgres:
         condition: service_healthy
     networks:
-      - user-network
+      - order-network
     restart: unless-stopped
 
 volumes:
-  user-postgres-data:
+  order-postgres-data:
     driver: local
 
 networks:
-  user-network:
+  order-network:
     driver: bridge
   msa-network:
     external: true
