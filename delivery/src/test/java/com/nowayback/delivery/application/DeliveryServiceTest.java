@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -162,6 +163,29 @@ class DeliveryServiceTest {
             assertThatThrownBy(() -> {
                 deliveryService.getDelivery(deliveryId);
             }).isInstanceOf(DeliveryApplicationException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("배송 검색 조회")
+    class SearchDeliveries {
+
+        @Test
+        @DisplayName("검색 조건에 맞는 배송을 조회하면 해당 배송 리스트가 반환된다.")
+        void searchDeliveries_success() {
+            /* given */
+            DeliveryStatus status = DELIVERY_STATUS;
+            int page = PAGE;
+            int size = SIZE;
+
+            when(deliveryRepository.searchDeliveries(ORDER_ID, SOURCE_HUB_ID, DESTINATION_HUB_ID, status, page, size)).thenReturn(DELIVERY_PAGE);
+
+            /* when */
+            Page<DeliveryResult> result = deliveryService.searchDeliveries(ORDER_UUID, SOURCE_HUB_UUID, DESTINATION_HUB_UUID, status, page, size);
+
+            /* then */
+            assertThat(result.getTotalElements()).isEqualTo(DELIVERY_PAGE.getTotalElements());
+            assertThat(result.getContent().size()).isEqualTo(DELIVERY_PAGE.getContent().size());
         }
     }
 }

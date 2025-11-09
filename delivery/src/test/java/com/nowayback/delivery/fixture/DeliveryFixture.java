@@ -3,8 +3,12 @@ package com.nowayback.delivery.fixture;
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.vo.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.UUID;
 
 public class DeliveryFixture {
@@ -33,6 +37,12 @@ public class DeliveryFixture {
 
     public static final DeliveryManagerId COMPANY_DELIVERY_MANAGER_ID = DeliveryManagerId.of(COMPANY_DELIVERY_MANAGER_UUID);
 
+    public static final DeliveryStatus DELIVERY_STATUS = DeliveryStatus.WAITING_AT_HUB;
+
+    public static final int PAGE = 0;
+    public static final int SIZE = 10;
+
+    /* delivery entity */
     public static Delivery createDelivery() {
         return Delivery.create(
                 ORDER_ID,
@@ -48,6 +58,12 @@ public class DeliveryFixture {
         setPrivateField(delivery, "status", status);
         return delivery;
     }
+
+    public static final Page<Delivery> DELIVERY_PAGE = new PageImpl<>(
+            List.of(createDelivery(), createDelivery(), createDelivery(), createDelivery()),
+            PageRequest.of(PAGE, SIZE),
+            2
+    );
 
     /* delivery command */
     public static final CreateDeliveryCommand CREATE_DELIVERY_COMMAND = new CreateDeliveryCommand(
