@@ -56,13 +56,16 @@ public class OrderService {
     }
 
     private void createDelivery(Order order) {
+        // TODO: hub id 추가 필요
+        String fullAddress = order.getReceiverCompanySnapshot().getAddress() + " "
+            + order.getReceiverCompanySnapshot().getDetailAddress();
+
         CreateDeliveryResponse response = deliveryClient.createDelivery(
             CreateDeliveryRequest.of(
                 order.getId(),
                 UUID.randomUUID(),
                 UUID.randomUUID(),
-                order.getReceiverCompanySnapshot().getAddress()
-                    + order.getReceiverCompanySnapshot().getDetailAddress(),
+                fullAddress,
                 order.getReceiverCompanySnapshot().getName(),
                 order.getReceiverCompanySnapshot().getContact()
             )
