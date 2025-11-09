@@ -210,5 +210,18 @@ class DeliveryServiceTest {
             assertThat(result.recipientName()).isEqualTo(MODIFIED_DELIVERY_NAME);
             assertThat(result.recipientSlackId()).isEqualTo(MODIFIED_DELIVERY_SLACK_ID);
         }
+
+        @Test
+        @DisplayName("존재하지 않는 ID로 배송 수령인 정보를 수정하면 예외가 발생한다.")
+        void updateRecipientInfo_WithNonExistentId_throwsException() {
+            /* given */
+            when(deliveryRepository.findById(DELIVERY_UUID)).thenReturn(Optional.empty());
+
+            /* when */
+            /* then */
+            assertThatThrownBy(() -> {
+                deliveryService.updateRecipientInfo(DELIVERY_UUID, UPDATE_DELIVERY_RECIPIENT_INFO_COMMAND);
+            }).isInstanceOf(DeliveryApplicationException.class);
+        }
     }
 }
