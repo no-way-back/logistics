@@ -9,6 +9,7 @@ import com.nowayback.order.application.client.response.CreateDeliveryResponse;
 import com.nowayback.order.application.client.response.DecreaseStockResponse;
 import com.nowayback.order.application.command.CreateOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand.CreateOrderItem;
+import com.nowayback.order.application.dto.OrderCreateResult;
 import com.nowayback.order.application.exception.OrderApplicationErrorCode;
 import com.nowayback.order.application.exception.OrderApplicationException;
 import com.nowayback.order.domain.entity.Order;
@@ -30,7 +31,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     @Transactional
-    public void createOrder(CreateOrderCommand command) {
+    public OrderCreateResult createOrder(CreateOrderCommand command) {
         decreaseStock(command.createOrderItems());
 
         Order order = command.toEntity();
@@ -39,6 +40,8 @@ public class OrderService {
         createDelivery(order);
 
         order.completeCreation();
+
+        return OrderCreateResult.of(order.getId());
     }
 
     private void decreaseStock(List<CreateOrderItem> createOrderItems) {
