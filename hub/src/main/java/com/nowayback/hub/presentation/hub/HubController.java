@@ -1,12 +1,14 @@
-package com.nowayback.hub.presentation;
+package com.nowayback.hub.presentation.hub;
 
-import com.nowayback.hub.application.HubService;
-import com.nowayback.hub.application.command.CreateHubCommand;
-import com.nowayback.hub.application.command.UpdateHubCommand;
-import com.nowayback.hub.presentation.request.CreateHubRequest;
-import com.nowayback.hub.presentation.request.UpdateHubRequest;
-import com.nowayback.hub.presentation.response.CreateHubResponse;
-import com.nowayback.hub.presentation.response.UpdateHubResponse;
+import com.nowayback.common.security.annotation.RequireRole;
+import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.hub.application.hub.HubService;
+import com.nowayback.hub.application.hub.command.CreateHubCommand;
+import com.nowayback.hub.application.hub.command.UpdateHubCommand;
+import com.nowayback.hub.presentation.hub.request.CreateHubRequest;
+import com.nowayback.hub.presentation.hub.request.UpdateHubRequest;
+import com.nowayback.hub.presentation.hub.response.CreateHubResponse;
+import com.nowayback.hub.presentation.hub.response.UpdateHubResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ public class HubController {
 
     private final HubService hubService;
 
+    @RequireRole(value = UserRole.MASTER)
     @PostMapping
     public ResponseEntity<CreateHubResponse> create(@Valid @RequestBody CreateHubRequest request) {
         CreateHubCommand createHubCommand = CreateHubCommand.from(request);

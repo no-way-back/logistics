@@ -1,6 +1,6 @@
-package com.nowayback.hub.application.dto;
+package com.nowayback.hub.application.hub.dto;
 
-import com.nowayback.hub.domain.entity.Hub;
+import com.nowayback.hub.domain.hub.entity.Hub;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

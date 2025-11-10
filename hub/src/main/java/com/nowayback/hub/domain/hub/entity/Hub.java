@@ -1,8 +1,8 @@
-package com.nowayback.hub.domain.entity;
+package com.nowayback.hub.domain.hub.entity;
 
 import com.nowayback.common.audit.BaseEntity;
-import com.nowayback.hub.application.command.CreateHubCommand;
-import com.nowayback.hub.application.command.UpdateHubCommand;
+import com.nowayback.hub.application.hub.command.CreateHubCommand;
+import com.nowayback.hub.application.hub.command.UpdateHubCommand;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

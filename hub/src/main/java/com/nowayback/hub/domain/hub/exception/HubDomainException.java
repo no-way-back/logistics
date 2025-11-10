@@ -1,4 +1,4 @@
-package com.nowayback.hub.domain.exception;
+package com.nowayback.hub.domain.hub.exception;
 
 import com.nowayback.common.exception.ErrorCode;
 import com.nowayback.common.exception.GlobalException;

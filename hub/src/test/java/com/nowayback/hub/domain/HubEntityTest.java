@@ -1,8 +1,8 @@
 package com.nowayback.hub.domain;
 
-import com.nowayback.hub.application.command.CreateHubCommand;
-import com.nowayback.hub.application.command.UpdateHubCommand;
-import com.nowayback.hub.domain.entity.Hub;
+import com.nowayback.hub.application.hub.command.CreateHubCommand;
+import com.nowayback.hub.application.hub.command.UpdateHubCommand;
+import com.nowayback.hub.domain.hub.entity.Hub;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

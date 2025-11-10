@@ -1,4 +1,4 @@
-package com.nowayback.hub.presentation.request;
+package com.nowayback.hub.presentation.hub.request;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;

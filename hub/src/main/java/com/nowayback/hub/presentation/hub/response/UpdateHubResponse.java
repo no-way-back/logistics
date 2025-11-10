@@ -1,6 +1,6 @@
-package com.nowayback.hub.presentation.response;
+package com.nowayback.hub.presentation.hub.response;
 
-import com.nowayback.hub.application.dto.UpdateHubResult;
+import com.nowayback.hub.application.hub.dto.UpdateHubResult;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

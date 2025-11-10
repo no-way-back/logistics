@@ -1,7 +1,7 @@
-package com.nowayback.hub.infrastructure;
+package com.nowayback.hub.infrastructure.hub;
 
-import com.nowayback.hub.domain.entity.Hub;
-import com.nowayback.hub.domain.repository.HubRepository;
+import com.nowayback.hub.domain.hub.entity.Hub;
+import com.nowayback.hub.domain.hub.repository.HubRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

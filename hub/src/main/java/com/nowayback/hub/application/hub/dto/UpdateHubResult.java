@@ -1,29 +1,29 @@
-package com.nowayback.hub.application.dto;
+package com.nowayback.hub.application.hub.dto;
 
-import com.nowayback.hub.domain.entity.Hub;
+import com.nowayback.hub.domain.hub.entity.Hub;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record HubResult (
+public record UpdateHubResult (
         UUID hubId,
         String name,
         String address,
         BigDecimal latitude,
         BigDecimal longitude,
-        LocalDateTime createdAt,
-        UUID createdBy
+        LocalDateTime updateAt,
+        UUID updatedBy
 ) {
-    public static HubResult from(Hub hub) {
-        return new HubResult(
+    public static UpdateHubResult of(Hub hub) {
+        return new UpdateHubResult(
                 hub.getId(),
                 hub.getName(),
                 hub.getAddress(),
                 hub.getLatitude(),
                 hub.getLongitude(),
-                hub.getCreatedAt(),
-                hub.getCreatedBy()
+                hub.getUpdatedAt(),
+                hub.getUpdatedBy()
         );
     }
 }

@@ -1,12 +1,13 @@
 package com.nowayback.hub.application;
 
-import com.nowayback.hub.application.command.CreateHubCommand;
-import com.nowayback.hub.application.command.UpdateHubCommand;
-import com.nowayback.hub.application.dto.CreateHubResult;
-import com.nowayback.hub.application.dto.UpdateHubResult;
-import com.nowayback.hub.application.exception.HubApplicationException;
-import com.nowayback.hub.domain.entity.Hub;
-import com.nowayback.hub.domain.repository.HubRepository;
+import com.nowayback.hub.application.hub.HubService;
+import com.nowayback.hub.application.hub.command.CreateHubCommand;
+import com.nowayback.hub.application.hub.command.UpdateHubCommand;
+import com.nowayback.hub.application.hub.dto.CreateHubResult;
+import com.nowayback.hub.application.hub.dto.UpdateHubResult;
+import com.nowayback.hub.application.hub.exception.HubApplicationException;
+import com.nowayback.hub.domain.hub.entity.Hub;
+import com.nowayback.hub.domain.hub.repository.HubRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,6 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.nowayback.hub.application.exception.HubApplicationErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;

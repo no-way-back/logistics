@@ -1,19 +1,19 @@
-package com.nowayback.hub.application;
+package com.nowayback.hub.application.hub;
 
-import com.nowayback.hub.application.command.CreateHubCommand;
-import com.nowayback.hub.application.command.UpdateHubCommand;
-import com.nowayback.hub.application.dto.CreateHubResult;
-import com.nowayback.hub.application.dto.UpdateHubResult;
-import com.nowayback.hub.application.exception.HubApplicationException;
-import com.nowayback.hub.domain.entity.Hub;
-import com.nowayback.hub.domain.repository.HubRepository;
+import com.nowayback.hub.application.hub.command.CreateHubCommand;
+import com.nowayback.hub.application.hub.command.UpdateHubCommand;
+import com.nowayback.hub.application.hub.dto.CreateHubResult;
+import com.nowayback.hub.application.hub.dto.UpdateHubResult;
+import com.nowayback.hub.application.hub.exception.HubApplicationException;
+import com.nowayback.hub.domain.hub.entity.Hub;
+import com.nowayback.hub.domain.hub.repository.HubRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.nowayback.hub.application.exception.HubApplicationErrorCode.*;
+import static com.nowayback.hub.application.hub.exception.HubApplicationErrorCode.*;
 
 @Service
 @RequiredArgsConstructor

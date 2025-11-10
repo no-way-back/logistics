@@ -1,6 +1,6 @@
-package com.nowayback.hub.domain.repository;
+package com.nowayback.hub.domain.hub.repository;
 
-import com.nowayback.hub.domain.entity.Hub;
+import com.nowayback.hub.domain.hub.entity.Hub;
 
 import java.util.Optional;
 import java.util.UUID;

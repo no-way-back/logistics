@@ -1,6 +1,6 @@
-package com.nowayback.hub.application.command;
+package com.nowayback.hub.application.hub.command;
 
-import com.nowayback.hub.presentation.request.CreateHubRequest;
+import com.nowayback.hub.presentation.hub.request.CreateHubRequest;
 
 import java.math.BigDecimal;
 

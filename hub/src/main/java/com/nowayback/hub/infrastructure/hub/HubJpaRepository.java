@@ -1,6 +1,6 @@
-package com.nowayback.hub.infrastructure;
+package com.nowayback.hub.infrastructure.hub;
 
-import com.nowayback.hub.domain.entity.Hub;
+import com.nowayback.hub.domain.hub.entity.Hub;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
