@@ -1,6 +1,5 @@
 package com.nowayback.user.domain.entity;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.nowayback.common.audit.BaseEntity;
@@ -16,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.user.application.exception.UserApplicationException;
 import com.nowayback.user.domain.exception.UserDomainErrorCode;
 import com.nowayback.user.domain.exception.UserDomainException;
 
@@ -76,6 +76,12 @@ public class User extends BaseEntity {
 	public void validateCanLogin() {
 		if (this.status != UserStatus.APPROVED) {
 			throw new UserDomainException(UserDomainErrorCode.INVALID_USER_STATUS);
+		}
+	}
+
+	public void validateApprovalStatus(UserStatus status) {
+		if (status != UserStatus.APPROVED && status != UserStatus.REJECTED) {
+			throw new UserApplicationException(UserDomainErrorCode.INVALID_APPROVAL_STATUS);
 		}
 	}
 }

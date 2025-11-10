@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -100,5 +101,13 @@ public class UserController {
 			: "회원가입이 거절되었습니다.";
 
 		return ResponseEntity.ok(UserResponse.withMessage(result, message));
+	}
+
+	@GetMapping("/me")
+	public ResponseEntity<UserResponse> getMyInfo(
+		@CurrentUser AuthUser authUser
+	) {
+		UserResult result = userService.getMyInfo(authUser.userId());
+		return ResponseEntity.ok(UserResponse.from(result));
 	}
 }

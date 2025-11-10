@@ -56,9 +56,9 @@ public class UserService {
 
 	@Transactional
 	public UserResult approveOrRejectSignup(ApprovalCommand command) {
-		validateApprovalStatus(command.status());
-
 		User user = findActiveUserById(command.userId());
+
+		user.validateApprovalStatus(command.status());
 
 		if (command.status() == UserStatus.APPROVED) {
 			user.approveSignup();
@@ -68,6 +68,11 @@ public class UserService {
 
 		User savedUser = userRepository.save(user);
 		return UserResult.from(savedUser);
+	}
+
+	public UserResult getMyInfo(UUID uuid) {
+		User user = findActiveUserById(uuid);
+		return UserResult.from(user);
 	}
 
 	// ========== Private Helper Methods ==========
@@ -91,12 +96,6 @@ public class UserService {
 	private void validatePassword(String rawPassword, String encodedPassword) {
 		if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
 			throw new UserApplicationException(UserApplicationErrorCode.INVALID_PASSWORD);
-		}
-	}
-
-	private void validateApprovalStatus(UserStatus status) {
-		if (status != UserStatus.APPROVED && status != UserStatus.REJECTED) {
-			throw new UserApplicationException(UserApplicationErrorCode.INVALID_APPROVAL_STATUS);
 		}
 	}
 }
