@@ -17,7 +17,10 @@ public enum OrderDomainErrorCode implements ErrorCode {
     MISSING_ORDER_ITEM_NAME("ORDER1009", "주문 상품 이름은 null이거나 비어 있을 수 없습니다.", HttpStatus.BAD_REQUEST),
     INVALID_ORDER_ITEM_PRICE("ORDER1010", "상품 가격은 0보다 커야 합니다.", HttpStatus.BAD_REQUEST),
     INVALID_STATUS_TRANSITION("ORDER1011", "변경할 수 없는 상태 전이입니다.", HttpStatus.BAD_REQUEST),
-    INVALID_CANCEL_STATUS("ORDER1012", "취소가 가능한 상태가 아닙니다.", HttpStatus.BAD_REQUEST);
+    INVALID_CANCEL_STATUS("ORDER1012", "취소가 가능한 상태가 아닙니다.", HttpStatus.BAD_REQUEST),
+    UNAUTHORIZED_ORDER_ACCESS("ORDER1013", "해당 주문에 권한이 없습니다.", HttpStatus.FORBIDDEN),
+    NULL_CUSTOMER_ID("ORDER1014", "고객 ID는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
+    ;
 
     private final String code;
     private final String message;

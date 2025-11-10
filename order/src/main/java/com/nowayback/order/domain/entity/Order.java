@@ -4,6 +4,7 @@ import static com.nowayback.order.domain.util.DomainPreconditions.notNull;
 
 import com.nowayback.common.audit.BaseEntity;
 import com.nowayback.order.domain.exception.OrderDomainErrorCode;
+import com.nowayback.order.domain.exception.OrderDomainException;
 import com.nowayback.order.domain.policy.OrderStatusTransitionPolicy;
 import com.nowayback.order.domain.vo.CustomerId;
 import com.nowayback.order.domain.vo.OrderItems;
@@ -118,7 +119,7 @@ public class Order extends BaseEntity {
         ReceiverCompanyId receiverCompanyId,
         ReceiverCompanySnapshot receiver,
         OrderItems orderItems) {
-
+        notNull(customerId, OrderDomainErrorCode.NULL_CUSTOMER_ID);
         validateSupplierAndReceiver(supplierCompanyId, supplier, receiverCompanyId, receiver);
         validateOrderItems(orderItems);
 
@@ -141,7 +142,8 @@ public class Order extends BaseEntity {
 
         this.status = OrderStatus.CREATED;
     }
-    public void cancel() {
+    public void cancel(CustomerId requesterId) {
+        validateOwner(requesterId);
         OrderStatusTransitionPolicy.assertCanCancel(this, OrderStatus.CANCELED);
 
         this.status = OrderStatus.CANCELED;
@@ -167,5 +169,10 @@ public class Order extends BaseEntity {
         orderItems.validate();
     }
 
+    private void validateOwner(CustomerId requesterId) {
+        if (!this.customerId.equals(requesterId)) {
+            throw new OrderDomainException(OrderDomainErrorCode.UNAUTHORIZED_ORDER_ACCESS);
+        }
+    }
 
 }
