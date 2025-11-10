@@ -3,8 +3,11 @@ package com.nowayback.delivery.fixture;
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
 import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
 import com.nowayback.delivery.application.command.UpdateDeliveryStatusCommand;
+import com.nowayback.delivery.application.dto.DeliveryResult;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.vo.*;
+import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;
+import com.nowayback.delivery.presentation.dto.response.DeliveryResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -98,6 +101,31 @@ public class DeliveryFixture {
     public static final UpdateDeliveryStatusCommand UPDATE_DELIVERY_STATUS_COMMAND = new UpdateDeliveryStatusCommand(
             DeliveryStatus.TRANSIT_BETWEEN_HUBS
     );
+
+    /* delivery result */
+    public static final DeliveryResult DELIVERY_RESULT = DeliveryResult.from(createDelivery());
+
+    /* delivery request dto */
+    public static final CreateDeliveryRequest VALID_CREATE_DELIVERY_REQUEST = new CreateDeliveryRequest(
+            ORDER_UUID,
+            SOURCE_HUB_UUID,
+            DESTINATION_HUB_UUID,
+            DELIVERY_ADDRESS,
+            RECIPIENT_NAME,
+            RECIPIENT_SLACK_ID
+    );
+
+    public static final CreateDeliveryRequest INVALID_CREATE_DELIVERY_REQUEST = new CreateDeliveryRequest(
+            null,
+            SOURCE_HUB_UUID,
+            DESTINATION_HUB_UUID,
+            "",
+            "",
+            RECIPIENT_SLACK_ID
+    );
+
+    /* delivery response dto */
+    public static final DeliveryResponse DELIVERY_RESPONSE = DeliveryResponse.from(DELIVERY_RESULT);
 
     private static void setPrivateField(Object target, String fieldName, Object value) {
         try {
