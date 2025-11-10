@@ -1,5 +1,6 @@
 package com.nowayback.order.domain.entity;
 
+import static com.nowayback.order.fixture.OrderFixture.CUSTOMER_ID;
 import static com.nowayback.order.fixture.OrderFixture.ORDER_ITEMS;
 import static com.nowayback.order.fixture.OrderFixture.RECEIVER_COMPANY_ID;
 import static com.nowayback.order.fixture.OrderFixture.RECEIVER_COMPANY_SNAPSHOT;
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.nowayback.order.domain.exception.OrderDomainException;
 import com.nowayback.order.domain.policy.OrderStatusTransitionPolicy;
+import com.nowayback.order.domain.vo.CustomerId;
 import com.nowayback.order.domain.vo.OrderItems;
 import com.nowayback.order.domain.vo.OrderStatus;
 import com.nowayback.order.domain.vo.ProductId;
@@ -39,6 +41,7 @@ class OrderTest {
     @DisplayName("모든 필드가 정상일 경우 주문 생성에 성공한다.")
     void createOrder_success() {
         // given
+        CustomerId customerId = CUSTOMER_ID;
         SupplierCompanyId supplierId = SUPPLIER_COMPANY_ID;
         SupplierCompanySnapshot supplier = SUPPLIER_COMPANY_SNAPSHOT;
         ReceiverCompanyId receiverId = RECEIVER_COMPANY_ID;
@@ -47,7 +50,7 @@ class OrderTest {
         String request = REQUEST;
 
         // when
-        Order order = Order.create(request, supplierId, supplier, receiverId, receiver, orderItems);
+        Order order = Order.create(customerId, request, supplierId, supplier, receiverId, receiver, orderItems);
 
         // then
         assertThat(order.getRequest()).isEqualTo(request);
@@ -63,6 +66,7 @@ class OrderTest {
         // given
         // when
         Order order = Order.create(
+            CUSTOMER_ID,
             REQUEST,
             SUPPLIER_COMPANY_ID,
             SUPPLIER_COMPANY_SNAPSHOT,
@@ -86,6 +90,7 @@ class OrderTest {
         );
         // when
         Order order = Order.create(
+            CUSTOMER_ID,
             REQUEST,
             SUPPLIER_COMPANY_ID,
             SUPPLIER_COMPANY_SNAPSHOT,
@@ -106,6 +111,7 @@ class OrderTest {
         // when / then
         assertThatThrownBy(() ->
             Order.create(
+                CUSTOMER_ID,
                 REQUEST,
                 SUPPLIER_COMPANY_ID,
                 SUPPLIER_COMPANY_SNAPSHOT,
@@ -126,6 +132,7 @@ class OrderTest {
             // when / then
             assertThatThrownBy(() ->
                 Order.create(
+                    CUSTOMER_ID,
                     REQUEST,
                     null,
                     SUPPLIER_COMPANY_SNAPSHOT,
@@ -142,6 +149,7 @@ class OrderTest {
             // when / then
             assertThatThrownBy(() ->
                 Order.create(
+                    CUSTOMER_ID,
                     REQUEST,
                     SUPPLIER_COMPANY_ID,
                     null,
@@ -158,6 +166,7 @@ class OrderTest {
             // when / then
             assertThatThrownBy(() ->
                 Order.create(
+                    CUSTOMER_ID,
                     REQUEST,
                     SUPPLIER_COMPANY_ID,
                     SUPPLIER_COMPANY_SNAPSHOT,
@@ -174,6 +183,7 @@ class OrderTest {
             // when / then
             assertThatThrownBy(() ->
                 Order.create(
+                    CUSTOMER_ID,
                     REQUEST,
                     SUPPLIER_COMPANY_ID,
                     SUPPLIER_COMPANY_SNAPSHOT,

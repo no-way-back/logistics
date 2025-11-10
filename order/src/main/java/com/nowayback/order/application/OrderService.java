@@ -7,6 +7,7 @@ import com.nowayback.order.application.client.request.DecreaseStockRequest;
 import com.nowayback.order.application.client.request.DecreaseStockRequest.DecreaseStockItem;
 import com.nowayback.order.application.client.response.CreateDeliveryResponse;
 import com.nowayback.order.application.client.response.DecreaseStockResponse;
+import com.nowayback.order.application.command.CancelOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand.CreateOrderItem;
 import com.nowayback.order.application.dto.OrderCreateResult;
@@ -44,6 +45,19 @@ public class OrderService {
         return OrderCreateResult.of(order.getId());
     }
 
+    @Transactional
+    public void cancelOrder(CancelOrderCommand command) {
+        UUID orderId = command.orderId();
+        Order order = findOrderOrThrow(orderId);
+
+        order.cancel();
+    }
+
+    /**
+     * product-service에 재고 차감 요청
+     *
+     * @param createOrderItems
+     */
     private void decreaseStock(List<CreateOrderItem> createOrderItems) {
         DecreaseStockResponse decreaseStockResponse = productClient.decreaseStocks(
             DecreaseStockRequest.of(
@@ -58,6 +72,11 @@ public class OrderService {
         }
     }
 
+    /**
+     * delivery-service에 배송 생성 요청
+     *
+     * @param order
+     */
     private void createDelivery(Order order) {
         // TODO: hub id 추가 필요
         String fullAddress = order.getReceiverCompanySnapshot().getAddress() + " "
@@ -77,5 +96,12 @@ public class OrderService {
         if (!response.success()) {
             throw new OrderApplicationException(OrderApplicationErrorCode.DELIVERY_CREATION_FAILED);
         }
+    }
+
+    private Order findOrderOrThrow(UUID orderId) {
+        return orderRepository.findById(orderId).orElseThrow(() -> {
+                throw new OrderApplicationException(OrderApplicationErrorCode.DELIVERY_CREATION_FAILED);
+            }
+        );
     }
 }

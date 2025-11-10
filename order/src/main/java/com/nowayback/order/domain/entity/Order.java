@@ -5,6 +5,7 @@ import static com.nowayback.order.domain.util.DomainPreconditions.notNull;
 import com.nowayback.common.audit.BaseEntity;
 import com.nowayback.order.domain.exception.OrderDomainErrorCode;
 import com.nowayback.order.domain.policy.OrderStatusTransitionPolicy;
+import com.nowayback.order.domain.vo.CustomerId;
 import com.nowayback.order.domain.vo.OrderItems;
 import com.nowayback.order.domain.vo.OrderStatus;
 import com.nowayback.order.domain.vo.ReceiverCompanyId;
@@ -38,6 +39,10 @@ public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "customer_id"))
+    private CustomerId customerId;
 
     @Embedded
     @AttributeOverride(name = "id", column = @Column(name = "supplier_id"))
@@ -82,6 +87,7 @@ public class Order extends BaseEntity {
     private OrderItems orderItems;
 
     private Order(
+        CustomerId customerId,
         SupplierCompanyId supplierCompanyId,
         SupplierCompanySnapshot supplierCompanySnapshot,
         ReceiverCompanyId receiverCompanyId,
@@ -92,6 +98,7 @@ public class Order extends BaseEntity {
         String request,
         OrderItems orderItems
     ) {
+        this.customerId = customerId;
         this.supplierCompanyId = supplierCompanyId;
         this.supplierCompanySnapshot = supplierCompanySnapshot;
         this.receiverCompanyId = receiverCompanyId;
@@ -104,6 +111,7 @@ public class Order extends BaseEntity {
     }
 
     public static Order create(
+        CustomerId customerId,
         String request,
         SupplierCompanyId supplierCompanyId,
         SupplierCompanySnapshot supplier,
@@ -115,6 +123,7 @@ public class Order extends BaseEntity {
         validateOrderItems(orderItems);
 
         return new Order(
+            customerId,
             supplierCompanyId,
             supplier,
             receiverCompanyId,

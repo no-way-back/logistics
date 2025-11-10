@@ -24,26 +24,6 @@ public record OrderCreateRequest(
     @NotEmpty(message = "주문 상품(orderItems)은 필수입니다.")
     List<OrderItemRequest> orderItems
 ) {
-
-    public CreateOrderCommand toCreateOrderCommand() {
-        return CreateOrderCommand.of(
-            supplier.supplierCompanyId(),
-            supplier.name(),
-            supplier.address(),
-            supplier.detailAddress(),
-            supplier.contact(),
-            receiver.receiverCompanyId(),
-            receiver.name(),
-            receiver.address(),
-            receiver.detailAddress(),
-            receiver.contact(),
-            request(),
-            orderItems.stream()
-                .map(OrderItemRequest::toCreateOrderItem)
-                .toList()
-        );
-    }
-
     public record SupplierRequest(
         @NotNull(message = "supplierCompanyId는 필수입니다.")
         UUID supplierCompanyId,
