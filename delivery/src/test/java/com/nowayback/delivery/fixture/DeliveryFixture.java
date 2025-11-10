@@ -55,6 +55,18 @@ public class DeliveryFixture {
         );
     }
 
+    public static Delivery createDelivery(OrderId orderId, HubId sourceHubId, HubId destinationHubId, DeliveryStatus status) {
+        Delivery delivery = Delivery.create(
+                orderId,
+                sourceHubId,
+                destinationHubId,
+                RECIPIENT_INFO,
+                COMPANY_DELIVERY_MANAGER_ID
+        );
+        setPrivateField(delivery, "status", status);
+        return delivery;
+    }
+
     public static Delivery createDeliveryWithStatus(DeliveryStatus status) {
         Delivery delivery = createDelivery();
         setPrivateField(delivery, "status", status);
