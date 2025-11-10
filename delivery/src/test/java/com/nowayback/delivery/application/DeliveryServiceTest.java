@@ -4,6 +4,7 @@ import com.nowayback.delivery.application.command.CreateDeliveryCommand;
 import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
 import com.nowayback.delivery.application.command.UpdateDeliveryStatusCommand;
 import com.nowayback.delivery.application.dto.DeliveryResult;
+import com.nowayback.delivery.application.exception.DeliveryApplicationErrorCode;
 import com.nowayback.delivery.application.exception.DeliveryApplicationException;
 import com.nowayback.delivery.application.service.HubClient;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
@@ -83,9 +84,9 @@ class DeliveryServiceTest {
 
             /* when */
             /* then */
-            assertThatThrownBy(() -> {
-                deliveryService.createDelivery(CREATE_DELIVERY_COMMAND);
-            }).isInstanceOf(DeliveryApplicationException.class);
+            assertThatThrownBy(() -> deliveryService.createDelivery(CREATE_DELIVERY_COMMAND))
+                    .isInstanceOf(DeliveryApplicationException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", DeliveryApplicationErrorCode.DUPLICATE_ORDER_ID);
         }
 
         @Test
@@ -100,9 +101,9 @@ class DeliveryServiceTest {
 
             /* when */
             /* then */
-            assertThatThrownBy(() -> {
-                deliveryService.createDelivery(command);
-            }).isInstanceOf(DeliveryApplicationException.class);
+            assertThatThrownBy(() -> deliveryService.createDelivery(command))
+                    .isInstanceOf(DeliveryApplicationException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", DeliveryApplicationErrorCode.NON_EXISTENT_HUB);
         }
 
 
@@ -120,9 +121,9 @@ class DeliveryServiceTest {
 
             /* when */
             /* then */
-            assertThatThrownBy(() -> {
-                deliveryService.createDelivery(command);
-            }).isInstanceOf(DeliveryApplicationException.class);
+            assertThatThrownBy(() -> deliveryService.createDelivery(command))
+                    .isInstanceOf(DeliveryApplicationException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", DeliveryApplicationErrorCode.NON_EXISTENT_HUB);
         }
     }
 
@@ -162,9 +163,9 @@ class DeliveryServiceTest {
 
             /* when */
             /* then */
-            assertThatThrownBy(() -> {
-                deliveryService.getDelivery(deliveryId);
-            }).isInstanceOf(DeliveryApplicationException.class);
+            assertThatThrownBy(() -> deliveryService.getDelivery(deliveryId))
+                    .isInstanceOf(DeliveryApplicationException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", DeliveryApplicationErrorCode.NOT_FOUND_DELIVERY);
         }
     }
 
@@ -220,9 +221,9 @@ class DeliveryServiceTest {
 
             /* when */
             /* then */
-            assertThatThrownBy(() -> {
-                deliveryService.updateRecipientInfo(DELIVERY_UUID, UPDATE_DELIVERY_RECIPIENT_INFO_COMMAND);
-            }).isInstanceOf(DeliveryApplicationException.class);
+            assertThatThrownBy(() -> deliveryService.updateRecipientInfo(DELIVERY_UUID, UPDATE_DELIVERY_RECIPIENT_INFO_COMMAND))
+                    .isInstanceOf(DeliveryApplicationException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", DeliveryApplicationErrorCode.NOT_FOUND_DELIVERY);
         }
     }
 
@@ -253,9 +254,9 @@ class DeliveryServiceTest {
 
             /* when */
             /* then */
-            assertThatThrownBy(() -> {
-                deliveryService.updateDeliveryStatus(DELIVERY_UUID, UPDATE_DELIVERY_STATUS_COMMAND);
-            }).isInstanceOf(DeliveryApplicationException.class);
+            assertThatThrownBy(() -> deliveryService.updateDeliveryStatus(DELIVERY_UUID, UPDATE_DELIVERY_STATUS_COMMAND))
+                    .isInstanceOf(DeliveryApplicationException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", DeliveryApplicationErrorCode.NOT_FOUND_DELIVERY);
         }
     }
 
@@ -284,9 +285,9 @@ class DeliveryServiceTest {
 
             /* when */
             /* then */
-            assertThatThrownBy(() -> {
-                deliveryService.deleteDelivery(DELIVERY_UUID);
-            }).isInstanceOf(DeliveryApplicationException.class);
+            assertThatThrownBy(() -> deliveryService.deleteDelivery(DELIVERY_UUID))
+                    .isInstanceOf(DeliveryApplicationException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", DeliveryApplicationErrorCode.NOT_FOUND_DELIVERY);
         }
     }
 }
