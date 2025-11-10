@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: user-service
+    name: order-service
 
   datasource:
     url: ${USER_SPRING_DATASOURCE_URL}
@@ -20,7 +20,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        default_schema: user_service
+        default_schema: order_service
     show-sql: false
 
 eureka:
@@ -39,4 +39,4 @@ management:
 logging:
   level:
     root: WARN
-    com.logistics.user: INFO
+    com.logistics.order: INFO

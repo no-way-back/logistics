@@ -32,7 +32,7 @@ COPY --from=build /app/order/build/libs/*.jar app.jar
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
   CMD curl -sf http://localhost:8081/actuator/health || exit 1
 
-EXPOSE 8081
+EXPOSE 18085
 
 
 ENTRYPOINT ["java","-Xms512m","-Xmx1024m","-jar","app.jar"]
