@@ -7,6 +7,7 @@ import static com.nowayback.order.fixture.OrderFixture.RECEIVER_COMPANY_SNAPSHOT
 import static com.nowayback.order.fixture.OrderFixture.REQUEST;
 import static com.nowayback.order.fixture.OrderFixture.SUPPLIER_COMPANY_ID;
 import static com.nowayback.order.fixture.OrderFixture.SUPPLIER_COMPANY_SNAPSHOT;
+import static com.nowayback.order.fixture.OrderFixture.createOrder;
 import static com.nowayback.order.fixture.OrderFixture.createOrderWithStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -238,7 +239,7 @@ class OrderTest {
             Order order = createOrderWithStatus(status);
 
             // when
-            order.cancel();
+            order.cancel(CUSTOMER_ID);
 
             //then
             assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELED);
@@ -257,12 +258,24 @@ class OrderTest {
 
             // when / then
             assertThatThrownBy(() -> {
-                order.cancel();
+                order.cancel(CUSTOMER_ID);
             }).isInstanceOf(OrderDomainException.class);
         }
 
         static Stream<OrderStatus> cancelNotAllowedStatus() {
             return Stream.of(OrderStatus.DELIVERING, OrderStatus.COMPLETED, OrderStatus.CANCELED);
+        }
+
+        @Test
+        @DisplayName("주문 취소시 CUSTOMER_ID가 다르면 예외가 발생한다.")
+        void cancelOrder_whenNotOwner_shouldThrow() {
+            // given
+            Order order = createOrder();
+
+            // when / then
+            assertThatThrownBy(() -> {
+                order.cancel(CustomerId.of(UUID.randomUUID()));
+            }).isInstanceOf(OrderDomainException.class);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.nowayback.order.fixture;
 
+import com.nowayback.order.application.command.CancelOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand.CreateOrderItem;
 import com.nowayback.order.domain.entity.Order;
@@ -115,6 +116,10 @@ public class OrderFixture {
             REQUEST,
             CREATE_ORDER_ITEMS
         );
+    }
+
+    public static CancelOrderCommand createCancelOrderCommand() {
+        return CancelOrderCommand.of(CUSTOMER_ID, UUID.randomUUID());
     }
 
     private static void setPrivateField(Object target, String fieldName, Object value) {
