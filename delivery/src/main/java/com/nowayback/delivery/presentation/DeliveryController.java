@@ -4,6 +4,7 @@ import com.nowayback.delivery.application.DeliveryService;
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
 import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;
 import com.nowayback.delivery.presentation.dto.response.DeliveryResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class DeliveryController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public DeliveryResponse createDelivery(
-            @RequestBody CreateDeliveryRequest request
+            @Valid @RequestBody CreateDeliveryRequest request
     ) {
         CreateDeliveryCommand command = CreateDeliveryCommand.from(request);
 

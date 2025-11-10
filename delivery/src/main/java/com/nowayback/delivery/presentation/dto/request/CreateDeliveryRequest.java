@@ -1,15 +1,16 @@
 package com.nowayback.delivery.presentation.dto.request;
 
-import com.nowayback.delivery.application.command.CreateDeliveryCommand;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
 public record CreateDeliveryRequest (
-        UUID orderId,
-        UUID sourceHubId,
-        UUID destinationHubId,
-        String deliveryAddress,
-        String recipientName,
-        String recipientSlackId
+        @NotNull UUID orderId,
+        @NotNull UUID sourceHubId,
+        @NotNull UUID destinationHubId,
+        @NotBlank String deliveryAddress,
+        @NotBlank String recipientName,
+        @NotBlank String recipientSlackId
 ) {
 }
