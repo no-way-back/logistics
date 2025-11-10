@@ -193,4 +193,19 @@ class DeliveryControllerTest {
                     .andExpect(status().isBadRequest());
         }
     }
+
+    @Nested
+    @DisplayName("배송 삭제 API")
+    class DeleteDelivery {
+
+        @Test
+        @DisplayName("배송 삭제 요청이 들어오면 배송을 삭제한다.")
+        void deleteDelivery_ValidRequest_Success() throws Exception {
+            /* given */
+            /* when */
+            /* then */
+            mockMvc.perform(delete(BASE_URL + "/" + DELIVERY_UUID))
+                    .andExpect(status().isNoContent());
+        }
+    }
 }
