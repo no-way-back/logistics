@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static com.nowayback.delivery.fixture.DeliveryFixture.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -70,6 +71,26 @@ class DeliveryControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("배송 단일 조회 API")
+    class GetDelivery {
+
+        @Test
+        @DisplayName("유효한 요청이 들어오면 배송을 조회한다.")
+        void getDelivery_ExistingUuid_Success() throws Exception {
+            /* given */
+            DeliveryResult result = DELIVERY_RESULT;
+
+            given(deliveryService.getDelivery(DELIVERY_UUID)).willReturn(result);
+
+            /* when */
+            /* then */
+            mockMvc.perform(get(BASE_URL + "/" + DELIVERY_UUID))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.orderId").value(result.orderId().toString()));
         }
     }
 }
