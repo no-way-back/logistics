@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/deliveries")
 @RequiredArgsConstructor
@@ -24,5 +26,12 @@ public class DeliveryController {
         CreateDeliveryCommand command = CreateDeliveryCommand.from(request);
 
         return DeliveryResponse.from(deliveryService.createDelivery(command));
+    }
+
+    @GetMapping("/{deliveryId}")
+    public DeliveryResponse getDelivery(
+            @PathVariable UUID deliveryId
+    ) {
+        return DeliveryResponse.from(deliveryService.getDelivery(deliveryId));
     }
 }
