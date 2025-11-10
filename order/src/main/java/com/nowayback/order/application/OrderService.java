@@ -15,6 +15,7 @@ import com.nowayback.order.application.exception.OrderApplicationErrorCode;
 import com.nowayback.order.application.exception.OrderApplicationException;
 import com.nowayback.order.domain.entity.Order;
 import com.nowayback.order.domain.repository.OrderRepository;
+import com.nowayback.order.domain.vo.CustomerId;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -47,10 +48,9 @@ public class OrderService {
 
     @Transactional
     public void cancelOrder(CancelOrderCommand command) {
-        UUID orderId = command.orderId();
-        Order order = findOrderOrThrow(orderId);
+        Order order = findOrderOrThrow(command.orderId());
 
-        order.cancel();
+        order.cancel(command.customerId());
     }
 
     /**
@@ -100,7 +100,7 @@ public class OrderService {
 
     private Order findOrderOrThrow(UUID orderId) {
         return orderRepository.findById(orderId).orElseThrow(() -> {
-                throw new OrderApplicationException(OrderApplicationErrorCode.DELIVERY_CREATION_FAILED);
+                throw new OrderApplicationException(OrderApplicationErrorCode.ORDER_NOT_FOUND);
             }
         );
     }
