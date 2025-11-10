@@ -188,11 +188,8 @@ class DeliveryRepositoryTest {
             entityManager.persist(deletedDelivery);
             entityManager.flush();
 
-            int page = 0;
-            int size = 10;
-
             /* when */
-            Page<Delivery> result = deliveryRepository.searchDeliveries(null, sourceHubId, destinationHubId, DeliveryStatus.WAITING_AT_HUB, page, size);
+            Page<Delivery> result = deliveryRepository.searchDeliveries(null, sourceHubId, destinationHubId, DeliveryStatus.WAITING_AT_HUB, PAGE, SIZE);
 
             /* then */
             assertThat(result.getContent()).hasSize(2);
@@ -215,7 +212,7 @@ class DeliveryRepositoryTest {
 
             HubId sourceHubId = SOURCE_HUB_ID;
             HubId destinationHubId = DESTINATION_HUB_ID;
-            DeliveryStatus status = DeliveryStatus.WAITING_AT_HUB;
+            DeliveryStatus status = DELIVERY_STATUS;
 
             Delivery delivery1 = createDelivery(orderId1, sourceHubId, destinationHubId, status);
             Delivery delivery2 = createDelivery(orderId2, sourceHubId, destinationHubId, status);
@@ -224,13 +221,10 @@ class DeliveryRepositoryTest {
             entityManager.persist(delivery1);
             entityManager.persist(delivery2);
             entityManager.persist(delivery3);
-            entityManager.flush();
-
-            int page = 0;
-            int size = 10;
+            entityManager.flush();;
 
             /* when */
-            Page<Delivery> result = deliveryRepository.searchDeliveries(null, null, null, null, page, size);
+            Page<Delivery> result = deliveryRepository.searchDeliveries(null, null, null, null, PAGE, SIZE);
 
             /* then */
             assertThat(result.getContent()).hasSize(3);
@@ -241,11 +235,8 @@ class DeliveryRepositoryTest {
         @DisplayName("조건에 맞는 배송이 없으면 빈 페이지를 반환한다.")
         void searchDeliveries_shouldReturnEmptyPageIfNoMatchingDeliveries() {
             /* given */
-            int page = 0;
-            int size = 10;
-
             /* when */
-            Page<Delivery> result = deliveryRepository.searchDeliveries(ORDER_ID, null, null, null, page, size);
+            Page<Delivery> result = deliveryRepository.searchDeliveries(ORDER_ID, null, null, null, PAGE, SIZE);
 
             /* then */
             assertThat(result.getContent()).isEmpty();
