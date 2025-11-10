@@ -8,9 +8,11 @@
         - Red: 실패하는 명세 작성 시, 기능의 기대 동작 방식에 대한 명확한 시나리오 정의 가능
         - Green: 테스트를 통과시키는 최소한의 코드만 작성하여 불필요한 과잉 설계를 피할 수 있음
         - Refactor: 테스트 코드를 통한 검증을 수행하여 버그 걱정 없이 코드를 개선하고 품질을 높일 수 있음
+
 - 느낀점
-    Given-When-Then 구조를 적용함으로써 구현 전에 무엇을 만들지 정확히 이해하고, 설계에 집중할 수 있었습니다.
-    테스트하기 쉬운 구조와 명확한 관심사 분리 원칙을 자연스럽게 적용하여 좋은 설계 방식을 익힐 수 있었습니다.
+  
+  Given-When-Then 구조를 적용함으로써 구현 전에 무엇을 만들지 정확히 이해하고, 설계에 집중할 수 있었습니다.
+  테스트하기 쉬운 구조와 명확한 관심사 분리 원칙을 자연스럽게 적용하여 좋은 설계 방식을 익힐 수 있었습니다.
 
 - 관련 코드
   - [OrderTest](https://github.com/no-way-back/logistics/blob/feat/tdd-practice/order/src/test/java/com/nowayback/order/domain/entity/OrderTest.java)
@@ -27,11 +29,13 @@
     - Mock의 활용과 인식 변화
         성공/실패 시나리오를 각각 설정하여 예외 처리와 롤백 동작을 검증
         도메인과 서비스의 경계를 명확히 구분할 수 있음
+
 - 느낀점
-    서비스 레이어에 TDD를 적용함으로써, 구현 전 기능의 의도를 구체적으로 이해할 수 있었으며, 테스트가 서비스 설계 방향을 자연스럽게 이끌며 개발 표율이 향상될 수 있었습니다.
-    또한 Mockito를 활용하여 실제 API나 DB 없이 테스트가 가능해져 로직 흐름에 집중할 수 있었습니다. 이를 통해 테스트 안정성과 실행 속도를 향상할 수 있었습니다.
-    Mock의 활용을 통해 테스트를 단순화한다는 의미를 체감할 수 있었습니다.
-    또한 특정 로직이 도메인의 책임인지, 서비스의 책임인지를 구분할 수 있게 되었습니다. 코드 구조가 명확해지고 유지보수성을 향상시킬 수 있었습니다.
+
+  서비스 레이어에 TDD를 적용함으로써, 구현 전 기능의 의도를 구체적으로 이해할 수 있었으며, 테스트가 서비스 설계 방향을 자연스럽게 이끌며 개발 표율이 향상될 수 있었습니다.
+  또한 Mockito를 활용하여 실제 API나 DB 없이 테스트가 가능해져 로직 흐름에 집중할 수 있었습니다. 이를 통해 테스트 안정성과 실행 속도를 향상할 수 있었습니다.
+  Mock의 활용을 통해 테스트를 단순화한다는 의미를 체감할 수 있었습니다.
+  또한 특정 로직이 도메인의 책임인지, 서비스의 책임인지를 구분할 수 있게 되었습니다. 코드 구조가 명확해지고 유지보수성을 향상시킬 수 있었습니다.
     
 - 관련 코드
   - [OrderServiceTest](https://github.com/no-way-back/logistics/blob/feat/tdd-practice/order/src/test/java/com/nowayback/order/application/OrderServiceTest.java)
@@ -40,8 +44,10 @@
 
 ### 📎 Step 3: Repository 테스트
 - 학습 내용
+
     `Testcontainers` 적용을 통한 실제 환경과 유사한 테스트 구축이 가능
 - 느낀점
+
     `Testcontainers`를 적용함으로써 테스트 데이터를 격리하고, Repository 테스트를 통해 실제 DB에서 의도대로 동작하는지 확인할 수 있었습니다.
 - 관련 코드
   - [OrderRepositoryTest](https://github.com/no-way-back/logistics/blob/feat/tdd-practice/order/src/test/java/com/nowayback/order/domain/repository/OrderRepositoryTest.java)
@@ -49,8 +55,10 @@
 
 ### 📎 Step 4: API 테스트와 통합 테스트
 - 학습 내용
+
     API 테스트를 통해 HTTP 요청/응답 상태와 JSON 응답을 검증
 - 느낀점
+
     API 테스트를 작성함으로써, API 명세서에 작성된 내용을 명확히 보장할 수 있었습니다. 이를 통해 클라이언트 요청에 대한 오류를 사전에 방지할 수 있었습니다.
 - 관련 코드
   - [DeliveryControllerTest](https://github.com/no-way-back/logistics/blob/feat/tdd-practice/delivery/src/test/java/com/nowayback/delivery/presentation/DeliveryControllerTest.java)
@@ -84,8 +92,9 @@
         여러 테스트에서 반복적으로 사용되는 테스트 데이터를 재사용하도록 Fixture 패턴 적용
 
 - 느낀점
-    `@ParameterizedTest`를 활용함으로써 반복적인 테스트 코드를 줄여 깔끔한 구조를 유지할 수 있었으며, 여러 케이스에 대한 테스트를 수행하여 테스트 커버리지를 향상시킬 수 있었습니다.
-    Fixture 패턴을 적용하게 되어, 테스트 데이터 변경 시 Fixture 내의 값만을 변경하여 유지보수가 편리했습니다. 또한 공통적인 데이터 선언이 감소해 테스트 할 기능 자체에 집중할 수 있었습니다.
+  
+  `@ParameterizedTest`를 활용함으로써 반복적인 테스트 코드를 줄여 깔끔한 구조를 유지할 수 있었으며, 여러 케이스에 대한 테스트를 수행하여 테스트 커버리지를 향상시킬 수 있었습니다.
+  Fixture 패턴을 적용하게 되어, 테스트 데이터 변경 시 Fixture 내의 값만을 변경하여 유지보수가 편리했습니다. 또한 공통적인 데이터 선언이 감소해 테스트 할 기능 자체에 집중할 수 있었습니다.
 
 ## 📑 회고
 각 레이어에 대한 모든 테스트를 작성하는 데 있어서, 많은 테스트 코드를 작성해야 했기에 많은 시간이 드는 어려움이 있었습니다.
