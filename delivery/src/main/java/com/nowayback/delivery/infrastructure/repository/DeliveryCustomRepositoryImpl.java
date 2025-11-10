@@ -7,11 +7,13 @@ import com.nowayback.delivery.domain.delivery.vo.OrderId;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.SimpleExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -40,15 +42,12 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                 .limit(size)
                 .fetch();
 
-        Long total = queryFactory
+        JPAQuery<Long> total = queryFactory
                 .select(delivery.count())
                 .from(delivery)
-                .where(condition)
-                .fetchOne();
+                .where(condition);
 
-        long totalCount = total != null ? total : 0L;
-
-        return new PageImpl<>(deliveries, PageRequest.of(page, size), totalCount);
+        return PageableExecutionUtils.getPage(deliveries, PageRequest.of(page, size), total::fetchOne);
     }
 
     private BooleanExpression deletedAtIsNull() {
