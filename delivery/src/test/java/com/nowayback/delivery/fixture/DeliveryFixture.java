@@ -3,8 +3,13 @@ package com.nowayback.delivery.fixture;
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
 import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
 import com.nowayback.delivery.application.command.UpdateDeliveryStatusCommand;
+import com.nowayback.delivery.application.dto.DeliveryResult;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.vo.*;
+import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;
+import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRecipientInfoRequest;
+import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryStatusRequest;
+import com.nowayback.delivery.presentation.dto.response.DeliveryResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -74,7 +79,7 @@ public class DeliveryFixture {
     }
 
     public static final Page<Delivery> DELIVERY_PAGE = new PageImpl<>(
-            List.of(createDelivery(), createDelivery(), createDelivery(), createDelivery()),
+            List.of(createDelivery(), createDelivery()),
             PageRequest.of(PAGE, SIZE),
             2
     );
@@ -98,6 +103,63 @@ public class DeliveryFixture {
     public static final UpdateDeliveryStatusCommand UPDATE_DELIVERY_STATUS_COMMAND = new UpdateDeliveryStatusCommand(
             DeliveryStatus.TRANSIT_BETWEEN_HUBS
     );
+
+    /* delivery result */
+    public static final DeliveryResult DELIVERY_RESULT = DeliveryResult.from(createDelivery());
+    public static final DeliveryResult MODIFIED_DELIVERY_RESULT = DeliveryResult.from(Delivery.create(
+            ORDER_ID,
+            SOURCE_HUB_ID,
+            DESTINATION_HUB_ID,
+            MODIFIED_RECIPIENT_INFO,
+            COMPANY_DELIVERY_MANAGER_ID
+    ));
+    public static final DeliveryResult DELIVERY_RESULT_TRANSIT_BETWEEN_HUBS = DeliveryResult.from(createDeliveryWithStatus(DeliveryStatus.TRANSIT_BETWEEN_HUBS));
+
+    public static final Page<DeliveryResult> DELIVERY_RESULT_PAGE = DELIVERY_PAGE.map(DeliveryResult::from);
+
+    /* delivery request dto */
+    public static final CreateDeliveryRequest VALID_CREATE_DELIVERY_REQUEST = new CreateDeliveryRequest(
+            ORDER_UUID,
+            SOURCE_HUB_UUID,
+            DESTINATION_HUB_UUID,
+            DELIVERY_ADDRESS,
+            RECIPIENT_NAME,
+            RECIPIENT_SLACK_ID
+    );
+
+    public static final CreateDeliveryRequest INVALID_CREATE_DELIVERY_REQUEST = new CreateDeliveryRequest(
+            null,
+            SOURCE_HUB_UUID,
+            DESTINATION_HUB_UUID,
+            "",
+            "",
+            RECIPIENT_SLACK_ID
+    );
+
+    public static final UpdateDeliveryRecipientInfoRequest VALID_UPDATE_DELIVERY_RECIPIENT_INFO_REQUEST = new UpdateDeliveryRecipientInfoRequest(
+            DELIVERY_ADDRESS,
+            MODIFIED_DELIVERY_NAME,
+            MODIFIED_DELIVERY_SLACK_ID
+    );
+
+    public static final UpdateDeliveryRecipientInfoRequest INVALID_UPDATE_DELIVERY_RECIPIENT_INFO_REQUEST = new UpdateDeliveryRecipientInfoRequest(
+            DELIVERY_ADDRESS,
+            "",
+            ""
+    );
+
+    public static final UpdateDeliveryStatusRequest VALID_UPDATE_DELIVERY_STATUS_REQUEST = new UpdateDeliveryStatusRequest(
+            DeliveryStatus.TRANSIT_BETWEEN_HUBS
+    );
+
+    public static final UpdateDeliveryStatusRequest INVALID_UPDATE_DELIVERY_STATUS_REQUEST = new UpdateDeliveryStatusRequest(
+            null
+    );
+
+    /* delivery response dto */
+    public static final DeliveryResponse DELIVERY_RESPONSE = DeliveryResponse.from(DELIVERY_RESULT);
+    public static final DeliveryResponse MODIFIED_DELIVERY_RESPONSE = DeliveryResponse.from(MODIFIED_DELIVERY_RESULT);
+    public static final DeliveryResponse DELIVERY_RESPONSE_TRANSIT_BETWEEN_HUBS = DeliveryResponse.from(DELIVERY_RESULT_TRANSIT_BETWEEN_HUBS);
 
     private static void setPrivateField(Object target, String fieldName, Object value) {
         try {
