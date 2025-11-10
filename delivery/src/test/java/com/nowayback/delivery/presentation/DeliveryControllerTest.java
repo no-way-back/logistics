@@ -57,5 +57,19 @@ class DeliveryControllerTest {
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.status").value(DeliveryStatus.WAITING_AT_HUB.name()));
         }
+
+        @Test
+        @DisplayName("유효하지 않은 요청이 들어오면 응답코드 400을 반환한다.")
+        void createDelivery_InvalidRequest_BadRequest() throws Exception {
+            /* given */
+            CreateDeliveryRequest request = INVALID_CREATE_DELIVERY_REQUEST;
+
+            /* when */
+            /* then */
+            mockMvc.perform(post(BASE_URL)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+        }
     }
 }
