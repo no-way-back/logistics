@@ -6,6 +6,7 @@ import com.nowayback.delivery.application.dto.DeliveryResult;
 import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
 import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;
 import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRecipientInfoRequest;
+import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryStatusRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -150,6 +151,43 @@ class DeliveryControllerTest {
             /* when */
             /* then */
             mockMvc.perform(patch(BASE_URL + "/" + DELIVERY_UUID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("배송 상태 수정 API")
+    class UpdateDeliveryStatus {
+
+        @Test
+        @DisplayName("배송 상태 수정 요청이 들어오면 배송 상태를 수정한다.")
+        void updateDeliveryStatus_ValidRequest_Success() throws Exception {
+            /* given */
+            UpdateDeliveryStatusRequest request = VALID_UPDATE_DELIVERY_STATUS_REQUEST;
+            DeliveryResult result = DELIVERY_RESULT_TRANSIT_BETWEEN_HUBS;
+
+            given(deliveryService.updateDeliveryStatus(eq(DELIVERY_UUID), any())).willReturn(result);
+
+            /* when */
+            /* then */
+            mockMvc.perform(patch(BASE_URL + "/" + DELIVERY_UUID + "/status")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").value(DeliveryStatus.TRANSIT_BETWEEN_HUBS.name()));
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 요청이 들어오면 응답코드 400을 반환한다.")
+        void updateDeliveryStatus_InvalidRequest_BadRequest() throws Exception {
+            /* given */
+            UpdateDeliveryStatusRequest request = INVALID_UPDATE_DELIVERY_STATUS_REQUEST;
+
+            /* when */
+            /* then */
+            mockMvc.perform(patch(BASE_URL + "/" + DELIVERY_UUID + "/status")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
