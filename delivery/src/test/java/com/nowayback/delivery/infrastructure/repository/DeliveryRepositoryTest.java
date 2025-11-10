@@ -2,6 +2,10 @@ package com.nowayback.delivery.infrastructure.repository;
 
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.repository.DeliveryRepository;
+import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
+import com.nowayback.delivery.domain.delivery.vo.HubId;
+import com.nowayback.delivery.domain.delivery.vo.OrderId;
+import com.nowayback.delivery.infrastructure.config.QueryDslConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,10 +14,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,7 +29,8 @@ import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(DeliveryRepositoryImpl.class)
+@Import({DeliveryRepositoryImpl.class, DeliveryCustomRepositoryImpl.class, QueryDslConfig.class})
+@EnableJpaAuditing
 @Testcontainers
 class DeliveryRepositoryTest {
 
@@ -151,6 +159,96 @@ class DeliveryRepositoryTest {
 
             /* then */
             assertThat(foundDelivery).isNotPresent();
+        }
+    }
+
+    @Nested
+    @DisplayName("배송 검색")
+    class SearchDeliveries {
+
+        @Test
+        @DisplayName("조건에 맞는 배송들을 반환한다.")
+        void searchDeliveries_shouldReturnMatchingDeliveries() {
+            /* given */
+            HubId sourceHubId = HubId.of(UUID.randomUUID());
+            HubId destinationHubId = HubId.of(UUID.randomUUID());
+            OrderId orderId1 = OrderId.of(UUID.randomUUID());
+            OrderId orderId2 = OrderId.of(UUID.randomUUID());
+            OrderId orderId3 = OrderId.of(UUID.randomUUID());
+
+            Delivery delivery1 = createDelivery(orderId1, sourceHubId, destinationHubId, DeliveryStatus.WAITING_AT_HUB);
+            Delivery delivery2 = createDelivery(orderId2, sourceHubId, destinationHubId, DeliveryStatus.DELIVERED);
+            Delivery delivery3 = createDelivery(orderId3, sourceHubId, destinationHubId, DeliveryStatus.WAITING_AT_HUB);
+            Delivery deletedDelivery = createDelivery();
+            deletedDelivery.delete(UUID.randomUUID());
+
+            entityManager.persist(delivery1);
+            entityManager.persist(delivery2);
+            entityManager.persist(delivery3);
+            entityManager.persist(deletedDelivery);
+            entityManager.flush();
+
+            int page = 0;
+            int size = 10;
+
+            /* when */
+            Page<Delivery> result = deliveryRepository.searchDeliveries(null, sourceHubId, destinationHubId, DeliveryStatus.WAITING_AT_HUB, page, size);
+
+            /* then */
+            assertThat(result.getContent()).hasSize(2);
+
+            assertThat(result.getContent()).noneMatch(d -> d.getDeletedAt() != null);
+
+            if (result.getContent().size() > 1) {
+                assertThat(result.getContent())
+                        .isSortedAccordingTo(Comparator.comparing(Delivery::getCreatedAt).reversed());
+            }
+        }
+
+        @Test
+        @DisplayName("조건이 없으면 모든 활성 배송들을 반환한다.")
+        void searchDeliveries_shouldReturnAllActiveDeliveriesWhenNoCondition() {
+            /* given */
+            OrderId orderId1 = OrderId.of(UUID.randomUUID());
+            OrderId orderId2 = OrderId.of(UUID.randomUUID());
+            OrderId orderId3 = OrderId.of(UUID.randomUUID());
+
+            HubId sourceHubId = SOURCE_HUB_ID;
+            HubId destinationHubId = DESTINATION_HUB_ID;
+            DeliveryStatus status = DeliveryStatus.WAITING_AT_HUB;
+
+            Delivery delivery1 = createDelivery(orderId1, sourceHubId, destinationHubId, status);
+            Delivery delivery2 = createDelivery(orderId2, sourceHubId, destinationHubId, status);
+            Delivery delivery3 = createDelivery(orderId3, sourceHubId, destinationHubId, status);
+
+            entityManager.persist(delivery1);
+            entityManager.persist(delivery2);
+            entityManager.persist(delivery3);
+            entityManager.flush();
+
+            int page = 0;
+            int size = 10;
+
+            /* when */
+            Page<Delivery> result = deliveryRepository.searchDeliveries(null, null, null, null, page, size);
+
+            /* then */
+            assertThat(result.getContent()).hasSize(3);
+            assertThat(result.getContent()).noneMatch(d -> d.getDeletedAt() != null);
+        }
+
+        @Test
+        @DisplayName("조건에 맞는 배송이 없으면 빈 페이지를 반환한다.")
+        void searchDeliveries_shouldReturnEmptyPageIfNoMatchingDeliveries() {
+            /* given */
+            int page = 0;
+            int size = 10;
+
+            /* when */
+            Page<Delivery> result = deliveryRepository.searchDeliveries(ORDER_ID, null, null, null, page, size);
+
+            /* then */
+            assertThat(result.getContent()).isEmpty();
         }
     }
 }
