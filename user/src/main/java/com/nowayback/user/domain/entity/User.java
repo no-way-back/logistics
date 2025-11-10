@@ -84,4 +84,16 @@ public class User extends BaseEntity {
 			throw new UserApplicationException(UserDomainErrorCode.INVALID_APPROVAL_STATUS);
 		}
 	}
+
+	public void updateInfo(String newPassword, UserRole newRole, String newSlackId) {
+		if (newPassword != null && !newPassword.isBlank()) {
+			this.password = newPassword;
+		}
+		if (newRole != null) {
+			this.role = newRole;
+		}
+		if (newSlackId != null) {
+			this.slackId = newSlackId;
+		}
+	}
 }

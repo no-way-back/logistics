@@ -2,13 +2,18 @@ package com.nowayback.user.application;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nowayback.common.dto.PageResponse;
 import com.nowayback.user.application.dto.command.ApprovalCommand;
 import com.nowayback.user.application.dto.command.LoginUserCommand;
 import com.nowayback.user.application.dto.command.SignupUserCommand;
+import com.nowayback.user.application.dto.command.UpdateUserCommand;
 import com.nowayback.user.application.dto.result.LoginResult;
 import com.nowayback.user.application.dto.result.UserResult;
 import com.nowayback.user.application.exception.UserApplicationErrorCode;
@@ -70,9 +75,37 @@ public class UserService {
 		return UserResult.from(savedUser);
 	}
 
-	public UserResult getMyInfo(UUID uuid) {
-		User user = findActiveUserById(uuid);
+	@Transactional(readOnly = true)
+	public UserResult getMyInfo(UUID userId) {
+		User user = findActiveUserById(userId);
 		return UserResult.from(user);
+	}
+
+	@Transactional(readOnly = true)
+	public PageResponse<UserResult> getUserList(Pageable pageable) {
+		Page<User> users = userRepository.findAllByDeletedAtIsNull(pageable);
+		Page<UserResult> userResults = users.map(UserResult::from);
+
+		Sort.Order order = pageable.getSort().stream()
+			.findFirst()
+			.orElse(Sort.Order.desc("createdAt"));
+
+		return PageResponse.fromPage(userResults, order.getProperty(), order.isAscending());
+	}
+
+	@Transactional
+	public UserResult updateUser(UUID userId, UpdateUserCommand command) {
+		User user = findActiveUserById(userId);
+
+		String encodedPassword = null;
+		if (command.password() != null && !command.password().isBlank()) {
+			encodedPassword = passwordEncoder.encode(command.password());
+		}
+
+		user.updateInfo(encodedPassword, command.role(), command.slackId());
+
+		User savedUser = userRepository.save(user);
+		return UserResult.from(savedUser);
 	}
 
 	// ========== Private Helper Methods ==========

@@ -2,20 +2,26 @@ package com.nowayback.user.presentation;
 
 import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nowayback.common.dto.PageResponse;
 import com.nowayback.user.application.UserService;
 import com.nowayback.user.application.dto.command.ApprovalCommand;
 import com.nowayback.user.application.dto.command.LoginUserCommand;
 import com.nowayback.user.application.dto.command.SignupUserCommand;
+import com.nowayback.user.application.dto.command.UpdateUserCommand;
 import com.nowayback.user.application.dto.result.LoginResult;
 import com.nowayback.user.application.dto.result.UserResult;
 import com.nowayback.user.domain.entity.UserStatus;
@@ -23,7 +29,9 @@ import com.nowayback.user.infrastructure.security.JwtTokenProvider;
 import com.nowayback.user.presentation.dto.request.ApprovalRequest;
 import com.nowayback.user.presentation.dto.request.LoginUserRequest;
 import com.nowayback.user.presentation.dto.request.SignupUserRequest;
+import com.nowayback.user.presentation.dto.request.UpdateUserRequest;
 import com.nowayback.user.presentation.dto.response.LoginResponse;
+import com.nowayback.user.presentation.dto.response.UpdateUserResponse;
 import com.nowayback.user.presentation.dto.response.UserResponse;
 
 import jakarta.validation.Valid;
@@ -109,5 +117,46 @@ public class UserController {
 	) {
 		UserResult result = userService.getMyInfo(authUser.userId());
 		return ResponseEntity.ok(UserResponse.from(result));
+	}
+
+	@GetMapping
+	@RequireRole(UserRole.MASTER)
+	public ResponseEntity<PageResponse<UserResponse>> getUserList(
+		@CurrentUser AuthUser authUser,
+		@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+		Pageable pageable
+	) {
+		PageResponse<UserResult> results = userService.getUserList(pageable);
+
+		PageResponse<UserResponse> response = new PageResponse<>(
+			results.currentPage(),
+			results.pageSize(),
+			results.totalPages(),
+			results.totalElements(),
+			results.sortBy(),
+			results.isAsc(),
+			results.items().stream()
+				.map(UserResponse::from)
+				.toList()
+		);
+
+		return ResponseEntity.ok(response);
+	}
+
+	@PutMapping("/{userId}")
+	@RequireRole(UserRole.MASTER)
+	public ResponseEntity<UpdateUserResponse> updateUser(
+		@PathVariable UUID userId,
+		@RequestBody UpdateUserRequest request
+	) {
+		UpdateUserCommand command = new UpdateUserCommand(
+			request.password(),
+			request.role(),
+			request.slackId()
+		);
+
+		UserResult result = userService.updateUser(userId, command);
+
+		return ResponseEntity.ok(new UpdateUserResponse(result.userId(),"사용자 정보가 수정되었습니다."));
 	}
 }

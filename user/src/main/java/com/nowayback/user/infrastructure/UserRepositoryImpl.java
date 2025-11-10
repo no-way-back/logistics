@@ -3,6 +3,8 @@ package com.nowayback.user.infrastructure;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.nowayback.user.domain.entity.User;
@@ -35,5 +37,10 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public boolean existsByUsernameAndDeletedAtIsNull(String username) {
 		return userJpaRepository.existsByUsernameAndDeletedAtIsNull(username);
+	}
+
+	@Override
+	public Page<User> findAllByDeletedAtIsNull(Pageable pageable) {
+		return userJpaRepository.findAllByDeletedAtIsNull(pageable);
 	}
 }
