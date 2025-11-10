@@ -2,8 +2,10 @@ package com.nowayback.delivery.presentation;
 
 import com.nowayback.delivery.application.DeliveryService;
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
+import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
 import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
 import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;
+import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRecipientInfoRequest;
 import com.nowayback.delivery.presentation.dto.response.DeliveryResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -48,5 +50,14 @@ public class DeliveryController {
     ) {
         return deliveryService.searchDeliveries(orderId, sourceHubId, destinationHubId, status, page, size)
                 .map(DeliveryResponse::from);
+    }
+
+    @PatchMapping("/{deliveryId}")
+    public DeliveryResponse updateDelivery(
+            @PathVariable UUID deliveryId,
+            @Valid @RequestBody UpdateDeliveryRecipientInfoRequest request
+    ) {
+        UpdateDeliveryRecipientInfoCommand command = UpdateDeliveryRecipientInfoCommand.from(request);
+        return DeliveryResponse.from(deliveryService.updateRecipientInfo(deliveryId, command));
     }
 }
