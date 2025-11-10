@@ -77,7 +77,7 @@ public class DeliveryFixture {
     }
 
     public static final Page<Delivery> DELIVERY_PAGE = new PageImpl<>(
-            List.of(createDelivery(), createDelivery(), createDelivery(), createDelivery()),
+            List.of(createDelivery(), createDelivery()),
             PageRequest.of(PAGE, SIZE),
             2
     );
@@ -104,6 +104,8 @@ public class DeliveryFixture {
 
     /* delivery result */
     public static final DeliveryResult DELIVERY_RESULT = DeliveryResult.from(createDelivery());
+
+    public static final Page<DeliveryResult> DELIVERY_RESULT_PAGE = DELIVERY_PAGE.map(DeliveryResult::from);
 
     /* delivery request dto */
     public static final CreateDeliveryRequest VALID_CREATE_DELIVERY_REQUEST = new CreateDeliveryRequest(

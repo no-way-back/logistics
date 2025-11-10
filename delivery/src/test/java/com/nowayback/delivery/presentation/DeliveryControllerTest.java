@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static com.nowayback.delivery.fixture.DeliveryFixture.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -91,6 +92,31 @@ class DeliveryControllerTest {
             mockMvc.perform(get(BASE_URL + "/" + DELIVERY_UUID))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.orderId").value(result.orderId().toString()));
+        }
+    }
+
+    @Nested
+    @DisplayName("배송 검색 API")
+    class SearchDeliveries {
+
+        @Test
+        @DisplayName("유효한 요청이 들어오면 배송 목록을 조회한다.")
+        void searchDeliveries_ValidRequest_Success() throws Exception {
+            /* given */
+            given(deliveryService.searchDeliveries(any(), any(), any(), any(), anyInt(), anyInt())).willReturn(DELIVERY_RESULT_PAGE);
+
+            /* when */
+            /* then */
+            mockMvc.perform(get(BASE_URL)
+                            .param("orderId", ORDER_UUID.toString())
+                            .param("sourceHubId", SOURCE_HUB_UUID.toString())
+                            .param("destinationHubId", DESTINATION_HUB_UUID.toString())
+                            .param("status", DeliveryStatus.WAITING_AT_HUB.name())
+                            .param("page", String.valueOf(PAGE))
+                            .param("size",  String.valueOf(SIZE)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.content.length()").value(2))
+                    .andExpect(jsonPath("$.totalElements").value(2));
         }
     }
 }
