@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -25,24 +26,27 @@ public class DeliveryController {
     private final DeliveryService deliveryService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public DeliveryResponse createDelivery(
+    public ResponseEntity<DeliveryResponse> createDelivery(
             @Valid @RequestBody CreateDeliveryRequest request
     ) {
         CreateDeliveryCommand command = CreateDeliveryCommand.from(request);
 
-        return DeliveryResponse.from(deliveryService.createDelivery(command));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(DeliveryResponse.from(deliveryService.createDelivery(command)));
     }
 
     @GetMapping("/{deliveryId}")
-    public DeliveryResponse getDelivery(
+    public ResponseEntity<DeliveryResponse> getDelivery(
             @PathVariable UUID deliveryId
     ) {
-        return DeliveryResponse.from(deliveryService.getDelivery(deliveryId));
+        return ResponseEntity.ok(
+                DeliveryResponse.from(deliveryService.getDelivery(deliveryId))
+        );
     }
 
     @GetMapping
-    public Page<DeliveryResponse> searchDeliveries(
+    public ResponseEntity<Page<DeliveryResponse>> searchDeliveries(
             @RequestParam(required = false) UUID orderId,
             @RequestParam(required = false) UUID sourceHubId,
             @RequestParam(required = false) UUID destinationHubId,
@@ -50,33 +54,42 @@ public class DeliveryController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return deliveryService.searchDeliveries(orderId, sourceHubId, destinationHubId, status, page, size)
+        Page<DeliveryResponse> responses = deliveryService.searchDeliveries(orderId, sourceHubId, destinationHubId, status, page, size)
                 .map(DeliveryResponse::from);
+
+        return ResponseEntity.ok(responses);
     }
 
     @PatchMapping("/{deliveryId}")
-    public DeliveryResponse updateDelivery(
+    public ResponseEntity<DeliveryResponse> updateDelivery(
             @PathVariable UUID deliveryId,
             @Valid @RequestBody UpdateDeliveryRecipientInfoRequest request
     ) {
         UpdateDeliveryRecipientInfoCommand command = UpdateDeliveryRecipientInfoCommand.from(request);
-        return DeliveryResponse.from(deliveryService.updateRecipientInfo(deliveryId, command));
+
+        return ResponseEntity.ok(
+                DeliveryResponse.from(deliveryService.updateRecipientInfo(deliveryId, command))
+        );
     }
 
     @PatchMapping("/{deliveryId}/status")
-    public DeliveryResponse updateDeliveryStatus(
+    public ResponseEntity<DeliveryResponse> updateDeliveryStatus(
             @PathVariable UUID deliveryId,
             @Valid @RequestBody UpdateDeliveryStatusRequest request
     ) {
         UpdateDeliveryStatusCommand command = UpdateDeliveryStatusCommand.from(request);
-        return DeliveryResponse.from(deliveryService.updateDeliveryStatus(deliveryId, command));
+
+        return ResponseEntity.ok(
+                DeliveryResponse.from(deliveryService.updateDeliveryStatus(deliveryId, command))
+        );
     }
 
     @DeleteMapping("/{deliveryId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteDelivery(
+    public ResponseEntity<Void> deleteDelivery(
             @PathVariable UUID deliveryId
     ) {
         deliveryService.deleteDelivery(deliveryId);
+
+        return ResponseEntity.noContent().build();
     }
 }
