@@ -26,17 +26,15 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
 
     @Override
     public Page<Delivery> searchDeliveries(OrderId orderId, HubId sourceHubId, HubId destinationHubId, DeliveryStatus status, int page, int size) {
-        BooleanBuilder builder = new BooleanBuilder();
-
-        builder.and(orderIdEq(orderId))
+        BooleanExpression condition = deletedAtIsNull()
+                .and(orderIdEq(orderId))
                 .and(sourceHubIdEq(sourceHubId))
                 .and(destinationHubIdEq(destinationHubId))
-                .and(statusEq(status))
-                .and(deletedAtIsNull());
+                .and(statusEq(status));
 
         List<Delivery> deliveries = queryFactory
                 .selectFrom(delivery)
-                .where(builder)
+                .where(condition)
                 .orderBy(delivery.createdAt.desc())
                 .offset((long) page * size)
                 .limit(size)
@@ -45,7 +43,7 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
         Long total = queryFactory
                 .select(delivery.count())
                 .from(delivery)
-                .where(builder)
+                .where(condition)
                 .fetchOne();
 
         long totalCount = total != null ? total : 0L;
