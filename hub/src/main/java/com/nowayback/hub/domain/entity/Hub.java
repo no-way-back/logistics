@@ -2,6 +2,7 @@ package com.nowayback.hub.domain.entity;
 
 import com.nowayback.common.audit.BaseEntity;
 import com.nowayback.hub.application.command.CreateHubCommand;
+import com.nowayback.hub.application.command.UpdateHubCommand;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,10 +27,10 @@ public class Hub extends BaseEntity {
     @Column(name = "hub_id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "name", length = 100)
+    @Column(name = "name", length = 100, unique = true, nullable = false)
     private String name;
 
-    @Column(name = "address", length = 500)
+    @Column(name = "address", length = 500, unique = true, nullable = false)
     private String address;
 
     @Column(name = "latitude", precision = 10, scale = 7)
@@ -50,7 +51,29 @@ public class Hub extends BaseEntity {
     }
 
     /**
-     * 주문 생성 유효성 검새
+     * 허브 정보 수정 (null이 아닌 필드만 수정)
+     */
+    public void update(UpdateHubCommand command) {
+        if (command.name() != null) {
+            validateName(command.name());
+            this.name = command.name();
+        }
+        if (command.address() != null) {
+            validateAddress(command.address());
+            this.address = command.address();
+        }
+        if (command.latitude() != null) {
+            validateLatitude(command.latitude());
+            this.latitude = command.latitude();
+        }
+        if (command.longitude() != null) {
+            validateLongitude(command.longitude());
+            this.longitude = command.longitude();
+        }
+    }
+
+    /**
+     * 허브 생성 유효성 검사
      */
     private static void validateCommand(CreateHubCommand command) {
         validateName(command.name());
@@ -65,7 +88,7 @@ public class Hub extends BaseEntity {
      */
     private static void validateName(String name) {
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("허브 이름은 필수입니다");
+            throw new IllegalArgumentException("허브 이름은 필수입니다.");
         }
     }
 
@@ -75,7 +98,7 @@ public class Hub extends BaseEntity {
      */
     private static void validateAddress(String address) {
         if (address == null || address.isBlank()) {
-            throw new IllegalArgumentException("주소는 필수입니다");
+            throw new IllegalArgumentException("주소는 필수입니다.");
         }
     }
 
@@ -86,10 +109,10 @@ public class Hub extends BaseEntity {
      */
     private static void validateLatitude(BigDecimal latitude) {
         if (latitude == null) {
-            throw new IllegalArgumentException("위도는 필수입니다");
+            throw new IllegalArgumentException("위도는 필수입니다.");
         }
         if (latitude.compareTo(MIN_LATITUDE) < 0 || latitude.compareTo(MAX_LATITUDE) > 0) {
-            throw new IllegalArgumentException("위도는 -90 이상 90 이하여야 합니다");
+            throw new IllegalArgumentException("위도는 -90 이상 90 이하여야 합니다.");
         }
     }
 
@@ -100,10 +123,10 @@ public class Hub extends BaseEntity {
      */
     private static void validateLongitude(BigDecimal longitude) {
         if (longitude == null) {
-            throw new IllegalArgumentException("경도는 필수입니다");
+            throw new IllegalArgumentException("경도는 필수입니다.");
         }
         if (longitude.compareTo(MIN_LONGITUDE) < 0 || longitude.compareTo(MAX_LONGITUDE) > 0) {
-            throw new IllegalArgumentException("경도는 -180 이상 180 이하여야 합니다");
+            throw new IllegalArgumentException("경도는 -180 이상 180 이하여야 합니다.");
         }
     }
 

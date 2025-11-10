@@ -1,29 +1,29 @@
 package com.nowayback.hub.presentation.response;
 
-import com.nowayback.hub.application.dto.CreateHubResult;
+import com.nowayback.hub.application.dto.UpdateHubResult;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record CreateHubResponse(
+public record UpdateHubResponse(
         UUID hubId,
         String name,
         String address,
         BigDecimal latitude,
         BigDecimal longitude,
-        LocalDateTime createdAt,
-        UUID createdBy
+        LocalDateTime updateAt,
+        UUID updatedBy
 ) {
-    public static CreateHubResponse from(CreateHubResult result) {
-        return new CreateHubResponse(
+    public static UpdateHubResponse from(UpdateHubResult result) {
+        return new UpdateHubResponse(
                 result.hubId(),
                 result.name(),
                 result.address(),
                 result.latitude(),
                 result.longitude(),
-                result.createdAt(),
-                result.createdBy()
+                result.updateAt(),
+                result.updatedBy()
         );
     }
 }
