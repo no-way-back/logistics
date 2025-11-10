@@ -1,7 +1,5 @@
 package com.nowayback.hub.presentation.hub;
 
-import com.nowayback.common.security.annotation.RequireRole;
-import com.nowayback.common.security.annotation.UserRole;
 import com.nowayback.hub.application.hub.HubService;
 import com.nowayback.hub.application.hub.command.CreateHubCommand;
 import com.nowayback.hub.application.hub.command.UpdateHubCommand;
@@ -24,7 +22,6 @@ public class HubController {
 
     private final HubService hubService;
 
-    @RequireRole(value = UserRole.MASTER)
     @PostMapping
     public ResponseEntity<CreateHubResponse> create(@Valid @RequestBody CreateHubRequest request) {
         CreateHubCommand createHubCommand = CreateHubCommand.from(request);
