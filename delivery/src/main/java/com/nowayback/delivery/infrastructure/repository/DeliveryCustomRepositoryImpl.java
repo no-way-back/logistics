@@ -28,11 +28,7 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
 
     @Override
     public Page<Delivery> searchDeliveries(OrderId orderId, HubId sourceHubId, HubId destinationHubId, DeliveryStatus status, int page, int size) {
-        BooleanExpression condition = deletedAtIsNull()
-                .and(orderIdEq(orderId))
-                .and(sourceHubIdEq(sourceHubId))
-                .and(destinationHubIdEq(destinationHubId))
-                .and(statusEq(status));
+        BooleanExpression condition = searchCondition(orderId, sourceHubId, destinationHubId, status);
 
         List<Delivery> deliveries = queryFactory
                 .selectFrom(delivery)
@@ -48,6 +44,14 @@ public class DeliveryCustomRepositoryImpl implements DeliveryCustomRepository {
                 .where(condition);
 
         return PageableExecutionUtils.getPage(deliveries, PageRequest.of(page, size), total::fetchOne);
+    }
+
+    private BooleanExpression searchCondition(OrderId orderId, HubId sourceHubId, HubId destinationHubId, DeliveryStatus status) {
+        return deletedAtIsNull()
+                .and(orderIdEq(orderId))
+                .and(sourceHubIdEq(sourceHubId))
+                .and(destinationHubIdEq(destinationHubId))
+                .and(statusEq(status));
     }
 
     private BooleanExpression deletedAtIsNull() {
