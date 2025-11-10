@@ -1,4 +1,4 @@
-package com.nowayback.hub.presentation;
+package com.nowayback.hub.presentation.hub;
 
 import com.nowayback.hub.application.hub.HubService;
 import com.nowayback.hub.application.hub.command.CreateHubCommand;
@@ -7,7 +7,6 @@ import com.nowayback.hub.application.hub.dto.CreateHubResult;
 import com.nowayback.hub.application.hub.dto.UpdateHubResult;
 import com.nowayback.hub.application.hub.exception.HubApplicationException;
 import com.nowayback.hub.domain.hub.entity.Hub;
-import com.nowayback.hub.presentation.hub.HubController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

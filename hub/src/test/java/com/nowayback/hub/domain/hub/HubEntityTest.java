@@ -1,4 +1,4 @@
-package com.nowayback.hub.domain;
+package com.nowayback.hub.domain.hub;
 
 import com.nowayback.hub.application.hub.command.CreateHubCommand;
 import com.nowayback.hub.application.hub.command.UpdateHubCommand;

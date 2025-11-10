@@ -1,6 +1,5 @@
-package com.nowayback.hub.application;
+package com.nowayback.hub.application.hub;
 
-import com.nowayback.hub.application.hub.HubService;
 import com.nowayback.hub.application.hub.command.CreateHubCommand;
 import com.nowayback.hub.application.hub.command.UpdateHubCommand;
 import com.nowayback.hub.application.hub.dto.CreateHubResult;
