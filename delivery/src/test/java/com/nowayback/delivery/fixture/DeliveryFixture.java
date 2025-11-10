@@ -7,6 +7,7 @@ import com.nowayback.delivery.application.dto.DeliveryResult;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.vo.*;
 import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;
+import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRecipientInfoRequest;
 import com.nowayback.delivery.presentation.dto.response.DeliveryResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -104,6 +105,13 @@ public class DeliveryFixture {
 
     /* delivery result */
     public static final DeliveryResult DELIVERY_RESULT = DeliveryResult.from(createDelivery());
+    public static final DeliveryResult MODIFIED_DELIVERY_RESULT = DeliveryResult.from(Delivery.create(
+            ORDER_ID,
+            SOURCE_HUB_ID,
+            DESTINATION_HUB_ID,
+            MODIFIED_RECIPIENT_INFO,
+            COMPANY_DELIVERY_MANAGER_ID
+    ));
 
     public static final Page<DeliveryResult> DELIVERY_RESULT_PAGE = DELIVERY_PAGE.map(DeliveryResult::from);
 
@@ -126,8 +134,21 @@ public class DeliveryFixture {
             RECIPIENT_SLACK_ID
     );
 
+    public static final UpdateDeliveryRecipientInfoRequest VALID_UPDATE_DELIVERY_RECIPIENT_INFO_REQUEST = new UpdateDeliveryRecipientInfoRequest(
+            DELIVERY_ADDRESS,
+            MODIFIED_DELIVERY_NAME,
+            MODIFIED_DELIVERY_SLACK_ID
+    );
+
+    public static final UpdateDeliveryRecipientInfoRequest INVALID_UPDATE_DELIVERY_RECIPIENT_INFO_REQUEST = new UpdateDeliveryRecipientInfoRequest(
+            DELIVERY_ADDRESS,
+            "",
+            ""
+    );
+
     /* delivery response dto */
     public static final DeliveryResponse DELIVERY_RESPONSE = DeliveryResponse.from(DELIVERY_RESULT);
+    public static final DeliveryResponse MODIFIED_DELIVERY_RESPONSE = DeliveryResponse.from(MODIFIED_DELIVERY_RESULT);
 
     private static void setPrivateField(Object target, String fieldName, Object value) {
         try {

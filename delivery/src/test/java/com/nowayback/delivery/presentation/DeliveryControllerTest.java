@@ -5,6 +5,7 @@ import com.nowayback.delivery.application.DeliveryService;
 import com.nowayback.delivery.application.dto.DeliveryResult;
 import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
 import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;
+import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRecipientInfoRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.nowayback.delivery.fixture.DeliveryFixture.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -117,6 +116,43 @@ class DeliveryControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content.length()").value(2))
                     .andExpect(jsonPath("$.totalElements").value(2));
+        }
+    }
+
+    @Nested
+    @DisplayName("배송 수령인 정보 수정 API")
+    class UpdateDeliveryRecipientInfo {
+
+        @Test
+        @DisplayName("유효한 요청이 들어오면 배송 수령인 정보를 수정한다.")
+        void updateDeliveryRecipientInfo_ValidRequest_Success() throws Exception {
+            /* given */
+            UpdateDeliveryRecipientInfoRequest request = VALID_UPDATE_DELIVERY_RECIPIENT_INFO_REQUEST;
+            DeliveryResult result = MODIFIED_DELIVERY_RESULT;
+
+            given(deliveryService.updateRecipientInfo(eq(DELIVERY_UUID), any())).willReturn(result);
+
+            /* when */
+            /* then */
+            mockMvc.perform(patch(BASE_URL + "/" + DELIVERY_UUID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.recipientName").value(request.recipientName()));
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 요청이 들어오면 응답코드 400을 반환한다.")
+        void updateDeliveryRecipientInfo_InvalidRequest_BadRequest() throws Exception {
+            /* given */
+            UpdateDeliveryRecipientInfoRequest request = INVALID_UPDATE_DELIVERY_RECIPIENT_INFO_REQUEST;
+
+            /* when */
+            /* then */
+            mockMvc.perform(patch(BASE_URL + "/" + DELIVERY_UUID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
         }
     }
 }
