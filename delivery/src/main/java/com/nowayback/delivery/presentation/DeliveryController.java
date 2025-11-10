@@ -71,4 +71,12 @@ public class DeliveryController {
         UpdateDeliveryStatusCommand command = UpdateDeliveryStatusCommand.from(request);
         return DeliveryResponse.from(deliveryService.updateDeliveryStatus(deliveryId, command));
     }
+
+    @DeleteMapping("/{deliveryId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteDelivery(
+            @PathVariable UUID deliveryId
+    ) {
+        deliveryService.deleteDelivery(deliveryId);
+    }
 }
