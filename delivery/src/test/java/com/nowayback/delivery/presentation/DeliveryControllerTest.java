@@ -1,6 +1,7 @@
 package com.nowayback.delivery.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nowayback.common.security.annotation.UserRole;
 import com.nowayback.delivery.application.DeliveryService;
 import com.nowayback.delivery.application.dto.DeliveryResult;
 import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static com.nowayback.delivery.fixture.DeliveryFixture.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -26,9 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(DeliveryController.class)
 class DeliveryControllerTest extends ControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @MockitoBean
     private DeliveryService deliveryService;
@@ -53,9 +50,10 @@ class DeliveryControllerTest extends ControllerTest {
 
             /* when */
             /* then */
-            mockMvc.perform(post(BASE_URL)
+            performWithAuth(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
+                            .content(objectMapper.writeValueAsString(request)),
+                    UserRole.MASTER)
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.status").value(DeliveryStatus.WAITING_AT_HUB.name()));
         }
@@ -68,9 +66,10 @@ class DeliveryControllerTest extends ControllerTest {
 
             /* when */
             /* then */
-            mockMvc.perform(post(BASE_URL)
+            performWithAuth(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
+                            .content(objectMapper.writeValueAsString(request)),
+                    UserRole.MASTER)
                     .andExpect(status().isBadRequest());
         }
     }
@@ -89,7 +88,7 @@ class DeliveryControllerTest extends ControllerTest {
 
             /* when */
             /* then */
-            mockMvc.perform(get(BASE_URL + "/" + DELIVERY_UUID))
+            performWithAuth(get(BASE_URL + "/" + DELIVERY_UUID), UserRole.MASTER)
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.orderId").value(result.orderId().toString()));
         }
@@ -107,13 +106,14 @@ class DeliveryControllerTest extends ControllerTest {
 
             /* when */
             /* then */
-            mockMvc.perform(get(BASE_URL)
+            performWithAuth(get(BASE_URL)
                             .param("orderId", ORDER_UUID.toString())
                             .param("sourceHubId", SOURCE_HUB_UUID.toString())
                             .param("destinationHubId", DESTINATION_HUB_UUID.toString())
                             .param("status", DeliveryStatus.WAITING_AT_HUB.name())
                             .param("page", String.valueOf(PAGE))
-                            .param("size",  String.valueOf(SIZE)))
+                            .param("size",  String.valueOf(SIZE)),
+                    UserRole.MASTER)
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content.length()").value(2))
                     .andExpect(jsonPath("$.totalElements").value(2));
@@ -135,9 +135,10 @@ class DeliveryControllerTest extends ControllerTest {
 
             /* when */
             /* then */
-            mockMvc.perform(patch(BASE_URL + "/" + DELIVERY_UUID)
+            performWithAuth(patch(BASE_URL + "/" + DELIVERY_UUID)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
+                            .content(objectMapper.writeValueAsString(request)),
+                    UserRole.MASTER)
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.recipientName").value(request.recipientName()));
         }
@@ -150,9 +151,10 @@ class DeliveryControllerTest extends ControllerTest {
 
             /* when */
             /* then */
-            mockMvc.perform(patch(BASE_URL + "/" + DELIVERY_UUID)
+            performWithAuth(patch(BASE_URL + "/" + DELIVERY_UUID)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
+                            .content(objectMapper.writeValueAsString(request)),
+                    UserRole.MASTER)
                     .andExpect(status().isBadRequest());
         }
     }
@@ -172,9 +174,10 @@ class DeliveryControllerTest extends ControllerTest {
 
             /* when */
             /* then */
-            mockMvc.perform(patch(BASE_URL + "/" + DELIVERY_UUID + "/status")
+            performWithAuth(patch(BASE_URL + "/" + DELIVERY_UUID + "/status")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
+                            .content(objectMapper.writeValueAsString(request)),
+                    UserRole.MASTER)
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(DeliveryStatus.TRANSIT_BETWEEN_HUBS.name()));
         }
@@ -187,9 +190,10 @@ class DeliveryControllerTest extends ControllerTest {
 
             /* when */
             /* then */
-            mockMvc.perform(patch(BASE_URL + "/" + DELIVERY_UUID + "/status")
+            performWithAuth(patch(BASE_URL + "/" + DELIVERY_UUID + "/status")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
+                            .content(objectMapper.writeValueAsString(request)),
+                    UserRole.MASTER)
                     .andExpect(status().isBadRequest());
         }
     }
@@ -204,7 +208,7 @@ class DeliveryControllerTest extends ControllerTest {
             /* given */
             /* when */
             /* then */
-            mockMvc.perform(delete(BASE_URL + "/" + DELIVERY_UUID))
+            performWithAuth(delete(BASE_URL + "/" + DELIVERY_UUID), UserRole.MASTER)
                     .andExpect(status().isNoContent());
         }
     }
