@@ -142,9 +142,10 @@ class DeliveryControllerTest extends ControllerTest {
     @DisplayName("배송 검색 API")
     class SearchDeliveries {
 
-        @Test
+        @ParameterizedTest
+        @EnumSource(value = UserRole.class, names = {"MASTER", "HUB_MANAGER", "DELIVERY_MANAGER", "COMPANY_MANAGER"})
         @DisplayName("유효한 요청이 들어오면 배송 목록을 조회한다.")
-        void searchDeliveries_ValidRequest_Success() throws Exception {
+        void searchDeliveries_ValidRequest_Success(UserRole role) throws Exception {
             /* given */
             given(deliveryService.searchDeliveries(any(), any(), any(), any(), anyInt(), anyInt())).willReturn(DELIVERY_RESULT_PAGE);
 
@@ -161,6 +162,22 @@ class DeliveryControllerTest extends ControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content.length()").value(2))
                     .andExpect(jsonPath("$.totalElements").value(2));
+        }
+
+        @Test
+        @DisplayName("인증되지 않은 사용자가 요청하면 응답코드 401을 반환한다.")
+        void searchDeliveries_Unauthorized_WhenHeaderMissing() throws Exception {
+            /* given */
+            /* when */
+            /* then */
+            mockMvc.perform(get(BASE_URL)
+                            .param("orderId", ORDER_UUID.toString())
+                            .param("sourceHubId", SOURCE_HUB_UUID.toString())
+                            .param("destinationHubId", DESTINATION_HUB_UUID.toString())
+                            .param("status", DeliveryStatus.WAITING_AT_HUB.name())
+                            .param("page", String.valueOf(PAGE))
+                            .param("size",  String.valueOf(SIZE)))
+                    .andExpect(status().isUnauthorized());
         }
     }
 
