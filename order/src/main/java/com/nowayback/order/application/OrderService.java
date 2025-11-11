@@ -10,10 +10,14 @@ import com.nowayback.order.application.client.response.DecreaseStockResponse;
 import com.nowayback.order.application.command.CancelOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand.CreateOrderItem;
+import com.nowayback.order.application.command.GetOrderCommand;
 import com.nowayback.order.application.dto.OrderCreateResult;
+import com.nowayback.order.application.dto.OrderResult;
 import com.nowayback.order.application.exception.OrderApplicationErrorCode;
 import com.nowayback.order.application.exception.OrderApplicationException;
 import com.nowayback.order.domain.entity.Order;
+import com.nowayback.order.domain.policy.OrderActor;
+import com.nowayback.order.domain.policy.OrderActorRole;
 import com.nowayback.order.domain.repository.OrderRepository;
 import java.util.List;
 import java.util.UUID;
@@ -50,6 +54,27 @@ public class OrderService {
         Order order = findOrderOrThrow(command.orderId());
 
         order.cancel(command.actor());
+    }
+
+    @Transactional(readOnly = true)
+    public OrderResult getOrder(GetOrderCommand command) {
+        Order order = findOrderOrThrow(command.orderId());
+
+        assertReadable(order, command.actor());
+
+        return OrderResult.of(order);
+    }
+
+    private void assertReadable(Order order, OrderActor actor) {
+        if (actor.role() == OrderActorRole.MASTER) {
+            return;
+        }
+
+        if (!actor.customerId().equals(order.getCustomerId())) {
+            throw new OrderApplicationException(
+                OrderApplicationErrorCode.UNAUTHORIZED_ORDER_ACCESS
+            );
+        }
     }
 
     /**
