@@ -1,5 +1,7 @@
 package com.nowayback.order.application;
 
+import static com.nowayback.order.fixture.OrderFixture.createCancelOrderCommand;
+import static com.nowayback.order.fixture.OrderFixture.createOrder;
 import static com.nowayback.order.fixture.OrderFixture.createOrderCommand;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,15 +9,21 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.order.application.actor.OrderActorFactory;
 import com.nowayback.order.application.client.DeliveryClient;
 import com.nowayback.order.application.client.ProductClient;
 import com.nowayback.order.application.client.response.CreateDeliveryResponse;
 import com.nowayback.order.application.client.response.DecreaseStockResponse;
+import com.nowayback.order.application.command.CancelOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand;
 import com.nowayback.order.application.exception.OrderApplicationException;
 import com.nowayback.order.domain.entity.Order;
+import com.nowayback.order.domain.exception.OrderDomainException;
 import com.nowayback.order.domain.repository.OrderRepository;
 import com.nowayback.order.domain.vo.OrderStatus;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,7 +48,7 @@ class OrderServiceTest {
     OrderService orderService;
 
     @Nested
-    class createOrder {
+    class CreateOrder {
         @Test
         @DisplayName("재고 차감과 배송 생성이 완료되면 주문을 생성한다.")
         void createOrder_success() {
@@ -103,6 +111,58 @@ class OrderServiceTest {
             assertThatThrownBy(() -> {
                 orderService.createOrder(orderCommand);
             }).isInstanceOf(OrderApplicationException.class);
+        }
+    }
+
+    @Nested
+    class CancelOrder {
+
+        @Test
+        @DisplayName("주문을 취소한다")
+        void cancelOrder_success() {
+            // given
+            CancelOrderCommand cancelOrderCommand = createCancelOrderCommand();
+            Order order = createOrder();
+            given(orderRepository.findById(cancelOrderCommand.orderId())).willReturn(Optional.of(order));
+
+            // when
+            orderService.cancelOrder(cancelOrderCommand);
+
+            // then
+            assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELED);
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 주문을 취소하면 예외가 발생한다")
+        void cancelOrder_whenOrderNotFound_shouldThrow() {
+            // given
+            CancelOrderCommand command = createCancelOrderCommand();
+
+            given(orderRepository.findById(command.orderId()))
+                .willReturn(Optional.empty());
+
+            // when / then
+            assertThatThrownBy(() -> orderService.cancelOrder(command))
+                .isInstanceOf(OrderApplicationException.class);
+        }
+
+        @Test
+        @DisplayName("다른 고객이 주문을 취소하면 예외가 발생한다")
+        void cancelOrder_whenNotOwner_shouldThrow() {
+            // given
+            UUID orderId = UUID.randomUUID();
+            CancelOrderCommand command = new CancelOrderCommand(
+                OrderActorFactory.from(UUID.randomUUID(), UserRole.COMPANY_MANAGER),
+                orderId
+            );
+
+            Order order = createOrder();
+            given(orderRepository.findById(command.orderId())).willReturn(Optional.of(order));
+
+            // when / then
+            assertThatThrownBy(() -> {
+                orderService.cancelOrder(command);
+            }).isInstanceOf(OrderDomainException.class);
         }
     }
 }

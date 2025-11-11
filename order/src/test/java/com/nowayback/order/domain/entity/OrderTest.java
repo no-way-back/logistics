@@ -1,17 +1,24 @@
 package com.nowayback.order.domain.entity;
 
+import static com.nowayback.order.fixture.OrderFixture.CUSTOMER_ID;
+import static com.nowayback.order.fixture.OrderFixture.CUSTOMER_ID_UUID;
+import static com.nowayback.order.fixture.OrderFixture.CUSTOMER_ROLE;
 import static com.nowayback.order.fixture.OrderFixture.ORDER_ITEMS;
 import static com.nowayback.order.fixture.OrderFixture.RECEIVER_COMPANY_ID;
 import static com.nowayback.order.fixture.OrderFixture.RECEIVER_COMPANY_SNAPSHOT;
 import static com.nowayback.order.fixture.OrderFixture.REQUEST;
 import static com.nowayback.order.fixture.OrderFixture.SUPPLIER_COMPANY_ID;
 import static com.nowayback.order.fixture.OrderFixture.SUPPLIER_COMPANY_SNAPSHOT;
+import static com.nowayback.order.fixture.OrderFixture.createOrder;
 import static com.nowayback.order.fixture.OrderFixture.createOrderWithStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.order.application.actor.OrderActorFactory;
 import com.nowayback.order.domain.exception.OrderDomainException;
 import com.nowayback.order.domain.policy.OrderStatusTransitionPolicy;
+import com.nowayback.order.domain.vo.CustomerId;
 import com.nowayback.order.domain.vo.OrderItems;
 import com.nowayback.order.domain.vo.OrderStatus;
 import com.nowayback.order.domain.vo.ProductId;
@@ -39,6 +46,7 @@ class OrderTest {
     @DisplayName("모든 필드가 정상일 경우 주문 생성에 성공한다.")
     void createOrder_success() {
         // given
+        CustomerId customerId = CUSTOMER_ID;
         SupplierCompanyId supplierId = SUPPLIER_COMPANY_ID;
         SupplierCompanySnapshot supplier = SUPPLIER_COMPANY_SNAPSHOT;
         ReceiverCompanyId receiverId = RECEIVER_COMPANY_ID;
@@ -47,7 +55,7 @@ class OrderTest {
         String request = REQUEST;
 
         // when
-        Order order = Order.create(request, supplierId, supplier, receiverId, receiver, orderItems);
+        Order order = Order.create(customerId, request, supplierId, supplier, receiverId, receiver, orderItems);
 
         // then
         assertThat(order.getRequest()).isEqualTo(request);
@@ -63,6 +71,7 @@ class OrderTest {
         // given
         // when
         Order order = Order.create(
+            CUSTOMER_ID,
             REQUEST,
             SUPPLIER_COMPANY_ID,
             SUPPLIER_COMPANY_SNAPSHOT,
@@ -86,6 +95,7 @@ class OrderTest {
         );
         // when
         Order order = Order.create(
+            CUSTOMER_ID,
             REQUEST,
             SUPPLIER_COMPANY_ID,
             SUPPLIER_COMPANY_SNAPSHOT,
@@ -106,6 +116,7 @@ class OrderTest {
         // when / then
         assertThatThrownBy(() ->
             Order.create(
+                CUSTOMER_ID,
                 REQUEST,
                 SUPPLIER_COMPANY_ID,
                 SUPPLIER_COMPANY_SNAPSHOT,
@@ -126,6 +137,7 @@ class OrderTest {
             // when / then
             assertThatThrownBy(() ->
                 Order.create(
+                    CUSTOMER_ID,
                     REQUEST,
                     null,
                     SUPPLIER_COMPANY_SNAPSHOT,
@@ -142,6 +154,7 @@ class OrderTest {
             // when / then
             assertThatThrownBy(() ->
                 Order.create(
+                    CUSTOMER_ID,
                     REQUEST,
                     SUPPLIER_COMPANY_ID,
                     null,
@@ -158,6 +171,7 @@ class OrderTest {
             // when / then
             assertThatThrownBy(() ->
                 Order.create(
+                    CUSTOMER_ID,
                     REQUEST,
                     SUPPLIER_COMPANY_ID,
                     SUPPLIER_COMPANY_SNAPSHOT,
@@ -174,6 +188,7 @@ class OrderTest {
             // when / then
             assertThatThrownBy(() ->
                 Order.create(
+                    CUSTOMER_ID,
                     REQUEST,
                     SUPPLIER_COMPANY_ID,
                     SUPPLIER_COMPANY_SNAPSHOT,
@@ -228,7 +243,8 @@ class OrderTest {
             Order order = createOrderWithStatus(status);
 
             // when
-            order.cancel();
+
+            order.cancel(OrderActorFactory.from(CUSTOMER_ID_UUID, CUSTOMER_ROLE));
 
             //then
             assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELED);
@@ -247,12 +263,24 @@ class OrderTest {
 
             // when / then
             assertThatThrownBy(() -> {
-                order.cancel();
+                order.cancel(OrderActorFactory.from(CUSTOMER_ID_UUID, CUSTOMER_ROLE));
             }).isInstanceOf(OrderDomainException.class);
         }
 
         static Stream<OrderStatus> cancelNotAllowedStatus() {
             return Stream.of(OrderStatus.DELIVERING, OrderStatus.COMPLETED, OrderStatus.CANCELED);
+        }
+
+        @Test
+        @DisplayName("주문 취소시 CUSTOMER_ID가 다르면 예외가 발생한다.")
+        void cancelOrder_whenNotOwner_shouldThrow() {
+            // given
+            Order order = createOrder();
+
+            // when / then
+            assertThatThrownBy(() -> {
+                order.cancel(OrderActorFactory.from(CUSTOMER_ID_UUID, UserRole.DELIVERY_MANAGER));
+            }).isInstanceOf(OrderDomainException.class);
         }
     }
 }

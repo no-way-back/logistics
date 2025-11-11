@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 public enum OrderApplicationErrorCode implements ErrorCode {
     NOT_ENOUGH_STOCK("ORDER2001", "주문 상품의 재고가 충분하지 않습니다.", HttpStatus.BAD_REQUEST),
     DELIVERY_CREATION_FAILED("ORDER2002", "배송 생성에 실패했습니다.", HttpStatus.FAILED_DEPENDENCY),
+    ORDER_NOT_FOUND("ORDER2003", "해당 주문이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+    UNAUTHORIZED_ORDER_ACCESS("ORDER2004", "해당 주문에 권한이 없습니다.", HttpStatus.FORBIDDEN),
     ;
 
     private final String code;

@@ -4,7 +4,9 @@ import static com.nowayback.order.domain.util.DomainPreconditions.notNull;
 
 import com.nowayback.common.audit.BaseEntity;
 import com.nowayback.order.domain.exception.OrderDomainErrorCode;
+import com.nowayback.order.domain.policy.OrderActor;
 import com.nowayback.order.domain.policy.OrderStatusTransitionPolicy;
+import com.nowayback.order.domain.vo.CustomerId;
 import com.nowayback.order.domain.vo.OrderItems;
 import com.nowayback.order.domain.vo.OrderStatus;
 import com.nowayback.order.domain.vo.ReceiverCompanyId;
@@ -38,6 +40,10 @@ public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "customer_id"))
+    private CustomerId customerId;
 
     @Embedded
     @AttributeOverride(name = "id", column = @Column(name = "supplier_id"))
@@ -82,6 +88,7 @@ public class Order extends BaseEntity {
     private OrderItems orderItems;
 
     private Order(
+        CustomerId customerId,
         SupplierCompanyId supplierCompanyId,
         SupplierCompanySnapshot supplierCompanySnapshot,
         ReceiverCompanyId receiverCompanyId,
@@ -92,6 +99,7 @@ public class Order extends BaseEntity {
         String request,
         OrderItems orderItems
     ) {
+        this.customerId = customerId;
         this.supplierCompanyId = supplierCompanyId;
         this.supplierCompanySnapshot = supplierCompanySnapshot;
         this.receiverCompanyId = receiverCompanyId;
@@ -104,17 +112,19 @@ public class Order extends BaseEntity {
     }
 
     public static Order create(
+        CustomerId customerId,
         String request,
         SupplierCompanyId supplierCompanyId,
         SupplierCompanySnapshot supplier,
         ReceiverCompanyId receiverCompanyId,
         ReceiverCompanySnapshot receiver,
         OrderItems orderItems) {
-
+        notNull(customerId, OrderDomainErrorCode.NULL_CUSTOMER_ID);
         validateSupplierAndReceiver(supplierCompanyId, supplier, receiverCompanyId, receiver);
         validateOrderItems(orderItems);
 
         return new Order(
+            customerId,
             supplierCompanyId,
             supplier,
             receiverCompanyId,
@@ -132,8 +142,8 @@ public class Order extends BaseEntity {
 
         this.status = OrderStatus.CREATED;
     }
-    public void cancel() {
-        OrderStatusTransitionPolicy.assertCanCancel(this, OrderStatus.CANCELED);
+    public void cancel(OrderActor actor) {
+        OrderStatusTransitionPolicy.assertCanCancel(this, actor);
 
         this.status = OrderStatus.CANCELED;
     }
@@ -157,6 +167,4 @@ public class Order extends BaseEntity {
     private static void validateOrderItems(OrderItems orderItems) {
         orderItems.validate();
     }
-
-
 }

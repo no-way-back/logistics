@@ -39,16 +39,25 @@ public final class OrderStatusTransitionPolicy {
         }
     }
 
-    public static void assertCanCancel(Order order, OrderStatus newStatus) {
-        assertCanTransition(order, newStatus);
-
+    public static void assertCanCancel(Order order, OrderActor actor) {
+        assertCanTransition(order, OrderStatus.CANCELED);
         if (!CANCEL_ALLOWED.contains(order.getStatus())) {
             throw new OrderDomainException(OrderDomainErrorCode.INVALID_CANCEL_STATUS);
         }
+
+        if (actor.role() != OrderActorRole.MASTER) {
+            assertOwner(order, actor);
+        }
     }
 
-    public static void assertCanDelete(Order order, OrderStatus newStatus) {
-        assertCanTransition(order, newStatus);
+    private static void assertOwner(Order order, OrderActor actor) {
+        if (!actor.customerId().equals(order.getCustomerId())) {
+            throw new OrderDomainException(OrderDomainErrorCode.UNAUTHORIZED_ORDER_ACCESS);
+        }
+    }
+
+    public static void assertCanDelete(Order order) {
+        assertCanTransition(order, OrderStatus.CANCELED);
 
         if (!DELETE_ALLOWED.contains(order.getStatus())) {
             throw new OrderDomainException(OrderDomainErrorCode.INVALID_CANCEL_STATUS);
