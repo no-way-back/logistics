@@ -72,6 +72,35 @@ class DeliveryControllerTest extends ControllerTest {
                     UserRole.MASTER)
                     .andExpect(status().isBadRequest());
         }
+
+        @Test
+        @DisplayName("인증되지 않은 사용자가 요청하면 응답코드 401을 반환한다.")
+        void createDelivery_Unauthorized_WhenHeaderMissing() throws Exception {
+            /* given */
+            CreateDeliveryRequest request = VALID_CREATE_DELIVERY_REQUEST;
+
+            /* when */
+            /* then */
+            mockMvc.perform(post(BASE_URL)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        @DisplayName("권한이 없는 사용자가 요청하면 응답코드 403을 반환한다.")
+        void createDelivery_Forbidden_WhenRoleInvalid() throws Exception {
+            /* given */
+            CreateDeliveryRequest request = VALID_CREATE_DELIVERY_REQUEST;
+
+            /* when */
+            /* then */
+            performWithAuth(post(BASE_URL)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)),
+                    UserRole.COMPANY_MANAGER)
+                    .andExpect(status().isForbidden());
+        }
     }
 
     @Nested
