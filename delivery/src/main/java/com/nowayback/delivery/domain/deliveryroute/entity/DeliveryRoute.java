@@ -91,6 +91,10 @@ public class DeliveryRoute extends BaseEntity {
         }
     }
 
+    public void delete(UUID deletedBy) {
+        softDelete(deletedBy);
+    }
+
     private static void validateNotNull(Object value, DeliveryRouteDomainErrorCode errorCode) {
         if (value == null) throw new DeliveryRouteDomainException(errorCode);
     }
