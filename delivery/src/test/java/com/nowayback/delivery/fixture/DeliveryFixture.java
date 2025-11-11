@@ -85,7 +85,7 @@ public class DeliveryFixture {
     );
 
     /* delivery command */
-    public static final CreateDeliveryCommand CREATE_DELIVERY_COMMAND = new CreateDeliveryCommand(
+    public static final CreateDeliveryCommand CREATE_DELIVERY_COMMAND = CreateDeliveryCommand.of(
             ORDER_UUID,
             SOURCE_HUB_UUID,
             DESTINATION_HUB_UUID,
@@ -94,7 +94,7 @@ public class DeliveryFixture {
             RECIPIENT_SLACK_ID
     );
 
-    public static final UpdateDeliveryRecipientInfoCommand UPDATE_DELIVERY_RECIPIENT_INFO_COMMAND = new UpdateDeliveryRecipientInfoCommand(
+    public static final UpdateDeliveryRecipientInfoCommand UPDATE_DELIVERY_RECIPIENT_INFO_COMMAND = UpdateDeliveryRecipientInfoCommand.of(
             DELIVERY_ADDRESS,
             MODIFIED_DELIVERY_NAME,
             MODIFIED_DELIVERY_SLACK_ID
