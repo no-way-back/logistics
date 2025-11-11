@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(DeliveryController.class)
-class DeliveryControllerTest {
+class DeliveryControllerTest extends ControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
