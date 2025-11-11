@@ -43,8 +43,10 @@ public class DeliveryController {
     }
 
     @GetMapping("/{deliveryId}")
+    @RequireRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.DELIVERY_MANAGER, UserRole.COMPANY_MANAGER})
     public ResponseEntity<DeliveryResponse> getDelivery(
-            @PathVariable UUID deliveryId
+            @PathVariable UUID deliveryId,
+            @CurrentUser AuthUser authUser
     ) {
         return ResponseEntity.ok(
                 DeliveryResponse.from(deliveryService.getDelivery(deliveryId))
