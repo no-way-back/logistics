@@ -34,14 +34,10 @@ public class DeliveryService {
         UUID companyDeliveryManagerId = UUID.randomUUID();
 
         Delivery delivery = Delivery.create(
-                OrderId.of(command.orderId()),
-                HubId.of(command.sourceHubId()),
-                HubId.of(command.destinationHubId()),
-                RecipientInfo.of(
-                        command.deliveryAddress(),
-                        command.recipientName(),
-                        command.recipientSlackId()
-                ),
+                command.orderId(),
+                command.sourceHubId(),
+                command.destinationHubId(),
+                command.recipientInfo(),
                 DeliveryManagerId.of(companyDeliveryManagerId)
         );
 
@@ -99,14 +95,14 @@ public class DeliveryService {
                 .orElseThrow(() -> new DeliveryApplicationException(DeliveryApplicationErrorCode.NOT_FOUND_DELIVERY));
     }
 
-    private void validateDuplicateOrderId(UUID orderId) {
-        if (deliveryRepository.existsByOrderId(OrderId.of(orderId))) {
+    private void validateDuplicateOrderId(OrderId orderId) {
+        if (deliveryRepository.existsByOrderId(orderId)) {
             throw new DeliveryApplicationException(DeliveryApplicationErrorCode.DUPLICATE_ORDER_ID);
         }
     }
 
-    private void validateHubExists(UUID hubId) {
-        if (!hubClient.existsById(hubId)) {
+    private void validateHubExists(HubId hubId) {
+        if (!hubClient.existsById(hubId.getId())) {
             throw new DeliveryApplicationException(DeliveryApplicationErrorCode.NON_EXISTENT_HUB);
         }
     }

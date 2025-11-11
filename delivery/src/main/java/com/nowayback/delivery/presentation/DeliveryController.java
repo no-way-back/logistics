@@ -35,7 +35,14 @@ public class DeliveryController {
     public ResponseEntity<DeliveryResponse> createDelivery(
             @Valid @RequestBody CreateDeliveryRequest request
     ) {
-        CreateDeliveryCommand command = CreateDeliveryCommand.from(request);
+        CreateDeliveryCommand command = CreateDeliveryCommand.of(
+                request.orderId(),
+                request.sourceHubId(),
+                request.destinationHubId(),
+                request.deliveryAddress(),
+                request.recipientName(),
+                request.recipientSlackId()
+        );
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

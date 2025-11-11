@@ -85,7 +85,7 @@ public class DeliveryFixture {
     );
 
     /* delivery command */
-    public static final CreateDeliveryCommand CREATE_DELIVERY_COMMAND = new CreateDeliveryCommand(
+    public static final CreateDeliveryCommand CREATE_DELIVERY_COMMAND = CreateDeliveryCommand.of(
             ORDER_UUID,
             SOURCE_HUB_UUID,
             DESTINATION_HUB_UUID,
