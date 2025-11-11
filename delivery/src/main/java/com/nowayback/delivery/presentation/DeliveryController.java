@@ -32,8 +32,7 @@ public class DeliveryController {
     @PostMapping
     @RequireRole(UserRole.MASTER)
     public ResponseEntity<DeliveryResponse> createDelivery(
-            @Valid @RequestBody CreateDeliveryRequest request,
-            @CurrentUser AuthUser authUser
+            @Valid @RequestBody CreateDeliveryRequest request
     ) {
         CreateDeliveryCommand command = CreateDeliveryCommand.from(request);
 
@@ -45,8 +44,8 @@ public class DeliveryController {
     @GetMapping("/{deliveryId}")
     @RequireRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.DELIVERY_MANAGER, UserRole.COMPANY_MANAGER})
     public ResponseEntity<DeliveryResponse> getDelivery(
-            @PathVariable UUID deliveryId,
-            @CurrentUser AuthUser authUser
+            @CurrentUser AuthUser authUser,
+            @PathVariable UUID deliveryId
     ) {
         return ResponseEntity.ok(
                 DeliveryResponse.from(deliveryService.getDelivery(deliveryId))
@@ -56,13 +55,13 @@ public class DeliveryController {
     @GetMapping
     @RequireRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.DELIVERY_MANAGER, UserRole.COMPANY_MANAGER})
     public ResponseEntity<Page<DeliveryResponse>> searchDeliveries(
+            @CurrentUser AuthUser authUser,
             @RequestParam(required = false) UUID orderId,
             @RequestParam(required = false) UUID sourceHubId,
             @RequestParam(required = false) UUID destinationHubId,
             @RequestParam(required = false) DeliveryStatus status,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @CurrentUser AuthUser authUser
+            @RequestParam(defaultValue = "10") int size
     ) {
         Page<DeliveryResponse> responses = deliveryService.searchDeliveries(orderId, sourceHubId, destinationHubId, status, page, size)
                 .map(DeliveryResponse::from);
@@ -73,9 +72,9 @@ public class DeliveryController {
     @PatchMapping("/{deliveryId}")
     @RequireRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.DELIVERY_MANAGER})
     public ResponseEntity<DeliveryResponse> updateDelivery(
+            @CurrentUser AuthUser authUser,
             @PathVariable UUID deliveryId,
-            @Valid @RequestBody UpdateDeliveryRecipientInfoRequest request,
-            @CurrentUser AuthUser authUser
+            @Valid @RequestBody UpdateDeliveryRecipientInfoRequest request
     ) {
         UpdateDeliveryRecipientInfoCommand command = UpdateDeliveryRecipientInfoCommand.from(request);
 
@@ -87,9 +86,9 @@ public class DeliveryController {
     @PatchMapping("/{deliveryId}/status")
     @RequireRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.DELIVERY_MANAGER})
     public ResponseEntity<DeliveryResponse> updateDeliveryStatus(
+            @CurrentUser AuthUser authUser,
             @PathVariable UUID deliveryId,
-            @Valid @RequestBody UpdateDeliveryStatusRequest request,
-            @CurrentUser AuthUser authUser
+            @Valid @RequestBody UpdateDeliveryStatusRequest request
     ) {
         UpdateDeliveryStatusCommand command = UpdateDeliveryStatusCommand.from(request);
 
@@ -101,8 +100,8 @@ public class DeliveryController {
     @DeleteMapping("/{deliveryId}")
     @RequireRole({UserRole.MASTER, UserRole.HUB_MANAGER})
     public ResponseEntity<Void> deleteDelivery(
-            @PathVariable UUID deliveryId,
-            @CurrentUser AuthUser authUser
+            @CurrentUser AuthUser authUser,
+            @PathVariable UUID deliveryId
     ) {
         deliveryService.deleteDelivery(deliveryId);
 
