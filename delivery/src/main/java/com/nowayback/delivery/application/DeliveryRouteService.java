@@ -70,8 +70,7 @@ public class DeliveryRouteService {
     }
 
     @Transactional(readOnly = true)
-    public Page<DeliveryRouteResult> searchDeliveryRoutes(UUID userId, UserRole role, UUID deliveryId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<DeliveryRouteResult> searchDeliveryRoutes(UUID userId, UserRole role, UUID deliveryId, Pageable pageable) {
         Page<DeliveryRoute> deliveryRoutes = deliveryRouteRepository.findAllByDeliveryId(DeliveryId.of(deliveryId), pageable);
         return deliveryRoutes.map(DeliveryRouteResult::from);
     }

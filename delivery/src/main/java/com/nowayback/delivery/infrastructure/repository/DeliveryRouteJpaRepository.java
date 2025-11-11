@@ -11,5 +11,6 @@ import java.util.UUID;
 
 public interface DeliveryRouteJpaRepository extends JpaRepository<DeliveryRoute, UUID> {
     Optional<DeliveryRoute> findByIdAndDeletedAtIsNull(UUID deliveryRouteId);
+    Page<DeliveryRoute> findAllByDeletedAtIsNull(Pageable pageable);
     Page<DeliveryRoute> findAllByDeliveryIdAndDeletedAtIsNull(DeliveryId deliveryId, Pageable pageable);
 }
