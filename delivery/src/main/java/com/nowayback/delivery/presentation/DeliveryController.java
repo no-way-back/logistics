@@ -85,9 +85,11 @@ public class DeliveryController {
     }
 
     @PatchMapping("/{deliveryId}/status")
+    @RequireRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.DELIVERY_MANAGER})
     public ResponseEntity<DeliveryResponse> updateDeliveryStatus(
             @PathVariable UUID deliveryId,
-            @Valid @RequestBody UpdateDeliveryStatusRequest request
+            @Valid @RequestBody UpdateDeliveryStatusRequest request,
+            @CurrentUser AuthUser authUser
     ) {
         UpdateDeliveryStatusCommand command = UpdateDeliveryStatusCommand.from(request);
 
