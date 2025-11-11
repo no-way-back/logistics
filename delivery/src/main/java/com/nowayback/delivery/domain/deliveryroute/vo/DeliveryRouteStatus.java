@@ -34,6 +34,6 @@ public enum DeliveryRouteStatus {
     public abstract boolean canTransitionTo(DeliveryRouteStatus newStatus);
 
     public boolean canUpdateRouteInfo() {
-        return this == WAITING_AT_HUB;
+        return this == AT_DESTINATION_HUB;
     }
 }
