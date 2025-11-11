@@ -23,7 +23,7 @@ public record DeliveryRouteResult(
                 deliveryRoute.getId(),
                 deliveryRoute.getSequence().getSequence(),
                 deliveryRoute.getHubRoute().getSourceHubId().getId(),
-                deliveryRoute.getHubRoute().getSourceHubId().getId(),
+                deliveryRoute.getHubRoute().getDestinationHubId().getId(),
                 deliveryRoute.getDeliveryManagerId().getId(),
                 deliveryRoute.getStatus(),
                 deliveryRoute.getRouteInfo().getExpectedDistanceMeters(),
