@@ -159,7 +159,7 @@ class DeliveryControllerTest extends ControllerTest {
                             .param("page", String.valueOf(PAGE))
                             .param("size",  String.valueOf(SIZE)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.content.length()").value(2))
+                    .andExpect(jsonPath("$.items.length()").value(2))
                     .andExpect(jsonPath("$.totalElements").value(2));
         }
 

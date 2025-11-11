@@ -1,5 +1,6 @@
 package com.nowayback.delivery.presentation;
 
+import com.nowayback.common.dto.PageResponse;
 import com.nowayback.common.security.annotation.AuthUser;
 import com.nowayback.common.security.annotation.CurrentUser;
 import com.nowayback.common.security.annotation.RequireRole;
@@ -54,7 +55,7 @@ public class DeliveryController {
 
     @GetMapping
     @RequireRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.DELIVERY_MANAGER, UserRole.COMPANY_MANAGER})
-    public ResponseEntity<Page<DeliveryResponse>> searchDeliveries(
+    public ResponseEntity<PageResponse<DeliveryResponse>> searchDeliveries(
             @CurrentUser AuthUser authUser,
             @RequestParam(required = false) UUID orderId,
             @RequestParam(required = false) UUID sourceHubId,
@@ -66,7 +67,7 @@ public class DeliveryController {
         Page<DeliveryResponse> responses = deliveryService.searchDeliveries(orderId, sourceHubId, destinationHubId, status, page, size)
                 .map(DeliveryResponse::from);
 
-        return ResponseEntity.ok(responses);
+        return ResponseEntity.ok(PageResponse.fromPage(responses));
     }
 
     @PatchMapping("/{deliveryId}")
