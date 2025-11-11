@@ -98,7 +98,7 @@ public class DeliveryController {
             @PathVariable UUID deliveryId,
             @Valid @RequestBody UpdateDeliveryStatusRequest request
     ) {
-        UpdateDeliveryStatusCommand command = UpdateDeliveryStatusCommand.from(request);
+        UpdateDeliveryStatusCommand command = UpdateDeliveryStatusCommand.of(request.status());
 
         return ResponseEntity.ok(
                 DeliveryResponse.from(deliveryService.updateDeliveryStatus(deliveryId, command))
