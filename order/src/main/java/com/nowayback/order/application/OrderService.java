@@ -70,7 +70,7 @@ public class OrderService {
             return;
         }
 
-        if (!actor.customerId().equals(order.getCustomerId())) {
+        if (!actor.customerId().getId().equals(order.getCustomerId().getId())) {
             throw new OrderApplicationException(
                 OrderApplicationErrorCode.UNAUTHORIZED_ORDER_ACCESS
             );
