@@ -94,7 +94,7 @@ public class DeliveryFixture {
             RECIPIENT_SLACK_ID
     );
 
-    public static final UpdateDeliveryRecipientInfoCommand UPDATE_DELIVERY_RECIPIENT_INFO_COMMAND = new UpdateDeliveryRecipientInfoCommand(
+    public static final UpdateDeliveryRecipientInfoCommand UPDATE_DELIVERY_RECIPIENT_INFO_COMMAND = UpdateDeliveryRecipientInfoCommand.of(
             DELIVERY_ADDRESS,
             MODIFIED_DELIVERY_NAME,
             MODIFIED_DELIVERY_SLACK_ID

@@ -84,7 +84,11 @@ public class DeliveryController {
             @PathVariable UUID deliveryId,
             @Valid @RequestBody UpdateDeliveryRecipientInfoRequest request
     ) {
-        UpdateDeliveryRecipientInfoCommand command = UpdateDeliveryRecipientInfoCommand.from(request);
+        UpdateDeliveryRecipientInfoCommand command = UpdateDeliveryRecipientInfoCommand.of(
+                request.deliveryAddress(),
+                request.recipientName(),
+                request.recipientSlackId()
+        );
 
         return ResponseEntity.ok(
                 DeliveryResponse.from(deliveryService.updateRecipientInfo(deliveryId, command))

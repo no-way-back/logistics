@@ -64,11 +64,7 @@ public class DeliveryService {
     public DeliveryResult updateRecipientInfo(UUID deliveryId, UpdateDeliveryRecipientInfoCommand command) {
         Delivery delivery = getDeliveryById(deliveryId);
 
-        delivery.updateRecipientInfo(RecipientInfo.of(
-                command.deliveryAddress(),
-                command.recipientName(),
-                command.recipientSlackId()
-        ));
+        delivery.updateRecipientInfo(command.recipientInfo());
 
         return DeliveryResult.from(delivery);
     }
