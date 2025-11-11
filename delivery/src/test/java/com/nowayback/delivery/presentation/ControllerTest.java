@@ -32,4 +32,8 @@ public abstract class ControllerTest {
                         .header(JwtConstants.HEADER_ROLE, role.name())
         );
     }
+
+    protected ResultActions performWithAuth(MockHttpServletRequestBuilder builder) throws Exception {
+        return performWithAuth(builder, UserRole.MASTER);
+    }
 }

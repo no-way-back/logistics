@@ -11,6 +11,8 @@ import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryStatusReque
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -39,9 +41,10 @@ class DeliveryControllerTest extends ControllerTest {
     @DisplayName("배송 생성 API")
     class CreateDelivery {
 
-        @Test
+        @ParameterizedTest
+        @EnumSource(value = UserRole.class, names = {"MASTER"})
         @DisplayName("유효한 요청이 들어오면 배송이 생성된다.")
-        void createDelivery_ValidRequest_Success() throws Exception {
+        void createDelivery_ValidRequest_Success(UserRole role) throws Exception {
             /* given */
             CreateDeliveryRequest request = VALID_CREATE_DELIVERY_REQUEST;
             DeliveryResult result = DELIVERY_RESULT;
@@ -53,7 +56,7 @@ class DeliveryControllerTest extends ControllerTest {
             performWithAuth(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)),
-                    UserRole.MASTER)
+                    role)
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.status").value(DeliveryStatus.WAITING_AT_HUB.name()));
         }
@@ -68,8 +71,7 @@ class DeliveryControllerTest extends ControllerTest {
             /* then */
             performWithAuth(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)),
-                    UserRole.MASTER)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
         }
 
@@ -87,9 +89,10 @@ class DeliveryControllerTest extends ControllerTest {
                     .andExpect(status().isUnauthorized());
         }
 
-        @Test
+        @ParameterizedTest
+        @EnumSource(value = UserRole.class, names = {"HUB_MANAGER", "DELIVERY_MANAGER", "COMPANY_MANAGER"})
         @DisplayName("권한이 없는 사용자가 요청하면 응답코드 403을 반환한다.")
-        void createDelivery_Forbidden_WhenRoleInvalid() throws Exception {
+        void createDelivery_Forbidden_WhenRoleInvalid(UserRole role) throws Exception {
             /* given */
             CreateDeliveryRequest request = VALID_CREATE_DELIVERY_REQUEST;
 
@@ -98,7 +101,7 @@ class DeliveryControllerTest extends ControllerTest {
             performWithAuth(post(BASE_URL)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)),
-                    UserRole.COMPANY_MANAGER)
+                    role)
                     .andExpect(status().isForbidden());
         }
     }
