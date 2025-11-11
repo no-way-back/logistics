@@ -11,6 +11,7 @@ import com.nowayback.order.application.command.CancelOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand.CreateOrderItem;
 import com.nowayback.order.application.command.GetOrderCommand;
+import com.nowayback.order.application.command.GetOrdersCommand;
 import com.nowayback.order.application.dto.OrderCreateResult;
 import com.nowayback.order.application.dto.OrderResult;
 import com.nowayback.order.application.exception.OrderApplicationErrorCode;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +66,24 @@ public class OrderService {
         assertReadable(order, command.actor());
 
         return OrderResult.of(order);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderResult> getOrders(GetOrdersCommand command) {
+        OrderActor actor = command.actor();
+
+        boolean isMaster = actor.role().isMaster();
+
+        PageRequest pageRequest = PageRequest.of(command.page(), command.size());
+        Page<Order> orders = orderRepository.searchOrders(
+            isMaster ? null : actor.customerId(),
+            command.status(),
+            command.sort(),
+            command.orderBy(),
+            pageRequest
+        );
+
+        return orders.map(OrderResult::of);
     }
 
     private void assertReadable(Order order, OrderActor actor) {
