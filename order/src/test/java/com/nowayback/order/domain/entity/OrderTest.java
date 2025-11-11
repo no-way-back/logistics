@@ -1,6 +1,8 @@
 package com.nowayback.order.domain.entity;
 
 import static com.nowayback.order.fixture.OrderFixture.CUSTOMER_ID;
+import static com.nowayback.order.fixture.OrderFixture.CUSTOMER_ID_UUID;
+import static com.nowayback.order.fixture.OrderFixture.CUSTOMER_ROLE;
 import static com.nowayback.order.fixture.OrderFixture.ORDER_ITEMS;
 import static com.nowayback.order.fixture.OrderFixture.RECEIVER_COMPANY_ID;
 import static com.nowayback.order.fixture.OrderFixture.RECEIVER_COMPANY_SNAPSHOT;
@@ -12,6 +14,8 @@ import static com.nowayback.order.fixture.OrderFixture.createOrderWithStatus;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.order.application.actor.OrderActorFactory;
 import com.nowayback.order.domain.exception.OrderDomainException;
 import com.nowayback.order.domain.policy.OrderStatusTransitionPolicy;
 import com.nowayback.order.domain.vo.CustomerId;
@@ -239,7 +243,8 @@ class OrderTest {
             Order order = createOrderWithStatus(status);
 
             // when
-            order.cancel(CUSTOMER_ID);
+
+            order.cancel(OrderActorFactory.from(CUSTOMER_ID_UUID, CUSTOMER_ROLE));
 
             //then
             assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELED);
@@ -258,7 +263,7 @@ class OrderTest {
 
             // when / then
             assertThatThrownBy(() -> {
-                order.cancel(CUSTOMER_ID);
+                order.cancel(OrderActorFactory.from(CUSTOMER_ID_UUID, CUSTOMER_ROLE));
             }).isInstanceOf(OrderDomainException.class);
         }
 
@@ -274,7 +279,7 @@ class OrderTest {
 
             // when / then
             assertThatThrownBy(() -> {
-                order.cancel(CustomerId.of(UUID.randomUUID()));
+                order.cancel(OrderActorFactory.from(CUSTOMER_ID_UUID, UserRole.DELIVERY_MANAGER));
             }).isInstanceOf(OrderDomainException.class);
         }
     }

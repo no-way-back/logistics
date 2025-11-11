@@ -1,5 +1,6 @@
 package com.nowayback.order.fixture;
 
+import com.nowayback.common.security.annotation.UserRole;
 import com.nowayback.order.application.command.CancelOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand.CreateOrderItem;
@@ -22,6 +23,7 @@ public class OrderFixture {
 
     public static final UUID CUSTOMER_ID_UUID = UUID.randomUUID();
     public static final CustomerId CUSTOMER_ID = CustomerId.of(CUSTOMER_ID_UUID);
+    public static final UserRole CUSTOMER_ROLE = UserRole.MASTER;
     public static final UUID SUPPLIER_COMPANY_ID_UUID = UUID.randomUUID();
 
     public static final String SUPPLIER_COMPANY_NAME = "공급업체";
@@ -103,6 +105,7 @@ public class OrderFixture {
     public static CreateOrderCommand createOrderCommand() {
         return CreateOrderCommand.of(
             CUSTOMER_ID_UUID,
+            CUSTOMER_ROLE,
             SUPPLIER_COMPANY_ID_UUID,
             SUPPLIER_COMPANY_NAME,
             SUPPLIER_COMPANY_ADDRESS,
@@ -119,7 +122,7 @@ public class OrderFixture {
     }
 
     public static CancelOrderCommand createCancelOrderCommand() {
-        return CancelOrderCommand.of(CUSTOMER_ID, UUID.randomUUID());
+        return CancelOrderCommand.of(CUSTOMER_ID_UUID, CUSTOMER_ROLE, UUID.randomUUID());
     }
 
     private static void setPrivateField(Object target, String fieldName, Object value) {

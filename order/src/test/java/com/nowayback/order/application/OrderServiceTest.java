@@ -9,6 +9,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.order.application.actor.OrderActorFactory;
 import com.nowayback.order.application.client.DeliveryClient;
 import com.nowayback.order.application.client.ProductClient;
 import com.nowayback.order.application.client.response.CreateDeliveryResponse;
@@ -19,7 +21,6 @@ import com.nowayback.order.application.exception.OrderApplicationException;
 import com.nowayback.order.domain.entity.Order;
 import com.nowayback.order.domain.exception.OrderDomainException;
 import com.nowayback.order.domain.repository.OrderRepository;
-import com.nowayback.order.domain.vo.CustomerId;
 import com.nowayback.order.domain.vo.OrderStatus;
 import java.util.Optional;
 import java.util.UUID;
@@ -151,7 +152,7 @@ class OrderServiceTest {
             // given
             UUID orderId = UUID.randomUUID();
             CancelOrderCommand command = new CancelOrderCommand(
-                CustomerId.of(UUID.randomUUID()),
+                OrderActorFactory.from(UUID.randomUUID(), UserRole.COMPANY_MANAGER),
                 orderId
             );
 
