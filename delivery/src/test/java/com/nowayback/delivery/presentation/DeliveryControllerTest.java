@@ -317,14 +317,36 @@ class DeliveryControllerTest extends ControllerTest {
     @DisplayName("배송 삭제 API")
     class DeleteDelivery {
 
-        @Test
+        @ParameterizedTest
+        @EnumSource(value = UserRole.class, names = {"MASTER", "HUB_MANAGER"})
         @DisplayName("배송 삭제 요청이 들어오면 배송을 삭제한다.")
-        void deleteDelivery_ValidRequest_Success() throws Exception {
+        void deleteDelivery_ValidRequest_Success(UserRole role) throws Exception {
             /* given */
             /* when */
             /* then */
-            performWithAuth(delete(BASE_URL + "/" + DELIVERY_UUID), UserRole.MASTER)
+            performWithAuth(delete(BASE_URL + "/" + DELIVERY_UUID), role)
                     .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @DisplayName("인증되지 않은 사용자가 요청하면 응답코드 401을 반환한다.")
+        void deleteDelivery_Unauthorized_WhenHeaderMissing() throws Exception {
+            /* given */
+            /* when */
+            /* then */
+            mockMvc.perform(delete(BASE_URL + "/" + DELIVERY_UUID))
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = UserRole.class, names = {"DELIVERY_MANAGER", "COMPANY_MANAGER"})
+        @DisplayName("권한이 없는 사용자가 요청하면 응답코드 403을 반환한다.")
+        void deleteDelivery_Forbidden_WhenRoleInvalid(UserRole role) throws Exception {
+            /* given */
+            /* when */
+            /* then */
+            performWithAuth(delete(BASE_URL + "/" + DELIVERY_UUID), role)
+                    .andExpect(status().isForbidden());
         }
     }
 }
