@@ -15,7 +15,6 @@ import com.nowayback.order.application.exception.OrderApplicationErrorCode;
 import com.nowayback.order.application.exception.OrderApplicationException;
 import com.nowayback.order.domain.entity.Order;
 import com.nowayback.order.domain.repository.OrderRepository;
-import com.nowayback.order.domain.vo.CustomerId;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +49,7 @@ public class OrderService {
     public void cancelOrder(CancelOrderCommand command) {
         Order order = findOrderOrThrow(command.orderId());
 
-        order.cancel(command.customerId());
+        order.cancel(command.actor());
     }
 
     /**

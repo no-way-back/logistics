@@ -1,6 +1,5 @@
 package com.nowayback.order.presentation.request;
 
-import com.nowayback.order.application.command.CreateOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand.CreateOrderItem;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

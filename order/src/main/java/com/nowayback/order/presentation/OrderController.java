@@ -3,15 +3,19 @@ package com.nowayback.order.presentation;
 import com.nowayback.common.security.annotation.AuthUser;
 import com.nowayback.common.security.annotation.CurrentUser;
 import com.nowayback.order.application.OrderService;
+import com.nowayback.order.application.command.CancelOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand;
 import com.nowayback.order.application.dto.OrderCreateResult;
 import com.nowayback.order.presentation.request.OrderCreateRequest;
 import com.nowayback.order.presentation.request.OrderCreateRequest.OrderItemRequest;
 import com.nowayback.order.presentation.response.OrderCreateResponse;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +33,7 @@ public class OrderController {
     ) {
         CreateOrderCommand command = CreateOrderCommand.of(
             authUser.userId(),
+            authUser.role(),
             request.supplier().supplierCompanyId(),
             request.supplier().name(),
             request.supplier().address(),
@@ -49,5 +54,21 @@ public class OrderController {
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(OrderCreateResponse.from(result));
+    }
+
+    @PatchMapping("/orders/{orderId}/cancel")
+    public ResponseEntity<Void> cancelOrder(
+        @CurrentUser AuthUser authUser,
+        @PathVariable UUID orderId
+    ) {
+        CancelOrderCommand command = CancelOrderCommand.of(
+            authUser.userId(),
+            authUser.role(),
+            orderId
+        );
+
+        orderService.cancelOrder(command);
+
+        return ResponseEntity.noContent().build();
     }
 }

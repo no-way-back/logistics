@@ -1,13 +1,15 @@
 package com.nowayback.order.application.command;
 
-import com.nowayback.order.domain.vo.CustomerId;
+import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.order.application.actor.OrderActorFactory;
+import com.nowayback.order.domain.policy.OrderActor;
 import java.util.UUID;
 
 public record CancelOrderCommand(
-    CustomerId customerId,
+    OrderActor actor,
     UUID orderId
 ) {
-    public static CancelOrderCommand of(CustomerId customerId, UUID orderId) {
-        return new CancelOrderCommand(customerId, orderId);
+    public static CancelOrderCommand of(UUID customerId, UserRole customerRole, UUID orderId) {
+        return new CancelOrderCommand(OrderActorFactory.from(customerId, customerRole), orderId);
     }
 }
