@@ -14,6 +14,7 @@ import com.nowayback.user.application.dto.command.ApprovalCommand;
 import com.nowayback.user.application.dto.command.LoginUserCommand;
 import com.nowayback.user.application.dto.command.SignupUserCommand;
 import com.nowayback.user.application.dto.command.UpdateUserCommand;
+import com.nowayback.user.application.dto.result.DeleteUserResult;
 import com.nowayback.user.application.dto.result.LoginResult;
 import com.nowayback.user.application.dto.result.UserResult;
 import com.nowayback.user.application.exception.UserApplicationErrorCode;
@@ -106,6 +107,17 @@ public class UserService {
 
 		User savedUser = userRepository.save(user);
 		return UserResult.from(savedUser);
+	}
+
+	@Transactional
+	public DeleteUserResult deleteUser(UUID userId, UUID deletedBy) {
+		User user = findActiveUserById(userId);
+
+		user.delete(deletedBy);
+
+		userRepository.save(user);
+
+		return DeleteUserResult.from(userId);
 	}
 
 	// ========== Private Helper Methods ==========

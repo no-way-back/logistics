@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import com.nowayback.user.application.dto.command.ApprovalCommand;
 import com.nowayback.user.application.dto.command.LoginUserCommand;
 import com.nowayback.user.application.dto.command.SignupUserCommand;
 import com.nowayback.user.application.dto.command.UpdateUserCommand;
+import com.nowayback.user.application.dto.result.DeleteUserResult;
 import com.nowayback.user.application.dto.result.LoginResult;
 import com.nowayback.user.application.dto.result.UserResult;
 import com.nowayback.user.domain.entity.UserStatus;
@@ -30,6 +32,7 @@ import com.nowayback.user.presentation.dto.request.ApprovalRequest;
 import com.nowayback.user.presentation.dto.request.LoginUserRequest;
 import com.nowayback.user.presentation.dto.request.SignupUserRequest;
 import com.nowayback.user.presentation.dto.request.UpdateUserRequest;
+import com.nowayback.user.presentation.dto.response.DeleteUserResponse;
 import com.nowayback.user.presentation.dto.response.LoginResponse;
 import com.nowayback.user.presentation.dto.response.UpdateUserResponse;
 import com.nowayback.user.presentation.dto.response.UserResponse;
@@ -122,8 +125,7 @@ public class UserController {
 	@GetMapping
 	@RequireRole(UserRole.MASTER)
 	public ResponseEntity<PageResponse<UserResponse>> getUserList(
-		@CurrentUser AuthUser authUser,
-		@PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+		@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC)
 		Pageable pageable
 	) {
 		PageResponse<UserResult> results = userService.getUserList(pageable);
@@ -158,5 +160,16 @@ public class UserController {
 		UserResult result = userService.updateUser(userId, command);
 
 		return ResponseEntity.ok(new UpdateUserResponse(result.userId(),"사용자 정보가 수정되었습니다."));
+	}
+
+	@DeleteMapping("/{userId}")
+	@RequireRole(UserRole.MASTER)
+	public ResponseEntity<DeleteUserResponse> deleteUser(
+		@PathVariable UUID userId,
+		@CurrentUser AuthUser authUser
+	) {
+		DeleteUserResult result = userService.deleteUser(userId, authUser.userId());
+
+		return ResponseEntity.ok(new DeleteUserResponse(result.userId(), "사용자가 삭제되었습니다."));
 	}
 }

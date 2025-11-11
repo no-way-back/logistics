@@ -15,7 +15,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.nowayback.common.security.annotation.UserRole;
-import com.nowayback.user.application.exception.UserApplicationException;
 import com.nowayback.user.domain.exception.UserDomainErrorCode;
 import com.nowayback.user.domain.exception.UserDomainException;
 
@@ -81,7 +80,7 @@ public class User extends BaseEntity {
 
 	public void validateApprovalStatus(UserStatus status) {
 		if (status != UserStatus.APPROVED && status != UserStatus.REJECTED) {
-			throw new UserApplicationException(UserDomainErrorCode.INVALID_APPROVAL_STATUS);
+			throw new UserDomainException(UserDomainErrorCode.INVALID_APPROVAL_STATUS);
 		}
 	}
 
@@ -95,5 +94,13 @@ public class User extends BaseEntity {
 		if (newSlackId != null) {
 			this.slackId = newSlackId;
 		}
+	}
+
+	public void delete(UUID deletedBy) {
+		if (this.getDeletedAt() != null) {
+			throw new UserDomainException(UserDomainErrorCode.USER_ALREADY_DELETED);
+		}
+
+		this.softDelete(deletedBy);
 	}
 }
