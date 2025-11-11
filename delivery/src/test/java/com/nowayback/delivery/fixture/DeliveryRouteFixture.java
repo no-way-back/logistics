@@ -59,6 +59,16 @@ public class DeliveryRouteFixture {
         return route;
     }
 
+    public static DeliveryRoute createDeliveryRoute(DeliveryId deliveryId, RouteSequence routeSequence) {
+        return DeliveryRoute.create(
+                deliveryId,
+                routeSequence,
+                HUB_ROUTE,
+                DELIVERY_MANAGER_ID,
+                ROUTE_INFO
+        );
+    }
+
     private static void setPrivateField(Object target, String fieldName, Object value) {
         try {
             Field field = target.getClass().getDeclaredField(fieldName);
