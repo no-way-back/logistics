@@ -36,13 +36,13 @@ public class RouteInfo {
     }
 
     private static void validateDistanceMeters(Integer distanceMeters) {
-        if (distanceMeters < 0) {
+        if (distanceMeters != null && distanceMeters < 0) {
             throw new DeliveryRouteDomainException(DeliveryRouteDomainErrorCode.INVALID_DISTANCE_METERS);
         }
     }
 
     private static void validateDurationMinutes(Integer durationMinutes) {
-        if (durationMinutes < 0) {
+        if (durationMinutes != null && durationMinutes < 0) {
             throw new DeliveryRouteDomainException(DeliveryRouteDomainErrorCode.INVALID_DURATION_MINUTES);
         }
     }
