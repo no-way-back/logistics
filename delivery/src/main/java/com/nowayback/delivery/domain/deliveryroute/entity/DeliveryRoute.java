@@ -83,12 +83,17 @@ public class DeliveryRoute extends BaseEntity {
         if (!status.canTransitionTo(newStatus)) {
             throw new DeliveryRouteDomainException(DeliveryRouteDomainErrorCode.INVALID_DELIVERY_ROUTE_STATUS_TRANSITION);
         }
+        this.status = newStatus;
     }
 
     public void updateRouteInfo(RouteInfo newRouteInfo) {
+        validateRouteInfo(newRouteInfo);
+
         if (!status.canUpdateRouteInfo()) {
             throw new DeliveryRouteDomainException(DeliveryRouteDomainErrorCode.INVALID_DELIVERY_ROUTE_STATUS_FOR_UPDATE);
         }
+
+        this.routeInfo = newRouteInfo;
     }
 
     public void delete(UUID deletedBy) {
