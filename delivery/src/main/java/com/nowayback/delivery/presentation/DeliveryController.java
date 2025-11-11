@@ -54,13 +54,15 @@ public class DeliveryController {
     }
 
     @GetMapping
+    @RequireRole({UserRole.MASTER, UserRole.HUB_MANAGER, UserRole.DELIVERY_MANAGER, UserRole.COMPANY_MANAGER})
     public ResponseEntity<Page<DeliveryResponse>> searchDeliveries(
             @RequestParam(required = false) UUID orderId,
             @RequestParam(required = false) UUID sourceHubId,
             @RequestParam(required = false) UUID destinationHubId,
             @RequestParam(required = false) DeliveryStatus status,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @CurrentUser AuthUser authUser
     ) {
         Page<DeliveryResponse> responses = deliveryService.searchDeliveries(orderId, sourceHubId, destinationHubId, status, page, size)
                 .map(DeliveryResponse::from);
