@@ -23,6 +23,7 @@ public enum DeliveryRouteDomainErrorCode implements ErrorCode {
     NULL_ROUTE_INFO_OBJECT("DELIVERYROUTE1014", "경로 정보 객체는 null일 수 없습니다.", HttpStatus.BAD_REQUEST),
 
     INVALID_DELIVERY_ROUTE_STATUS_TRANSITION("DELIVERYROUTE1015", "유효하지 않은 배송 경로 상태 전환입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_DELIVERY_ROUTE_STATUS_FOR_UPDATE("DELIVERYROUTE1016", "현재 배송 경로 상태에서는 경로 정보를 수정할 수 없습니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

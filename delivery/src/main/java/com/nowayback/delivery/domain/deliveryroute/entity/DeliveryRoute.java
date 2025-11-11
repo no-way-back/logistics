@@ -62,7 +62,7 @@ public class DeliveryRoute extends BaseEntity {
         this.routeInfo = routeInfo;
     }
 
-    public static DeliveryRoute create(DeliveryId deliveryId, RouteSequence sequence, HubRoute hubRoute, DeliveryManagerId deliveryManagerId, DeliveryRouteStatus status, RouteInfo routeInfo) {
+    public static DeliveryRoute create(DeliveryId deliveryId, RouteSequence sequence, HubRoute hubRoute, DeliveryManagerId deliveryManagerId, RouteInfo routeInfo) {
         validateDeliveryId(deliveryId);
         validateRouteSequence(sequence);
         validateHubRoute(hubRoute);
@@ -82,6 +82,12 @@ public class DeliveryRoute extends BaseEntity {
     public void updateStatus(DeliveryRouteStatus newStatus) {
         if (!status.canTransitionTo(newStatus)) {
             throw new DeliveryRouteDomainException(DeliveryRouteDomainErrorCode.INVALID_DELIVERY_ROUTE_STATUS_TRANSITION);
+        }
+    }
+
+    public void updateRouteInfo(RouteInfo newRouteInfo) {
+        if (!status.canUpdateRouteInfo()) {
+            throw new DeliveryRouteDomainException(DeliveryRouteDomainErrorCode.INVALID_DELIVERY_ROUTE_STATUS_FOR_UPDATE);
         }
     }
 
