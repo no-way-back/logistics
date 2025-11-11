@@ -157,8 +157,7 @@ class DeliveryControllerTest extends ControllerTest {
                             .param("destinationHubId", DESTINATION_HUB_UUID.toString())
                             .param("status", DeliveryStatus.WAITING_AT_HUB.name())
                             .param("page", String.valueOf(PAGE))
-                            .param("size",  String.valueOf(SIZE)),
-                    UserRole.MASTER)
+                            .param("size",  String.valueOf(SIZE)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.content.length()").value(2))
                     .andExpect(jsonPath("$.totalElements").value(2));
@@ -215,8 +214,7 @@ class DeliveryControllerTest extends ControllerTest {
             /* then */
             performWithAuth(patch(BASE_URL + "/" + DELIVERY_UUID)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)),
-                    UserRole.MASTER)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
         }
 
@@ -281,8 +279,7 @@ class DeliveryControllerTest extends ControllerTest {
             /* then */
             performWithAuth(patch(BASE_URL + "/" + DELIVERY_UUID + "/status")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)),
-                    UserRole.MASTER)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
         }
 
