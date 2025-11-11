@@ -78,7 +78,7 @@ class DeliveryControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("인증되지 않은 사용자가 요청하면 응답코드 401을 반환한다.")
-        void createDelivery_Unauthorized_WhenHeaderMissing() throws Exception {
+        void createDelivery_WhenHeaderMissing_Unauthorized() throws Exception {
             /* given */
             CreateDeliveryRequest request = VALID_CREATE_DELIVERY_REQUEST;
 
@@ -93,7 +93,7 @@ class DeliveryControllerTest extends ControllerTest {
         @ParameterizedTest
         @EnumSource(value = UserRole.class, names = {"HUB_MANAGER", "DELIVERY_MANAGER", "COMPANY_MANAGER"})
         @DisplayName("권한이 없는 사용자가 요청하면 응답코드 403을 반환한다.")
-        void createDelivery_Forbidden_WhenRoleInvalid(UserRole role) throws Exception {
+        void createDelivery_WhenRoleInvalid_Forbidden(UserRole role) throws Exception {
             /* given */
             CreateDeliveryRequest request = VALID_CREATE_DELIVERY_REQUEST;
 
@@ -129,7 +129,7 @@ class DeliveryControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("인증되지 않은 사용자가 요청하면 응답코드 401을 반환한다.")
-        void getDelivery_Unauthorized_WhenHeaderMissing() throws Exception {
+        void getDelivery_WhenHeaderMissing_Unauthorized() throws Exception {
             /* given */
             /* when */
             /* then */
@@ -166,7 +166,7 @@ class DeliveryControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("인증되지 않은 사용자가 요청하면 응답코드 401을 반환한다.")
-        void searchDeliveries_Unauthorized_WhenHeaderMissing() throws Exception {
+        void searchDeliveries_WhenHeaderMissing_Unauthorized() throws Exception {
             /* given */
             /* when */
             /* then */
@@ -222,7 +222,7 @@ class DeliveryControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("인증되지 않은 사용자가 요청하면 응답코드 401을 반환한다.")
-        void updateDeliveryRecipientInfo_Unauthorized_WhenHeaderMissing() throws Exception {
+        void updateDeliveryRecipientInfo_WhenHeaderMissing_Unauthorized() throws Exception {
             /* given */
             /* when */
             /* then */
@@ -235,7 +235,7 @@ class DeliveryControllerTest extends ControllerTest {
         @ParameterizedTest
         @EnumSource(value = UserRole.class, names = {"COMPANY_MANAGER"})
         @DisplayName("권한이 없는 사용자가 요청하면 응답코드 403을 반환한다.")
-        void updateDeliveryRecipientInfo_Forbidden_WhenRoleInvalid(UserRole role) throws Exception {
+        void updateDeliveryRecipientInfo_WhenRoleInvalid_Forbidden(UserRole role) throws Exception {
             /* given */
             /* when */
             /* then */
@@ -288,7 +288,7 @@ class DeliveryControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("인증되지 않은 사용자가 요청하면 응답코드 401을 반환한다.")
-        void updateDeliveryStatus_Unauthorized_WhenHeaderMissing() throws Exception {
+        void updateDeliveryStatus_WhenHeaderMissing_Unauthorized() throws Exception {
             /* given */
             /* when */
             /* then */
@@ -301,7 +301,7 @@ class DeliveryControllerTest extends ControllerTest {
         @ParameterizedTest
         @EnumSource(value = UserRole.class, names = {"COMPANY_MANAGER"})
         @DisplayName("권한이 없는 사용자가 요청하면 응답코드 403을 반환한다.")
-        void updateDeliveryStatus_Forbidden_WhenRoleInvalid(UserRole role) throws Exception {
+        void updateDeliveryStatus_WhenRoleInvalid_Forbidden(UserRole role) throws Exception {
             /* given */
             /* when */
             /* then */
@@ -330,7 +330,7 @@ class DeliveryControllerTest extends ControllerTest {
 
         @Test
         @DisplayName("인증되지 않은 사용자가 요청하면 응답코드 401을 반환한다.")
-        void deleteDelivery_Unauthorized_WhenHeaderMissing() throws Exception {
+        void deleteDelivery_WhenHeaderMissing_Unauthorized() throws Exception {
             /* given */
             /* when */
             /* then */
@@ -341,7 +341,7 @@ class DeliveryControllerTest extends ControllerTest {
         @ParameterizedTest
         @EnumSource(value = UserRole.class, names = {"DELIVERY_MANAGER", "COMPANY_MANAGER"})
         @DisplayName("권한이 없는 사용자가 요청하면 응답코드 403을 반환한다.")
-        void deleteDelivery_Forbidden_WhenRoleInvalid(UserRole role) throws Exception {
+        void deleteDelivery_WhenRoleInvalid_Forbidden(UserRole role) throws Exception {
             /* given */
             /* when */
             /* then */
