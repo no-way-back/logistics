@@ -49,8 +49,8 @@ class DeliveryServiceTest {
             CreateDeliveryCommand command = CREATE_DELIVERY_COMMAND;
             Delivery delivery = createDelivery();
 
-            UUID sourceHubId = command.sourceHubId();
-            UUID destinationHubId = command.destinationHubId();
+            UUID sourceHubId = command.sourceHubId().getId();
+            UUID destinationHubId = command.destinationHubId().getId();
 
             when(deliveryRepository.existsByOrderId(any(OrderId.class))).thenReturn(false);
             when(hubClient.existsById(sourceHubId)).thenReturn(true);
@@ -94,7 +94,7 @@ class DeliveryServiceTest {
         void createDelivery_WithNonExistentSourceHubId_throwsException() {
             /* given */
             CreateDeliveryCommand command = CREATE_DELIVERY_COMMAND;
-            UUID sourceHubId = command.sourceHubId();
+            UUID sourceHubId = command.sourceHubId().getId();
 
             when(deliveryRepository.existsByOrderId(any(OrderId.class))).thenReturn(false);
             when(hubClient.existsById(sourceHubId)).thenReturn(false);
@@ -112,8 +112,8 @@ class DeliveryServiceTest {
         void createDelivery_WithNonExistentDestinationHubId_throwsException() {
             /* given */
             CreateDeliveryCommand command = CREATE_DELIVERY_COMMAND;
-            UUID sourceHubId = command.sourceHubId();
-            UUID destinationHubId = command.destinationHubId();
+            UUID sourceHubId = command.sourceHubId().getId();
+            UUID destinationHubId = command.destinationHubId().getId();
 
             when(deliveryRepository.existsByOrderId(any(OrderId.class))).thenReturn(false);
             when(hubClient.existsById(sourceHubId)).thenReturn(true);
