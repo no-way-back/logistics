@@ -3,7 +3,6 @@ package com.nowayback.order.infrastructure.persistence;
 import static com.nowayback.order.domain.entity.QOrder.order;
 
 import com.nowayback.order.domain.entity.Order;
-import com.nowayback.order.domain.entity.QOrder;
 import com.nowayback.order.domain.vo.CustomerId;
 import com.nowayback.order.domain.vo.OrderStatus;
 import com.querydsl.core.types.OrderSpecifier;

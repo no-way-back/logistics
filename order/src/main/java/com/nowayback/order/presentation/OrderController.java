@@ -16,7 +16,6 @@ import com.nowayback.order.presentation.request.OrderCreateRequest.OrderItemRequ
 import com.nowayback.order.presentation.response.OrderCreateResponse;
 import com.nowayback.order.presentation.response.OrderResponse;
 import jakarta.validation.Valid;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

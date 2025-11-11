@@ -3,7 +3,6 @@ package com.nowayback.order.application.command;
 import com.nowayback.common.security.annotation.UserRole;
 import com.nowayback.order.application.actor.OrderActorFactory;
 import com.nowayback.order.domain.policy.OrderActor;
-import com.nowayback.order.domain.vo.CustomerId;
 import com.nowayback.order.domain.vo.OrderStatus;
 import java.util.UUID;
 
