@@ -1,5 +1,9 @@
 package com.nowayback.delivery.presentation;
 
+import com.nowayback.common.security.annotation.AuthUser;
+import com.nowayback.common.security.annotation.CurrentUser;
+import com.nowayback.common.security.annotation.RequireRole;
+import com.nowayback.common.security.annotation.UserRole;
 import com.nowayback.delivery.application.DeliveryService;
 import com.nowayback.delivery.application.command.CreateDeliveryCommand;
 import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
@@ -26,8 +30,10 @@ public class DeliveryController {
     private final DeliveryService deliveryService;
 
     @PostMapping
+    @RequireRole(UserRole.MASTER)
     public ResponseEntity<DeliveryResponse> createDelivery(
-            @Valid @RequestBody CreateDeliveryRequest request
+            @Valid @RequestBody CreateDeliveryRequest request,
+            @CurrentUser AuthUser authUser
     ) {
         CreateDeliveryCommand command = CreateDeliveryCommand.from(request);
 
