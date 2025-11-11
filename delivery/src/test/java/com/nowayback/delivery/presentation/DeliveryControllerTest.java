@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowayback.common.security.annotation.UserRole;
 import com.nowayback.delivery.application.DeliveryService;
 import com.nowayback.delivery.application.dto.DeliveryResult;
+import com.nowayback.delivery.application.exception.DeliveryApplicationException;
 import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
 import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;
 import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRecipientInfoRequest;
@@ -110,9 +111,10 @@ class DeliveryControllerTest extends ControllerTest {
     @DisplayName("배송 단일 조회 API")
     class GetDelivery {
 
-        @Test
+        @ParameterizedTest
+        @EnumSource(value = UserRole.class, names = {"MASTER", "HUB_MANAGER", "DELIVERY_MANAGER", "COMPANY_MANAGER"})
         @DisplayName("유효한 요청이 들어오면 배송을 조회한다.")
-        void getDelivery_ExistingUuid_Success() throws Exception {
+        void getDelivery_ExistingUuid_Success(UserRole role) throws Exception {
             /* given */
             DeliveryResult result = DELIVERY_RESULT;
 
@@ -120,9 +122,19 @@ class DeliveryControllerTest extends ControllerTest {
 
             /* when */
             /* then */
-            performWithAuth(get(BASE_URL + "/" + DELIVERY_UUID), UserRole.MASTER)
+            performWithAuth(get(BASE_URL + "/" + DELIVERY_UUID), role)
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.orderId").value(result.orderId().toString()));
+        }
+
+        @Test
+        @DisplayName("인증되지 않은 사용자가 요청하면 응답코드 401을 반환한다.")
+        void getDelivery_Unauthorized_WhenHeaderMissing() throws Exception {
+            /* given */
+            /* when */
+            /* then */
+            mockMvc.perform(get(BASE_URL + "/" + DELIVERY_UUID))
+                    .andExpect(status().isUnauthorized());
         }
     }
 
