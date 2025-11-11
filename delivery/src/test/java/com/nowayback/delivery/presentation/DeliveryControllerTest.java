@@ -251,9 +251,10 @@ class DeliveryControllerTest extends ControllerTest {
     @DisplayName("배송 상태 수정 API")
     class UpdateDeliveryStatus {
 
-        @Test
+        @ParameterizedTest
+        @EnumSource(value = UserRole.class, names = {"MASTER", "HUB_MANAGER", "DELIVERY_MANAGER"})
         @DisplayName("배송 상태 수정 요청이 들어오면 배송 상태를 수정한다.")
-        void updateDeliveryStatus_ValidRequest_Success() throws Exception {
+        void updateDeliveryStatus_ValidRequest_Success(UserRole role) throws Exception {
             /* given */
             UpdateDeliveryStatusRequest request = VALID_UPDATE_DELIVERY_STATUS_REQUEST;
             DeliveryResult result = DELIVERY_RESULT_TRANSIT_BETWEEN_HUBS;
@@ -265,7 +266,7 @@ class DeliveryControllerTest extends ControllerTest {
             performWithAuth(patch(BASE_URL + "/" + DELIVERY_UUID + "/status")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)),
-                    UserRole.MASTER)
+                    role)
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value(DeliveryStatus.TRANSIT_BETWEEN_HUBS.name()));
         }
@@ -283,6 +284,32 @@ class DeliveryControllerTest extends ControllerTest {
                             .content(objectMapper.writeValueAsString(request)),
                     UserRole.MASTER)
                     .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("인증되지 않은 사용자가 요청하면 응답코드 401을 반환한다.")
+        void updateDeliveryStatus_Unauthorized_WhenHeaderMissing() throws Exception {
+            /* given */
+            /* when */
+            /* then */
+            mockMvc.perform(patch(BASE_URL + "/" + DELIVERY_UUID + "/status")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(VALID_UPDATE_DELIVERY_STATUS_REQUEST)))
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = UserRole.class, names = {"COMPANY_MANAGER"})
+        @DisplayName("권한이 없는 사용자가 요청하면 응답코드 403을 반환한다.")
+        void updateDeliveryStatus_Forbidden_WhenRoleInvalid(UserRole role) throws Exception {
+            /* given */
+            /* when */
+            /* then */
+            performWithAuth(patch(BASE_URL + "/" + DELIVERY_UUID + "/status")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(VALID_UPDATE_DELIVERY_STATUS_REQUEST)),
+                    role)
+                    .andExpect(status().isForbidden());
         }
     }
 
