@@ -99,8 +99,10 @@ public class DeliveryController {
     }
 
     @DeleteMapping("/{deliveryId}")
+    @RequireRole({UserRole.MASTER, UserRole.HUB_MANAGER})
     public ResponseEntity<Void> deleteDelivery(
-            @PathVariable UUID deliveryId
+            @PathVariable UUID deliveryId,
+            @CurrentUser AuthUser authUser
     ) {
         deliveryService.deleteDelivery(deliveryId);
 
