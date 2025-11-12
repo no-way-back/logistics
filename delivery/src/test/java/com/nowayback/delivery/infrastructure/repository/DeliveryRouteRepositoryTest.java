@@ -116,6 +116,43 @@ class DeliveryRouteRepositoryTest {
             assertThat(foundRoute).isNotPresent();
         }
     }
+    
+    @Nested
+    @DisplayName("배송 ID에 대한 배송 경로들 조회")
+    class findAllByDeliveryId {
+        
+        @Test
+        @DisplayName("배송 ID로 배송 경로들을 조회한다.")
+        void findAllByDeliveryId_ExistingDeliveryId_ShouldReturnDeliveryRoutes() {
+            /* given */
+            DeliveryRoute route1 = createDeliveryRoute(DELIVERY_ID, RouteSequence.of(1));
+            DeliveryRoute route2 = createDeliveryRoute(DELIVERY_ID, RouteSequence.of(2));
+
+            entityManager.persist(route1);
+            entityManager.persist(route2);
+            entityManager.flush();
+
+            /* when */
+            List<DeliveryRoute> foundRoutes = deliveryRouteRepository.findAllByDeliveryId(DELIVERY_ID);
+            
+            /* then */
+            assertThat(foundRoutes).hasSize(2);
+            for (DeliveryRoute route : foundRoutes) {
+                assertThat(route.getDeliveryId()).isEqualTo(DELIVERY_ID);
+            }
+        }
+
+        @Test
+        @DisplayName("배송 ID에 대한 배송 경로들이 존재하지 않으면 빈 리스트를 반환한다.")
+        void findAllByDeliveryId_NonExistentDeliveryId_ShouldReturnEmptyList() {
+            /* given */
+            /* when */
+            List<DeliveryRoute> foundRoutes = deliveryRouteRepository.findAllByDeliveryId(DELIVERY_ID);
+
+            /* then */
+            assertThat(foundRoutes).isEmpty();
+        }
+    }
 
     @Nested
     @DisplayName("배송 경로 검색")
