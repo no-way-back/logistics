@@ -3,6 +3,7 @@ package com.nowayback.hub.application.hub;
 import com.nowayback.hub.application.hub.command.CreateHubCommand;
 import com.nowayback.hub.application.hub.command.UpdateHubCommand;
 import com.nowayback.hub.application.hub.dto.CreateHubResult;
+import com.nowayback.hub.application.hub.dto.GetHubResult;
 import com.nowayback.hub.application.hub.dto.UpdateHubResult;
 import com.nowayback.hub.application.hub.exception.HubApplicationException;
 import com.nowayback.hub.domain.hub.entity.Hub;
@@ -33,6 +34,66 @@ class HubServiceTest {
 
     @InjectMocks
     private HubService hubService;
+
+    @Nested
+    @DisplayName("허브 단건 조회")
+    class GetHub {
+
+        @Nested
+        @DisplayName("허브 조회 성공 테스트")
+        class GetHubSuccess {
+
+            @Test
+            @DisplayName("유효한 hubId로 허브를 조회할 수 있다")
+            void get_hub_success() {
+                // given
+                UUID hubId = UUID.randomUUID();
+
+                Hub existingHub = Hub.create(new CreateHubCommand(
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780")
+                ));
+
+                when(hubRepository.findById(hubId)).thenReturn(Optional.of(existingHub));
+
+                // when
+                GetHubResult result = hubService.getHub(hubId);
+
+                // then
+                assertThat(result).isNotNull();
+                assertThat(result.hubId()).isEqualTo(existingHub.getId());
+                assertThat(result.name()).isEqualTo("서울특별시 센터");
+                assertThat(result.address()).isEqualTo("서울시 송파구 송파대로 55");
+                assertThat(result.latitude()).isEqualByComparingTo("37.5665");
+                assertThat(result.longitude()).isEqualByComparingTo("126.9780");
+
+                verify(hubRepository, times(1)).findById(hubId);
+            }
+        }
+
+        @Nested
+        @DisplayName("허브 조회 실패 테스트")
+        class GetHubFailure {
+
+            @Test
+            @DisplayName("존재하지 않는 허브 ID로 조회 시도하면 예외가 발생한다")
+            void get_hub_with_non_existent_id_throws_exception() {
+                // given
+                UUID hubId = UUID.randomUUID();
+
+                when(hubRepository.findById(hubId)).thenReturn(Optional.empty());
+
+                // when & then
+                assertThatThrownBy(() -> hubService.getHub(hubId))
+                        .isInstanceOf(HubApplicationException.class)
+                        .hasFieldOrPropertyWithValue("errorCode", HUB_NOT_FOUND_EXCEPTION);
+
+                verify(hubRepository, times(1)).findById(hubId);
+            }
+        }
+    }
 
     @Nested
     @DisplayName("허브 생성")
