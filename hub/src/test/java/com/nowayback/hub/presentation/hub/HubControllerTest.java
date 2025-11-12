@@ -1,12 +1,12 @@
 package com.nowayback.hub.presentation.hub;
 
 import com.nowayback.common.security.annotation.UserRole;
-import com.nowayback.common.security.config.CommonWebConfig;
 import com.nowayback.common.security.interceptor.JwtConstants;
 import com.nowayback.hub.application.hub.HubService;
 import com.nowayback.hub.application.hub.command.CreateHubCommand;
 import com.nowayback.hub.application.hub.command.UpdateHubCommand;
 import com.nowayback.hub.application.hub.dto.CreateHubResult;
+import com.nowayback.hub.application.hub.dto.GetHubResult;
 import com.nowayback.hub.application.hub.dto.UpdateHubResult;
 import com.nowayback.hub.application.hub.exception.HubApplicationException;
 import com.nowayback.hub.domain.hub.entity.Hub;
@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,6 +39,152 @@ class HubControllerTest {
 
     @MockitoBean
     private HubService hubService;
+
+    @Nested
+    @DisplayName("GET /hubs/{hubId} - 허브 단건 조회 테스트")
+    class GetHub {
+
+        @Nested
+        @DisplayName("허브 조회 성공 테스트")
+        class GetHubSuccess {
+
+            @Test
+            @DisplayName("유효한 hubId로 허브를 조회할 수 있다")
+            void get_hub_success() throws Exception {
+                // given
+                UUID hubId = UUID.randomUUID();
+                UUID createdBy = UUID.randomUUID();
+                UUID updatedBy = UUID.randomUUID();
+                LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
+                LocalDateTime updatedAt = LocalDateTime.now();
+
+                GetHubResult getHubResult = new GetHubResult(
+                        hubId,
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780"),
+                        createdAt,
+                        createdBy,
+                        updatedAt,
+                        updatedBy
+                );
+
+                when(hubService.getHub(eq(hubId))).thenReturn(getHubResult);
+
+                // when & then
+                mockMvc.perform(get("/hubs/{hubId}", hubId))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.hubId").value(hubId.toString()))
+                        .andExpect(jsonPath("$.name").value("서울특별시 센터"))
+                        .andExpect(jsonPath("$.address").value("서울시 송파구 송파대로 55"))
+                        .andExpect(jsonPath("$.latitude").value(37.5665))
+                        .andExpect(jsonPath("$.longitude").value(126.9780))
+                        .andExpect(jsonPath("$.createdAt").exists())
+                        .andExpect(jsonPath("$.createdBy").value(createdBy.toString()))
+                        .andExpect(jsonPath("$.updatedAt").exists())
+                        .andExpect(jsonPath("$.updatedBy").value(updatedBy.toString()));
+
+                verify(hubService, times(1)).getHub(eq(hubId));
+            }
+
+            @Test
+            @DisplayName("인증 헤더 없이도 허브를 조회할 수 있다")
+            void get_hub_without_auth_header_success() throws Exception {
+                // given
+                UUID hubId = UUID.randomUUID();
+                UUID createdBy = UUID.randomUUID();
+
+                GetHubResult getHubResult = new GetHubResult(
+                        hubId,
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780"),
+                        LocalDateTime.now(),
+                        createdBy,
+                        null,
+                        null
+                );
+
+                when(hubService.getHub(eq(hubId))).thenReturn(getHubResult);
+
+                // when & then - 헤더 없이 요청
+                mockMvc.perform(get("/hubs/{hubId}", hubId))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.hubId").value(hubId.toString()))
+                        .andExpect(jsonPath("$.name").value("서울특별시 센터"));
+
+                verify(hubService, times(1)).getHub(eq(hubId));
+            }
+
+            @Test
+            @DisplayName("일반 사용자도 허브를 조회할 수 있다")
+            void get_hub_with_any_role_success() throws Exception {
+                // given
+                UUID hubId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
+
+                GetHubResult getHubResult = new GetHubResult(
+                        hubId,
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780"),
+                        LocalDateTime.now(),
+                        UUID.randomUUID(),
+                        null,
+                        null
+                );
+
+                when(hubService.getHub(eq(hubId))).thenReturn(getHubResult);
+
+                // when & then - HUB_MANAGER 권한으로 요청
+                mockMvc.perform(get("/hubs/{hubId}", hubId)
+                                .header(JwtConstants.HEADER_USER_ID, userId.toString())
+                                .header(JwtConstants.HEADER_USERNAME, "user")
+                                .header(JwtConstants.HEADER_ROLE, UserRole.HUB_MANAGER.name()))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.hubId").value(hubId.toString()));
+
+                verify(hubService, times(1)).getHub(eq(hubId));
+            }
+        }
+
+        @Nested
+        @DisplayName("허브 조회 실패 테스트")
+        class GetHubFailure {
+
+            @Test
+            @DisplayName("존재하지 않는 hubId일 경우 404 에러를 반환한다")
+            void get_hub_with_non_existent_id_returns_not_found() throws Exception {
+                // given
+                UUID hubId = UUID.randomUUID();
+
+                when(hubService.getHub(eq(hubId)))
+                        .thenThrow(new HubApplicationException(HUB_NOT_FOUND_EXCEPTION));
+
+                // when & then
+                mockMvc.perform(get("/hubs/{hubId}", hubId))
+                        .andExpect(status().isNotFound());
+
+                verify(hubService, times(1)).getHub(eq(hubId));
+            }
+
+            @Test
+            @DisplayName("잘못된 형식의 hubId로 요청 시 400 에러를 반환한다")
+            void get_hub_with_invalid_hub_id_format_returns_bad_request() throws Exception {
+                // given
+                String invalidHubId = "invalid-uuid";
+
+                // when & then
+                mockMvc.perform(get("/hubs/{hubId}", invalidHubId))
+                        .andExpect(status().isBadRequest());
+
+                verify(hubService, never()).getHub(any(UUID.class));
+            }
+        }
+    }
 
     @Nested
     @DisplayName("POST /hubs - 허브 생성 테스트")

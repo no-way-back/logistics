@@ -10,6 +10,7 @@ import com.nowayback.hub.application.hub.command.UpdateHubCommand;
 import com.nowayback.hub.presentation.hub.request.CreateHubRequest;
 import com.nowayback.hub.presentation.hub.request.UpdateHubRequest;
 import com.nowayback.hub.presentation.hub.response.CreateHubResponse;
+import com.nowayback.hub.presentation.hub.response.GetHubResponse;
 import com.nowayback.hub.presentation.hub.response.UpdateHubResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,14 @@ import java.util.UUID;
 public class HubController {
 
     private final HubService hubService;
+
+    @GetMapping("/{hubId}")
+    public ResponseEntity<GetHubResponse> get(@PathVariable UUID hubId) {
+        return ResponseEntity.
+                ok(GetHubResponse.from(
+                        hubService.getHub(hubId))
+                );
+    }
 
     @PostMapping
     @RequireRole(UserRole.MASTER)
