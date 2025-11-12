@@ -29,6 +29,11 @@ public class DeliveryRouteRepositoryImpl implements DeliveryRouteRepository {
     }
 
     @Override
+    public List<DeliveryRoute> findAllByDeliveryId(DeliveryId deliveryId) {
+        return deliveryRouteJpaRepository.findAllByDeliveryIdAndDeletedAtIsNull(deliveryId);
+    }
+
+    @Override
     public Page<DeliveryRoute> findAllByDeliveryId(DeliveryId deliveryId, Pageable pageable) {
         if (deliveryId == null) {
             return deliveryRouteJpaRepository.findAllByDeletedAtIsNull(pageable);

@@ -12,5 +12,6 @@ import java.util.UUID;
 public interface DeliveryRouteRepository {
     List<DeliveryRoute> saveAll(List<DeliveryRoute> deliveryRoutes);
     Optional<DeliveryRoute> findById(UUID deliveryRouteId);
+    List<DeliveryRoute> findAllByDeliveryId(DeliveryId deliveryId);
     Page<DeliveryRoute> findAllByDeliveryId(DeliveryId deliveryId, Pageable pageable);
 }

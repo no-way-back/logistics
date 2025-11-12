@@ -101,8 +101,8 @@ public class DeliveryRouteService {
 
     @Transactional
     public void deleteDeliveryRoutesByDeliveryId(UUID userId, UUID deliveryId) {
-        DeliveryRoute deliveryRoute = getDeliveryRouteById(deliveryId);
-        deliveryRoute.delete(userId);
+        List<DeliveryRoute> routes = deliveryRouteRepository.findAllByDeliveryId(DeliveryId.of(deliveryId));
+        routes.forEach(route -> route.delete(userId));
     }
 
     private DeliveryRoute getDeliveryRouteById(UUID deliveryRouteId) {
