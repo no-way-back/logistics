@@ -1,5 +1,7 @@
 package com.nowayback.hub.presentation.hub;
 
+import com.nowayback.common.security.annotation.AuthUser;
+import com.nowayback.common.security.annotation.CurrentUser;
 import com.nowayback.common.security.annotation.RequireRole;
 import com.nowayback.common.security.annotation.UserRole;
 import com.nowayback.hub.application.hub.HubService;
@@ -45,5 +47,12 @@ public class HubController {
                 UpdateHubResponse.from(
                         hubService.update(hubId, updateHubCommand))
         );
+    }
+
+    @DeleteMapping("/{hubId}")
+    @RequireRole(UserRole.MASTER)
+    public ResponseEntity<Void> delete(@PathVariable UUID hubId, @CurrentUser AuthUser user) {
+        hubService.delete(hubId, user.userId());
+        return ResponseEntity.noContent().build();
     }
 }

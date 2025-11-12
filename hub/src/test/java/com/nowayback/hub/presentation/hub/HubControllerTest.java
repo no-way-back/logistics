@@ -32,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(HubController.class)
-@Import(CommonWebConfig.class)
 @DisplayName("HubController 테스트")
 class HubControllerTest {
 
@@ -235,7 +234,7 @@ class HubControllerTest {
     }
 
     @Nested
-    @DisplayName("PUT /hubs/{hubId} - 허브 수정 테스트")
+    @DisplayName("PATCH /hubs/{hubId} - 허브 수정 테스트")
     class UpdateHub {
 
         @Nested
@@ -273,7 +272,7 @@ class HubControllerTest {
                         .thenReturn(updateHubResult);
 
                 // when & then
-                mockMvc.perform(put("/hubs/{hubId}", hubId)
+                mockMvc.perform(patch("/hubs/{hubId}", hubId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header(JwtConstants.HEADER_USER_ID, userId.toString())
                                 .header(JwtConstants.HEADER_USERNAME, "admin")
@@ -317,7 +316,7 @@ class HubControllerTest {
                         .thenThrow(new HubApplicationException(HUB_NOT_FOUND_EXCEPTION));
 
                 // when & then
-                mockMvc.perform(put("/hubs/{hubId}", hubId)
+                mockMvc.perform(patch("/hubs/{hubId}", hubId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .header(JwtConstants.HEADER_USER_ID, userId.toString())
                                 .header(JwtConstants.HEADER_USERNAME, "admin")
@@ -378,6 +377,97 @@ class HubControllerTest {
                         .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
 
                 verify(hubService, never()).update(any(UUID.class), any(UpdateHubCommand.class));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("DELETE /hubs/{hubId} - 허브 삭제 테스트")
+    class DeleteHub {
+
+        @Nested
+        @DisplayName("허브 삭제 성공 테스트")
+        class HubDeleteSuccess {
+
+            @Test
+            @DisplayName("유효한 요청으로 허브를 삭제할 수 있다")
+            void delete_hub_success() throws Exception {
+                // given
+                UUID hubId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
+
+                doNothing().when(hubService).delete(eq(hubId), eq(userId));
+
+                // when & then
+                mockMvc.perform(delete("/hubs/{hubId}", hubId)
+                                .header(JwtConstants.HEADER_USER_ID, userId.toString())
+                                .header(JwtConstants.HEADER_USERNAME, "admin")
+                                .header(JwtConstants.HEADER_ROLE, UserRole.MASTER.name()))
+                        .andExpect(status().isNoContent());
+
+                verify(hubService, times(1)).delete(eq(hubId), eq(userId));
+            }
+        }
+
+        @Nested
+        @DisplayName("허브 삭제 실패 테스트")
+        class HubDeleteFailure {
+
+            @Test
+            @DisplayName("존재하지 않는 hubId일 경우 404 에러를 반환한다")
+            void delete_hub_with_non_existent_id_returns_not_found() throws Exception {
+                // given
+                UUID hubId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
+
+                doThrow(new HubApplicationException(HUB_NOT_FOUND_EXCEPTION))
+                        .when(hubService).delete(eq(hubId), eq(userId));
+
+                // when & then
+                mockMvc.perform(delete("/hubs/{hubId}", hubId)
+                                .header(JwtConstants.HEADER_USER_ID, userId.toString())
+                                .header(JwtConstants.HEADER_USERNAME, "admin")
+                                .header(JwtConstants.HEADER_ROLE, UserRole.MASTER.name()))
+                        .andExpect(status().isNotFound());
+
+                verify(hubService, times(1)).delete(eq(hubId), eq(userId));
+            }
+        }
+
+        @Nested
+        @DisplayName("허브 삭제 권한 테스트")
+        class HubDeleteAuthTest {
+
+            @Test
+            @DisplayName("MASTER 권한 없이 허브 삭제 시도 시 403 에러를 반환한다")
+            void delete_hub_without_master_role_returns_forbidden() throws Exception {
+                // given
+                UUID hubId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
+
+                // when & then
+                mockMvc.perform(delete("/hubs/{hubId}", hubId)
+                                .header(JwtConstants.HEADER_USER_ID, userId.toString())
+                                .header(JwtConstants.HEADER_USERNAME, "user")
+                                .header(JwtConstants.HEADER_ROLE, UserRole.HUB_MANAGER.name()))
+                        .andExpect(status().isForbidden())
+                        .andExpect(jsonPath("$.code").value("FORBIDDEN"));
+
+                verify(hubService, never()).delete(any(UUID.class), any(UUID.class));
+            }
+
+            @Test
+            @DisplayName("인증 헤더 없이 허브 삭제 시도 시 401 에러를 반환한다")
+            void delete_hub_without_auth_header_returns_unauthorized() throws Exception {
+                // given
+                UUID hubId = UUID.randomUUID();
+
+                // when & then
+                mockMvc.perform(delete("/hubs/{hubId}", hubId))
+                        .andExpect(status().isUnauthorized())
+                        .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
+
+                verify(hubService, never()).delete(any(UUID.class), any(UUID.class));
             }
         }
     }

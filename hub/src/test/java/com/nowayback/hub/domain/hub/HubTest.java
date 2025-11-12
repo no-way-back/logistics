@@ -8,10 +8,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
-class HubEntityTest {
+class HubTest {
 
     @Nested
     @DisplayName("허브 생성 테스트")
@@ -299,6 +300,32 @@ class HubEntityTest {
             assertThat(hub.getAddress()).isEqualTo("서울시 송파구 송파대로 55");
             assertThat(hub.getLatitude()).isEqualByComparingTo("37.5665");
             assertThat(hub.getLongitude()).isEqualByComparingTo("126.9780");
+        }
+    }
+
+    @Nested
+    @DisplayName("허브 삭제 테스트")
+    class DeleteHub {
+
+        @Test
+        @DisplayName("허브를 소프트 삭제할 수 있다")
+        void delete_hub_success() {
+            // given
+            Hub hub = Hub.create(new CreateHubCommand(
+                    "서울특별시 센터",
+                    "서울시 송파구 송파대로 55",
+                    new BigDecimal("37.5665"),
+                    new BigDecimal("126.9780")
+            ));
+            UUID deletedBy = UUID.randomUUID();
+
+            // when
+            hub.delete(deletedBy);
+
+            // then
+            assertThat(hub.isDeleted()).isTrue();
+            assertThat(hub.getDeletedAt()).isNotNull();
+            assertThat(hub.getDeletedBy()).isEqualTo(deletedBy);
         }
     }
 }
