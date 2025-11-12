@@ -83,7 +83,9 @@ class ProductServiceTest {
 
             /* then */
             assertThat(product.isDeleted()).isTrue();
+
             verify(productRepository).save(any());
+            verify(stockService).deleteStock(actorId, productId);
         }
 
         @Test

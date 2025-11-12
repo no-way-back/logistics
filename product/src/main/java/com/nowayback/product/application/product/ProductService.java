@@ -39,6 +39,8 @@ public class ProductService {
     public void deleteProduct(UUID actorId, UUID productId) {
         Product product = getProductById(productId);
         product.delete(actorId);
+
+        stockService.deleteStock(actorId, productId);
         productRepository.save(product);
     }
 
