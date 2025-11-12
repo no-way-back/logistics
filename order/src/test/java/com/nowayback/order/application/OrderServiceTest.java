@@ -1,5 +1,6 @@
 package com.nowayback.order.application;
 
+import static com.nowayback.order.fixture.OrderFixture.CUSTOMER_ID_UUID;
 import static com.nowayback.order.fixture.OrderFixture.createCancelOrderCommand;
 import static com.nowayback.order.fixture.OrderFixture.createOrder;
 import static com.nowayback.order.fixture.OrderFixture.createOrderCommand;
@@ -17,6 +18,8 @@ import com.nowayback.order.application.client.response.CreateDeliveryResponse;
 import com.nowayback.order.application.client.response.DecreaseStockResponse;
 import com.nowayback.order.application.command.CancelOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand;
+import com.nowayback.order.application.command.GetOrderCommand;
+import com.nowayback.order.application.dto.OrderResult;
 import com.nowayback.order.application.exception.OrderApplicationException;
 import com.nowayback.order.domain.entity.Order;
 import com.nowayback.order.domain.exception.OrderDomainException;
@@ -28,6 +31,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -163,6 +168,79 @@ class OrderServiceTest {
             assertThatThrownBy(() -> {
                 orderService.cancelOrder(command);
             }).isInstanceOf(OrderDomainException.class);
+        }
+    }
+
+    @Nested
+    class SearchOrder {
+
+        @Test
+        @DisplayName("Master 권한으로 주문 단건을 조회할 수 있다.")
+        void getOrder_WhenMaster_ShouldReturnOrder() {
+            // given
+            UUID orderId = UUID.randomUUID();
+            UUID userId = UUID.randomUUID();
+            GetOrderCommand command = GetOrderCommand.of(
+                userId,
+                UserRole.MASTER,
+                orderId
+            );
+
+            Order order = createOrder();
+            given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+
+            // when
+            OrderResult findOrder = orderService.getOrder(command);
+
+            // then
+            assertThat(findOrder.orderId()).isEqualTo(order.getId());
+        }
+
+        @ParameterizedTest
+        @EnumSource(UserRole.class)
+        @DisplayName("주문 생성자는 주문 단건을 조회할 수 있다.")
+        void getOrder_WhenOwner_ShouldReturnOrder(UserRole userRole) {
+            // given
+            UUID orderId = UUID.randomUUID();
+            GetOrderCommand command = GetOrderCommand.of(
+                CUSTOMER_ID_UUID,
+                userRole,
+                orderId
+            );
+
+            Order order = createOrder();
+            given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+
+            // when
+            OrderResult findOrder = orderService.getOrder(command);
+
+            // then
+            assertThat(findOrder.orderId()).isEqualTo(order.getId());
+        }
+
+        @ParameterizedTest
+        @EnumSource(
+            value = UserRole.class,
+            names = "MASTER",
+            mode = EnumSource.Mode.EXCLUDE
+        )
+        @DisplayName("주문 생성자가 아닌 경우 예외가 발생한다.")
+        void getOrder_WhenNotOwner_ShouldThrow(UserRole userRole) {
+            // given
+            UUID orderId = UUID.randomUUID();
+            GetOrderCommand command = GetOrderCommand.of(
+                UUID.randomUUID(),
+                userRole,
+                orderId
+            );
+
+            Order order = createOrder();
+            given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+
+            // when / then
+            assertThatThrownBy(() -> {
+                OrderResult findOrder = orderService.getOrder(command);
+            }).isInstanceOf(OrderApplicationException.class);
         }
     }
 }

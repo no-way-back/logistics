@@ -7,4 +7,8 @@ public enum OrderActorRole {
     DELIVERY_MANAGER,
     COMPANY_MANAGER
     ;
+
+    public boolean isMaster() {
+        return this == MASTER;
+    }
 }
