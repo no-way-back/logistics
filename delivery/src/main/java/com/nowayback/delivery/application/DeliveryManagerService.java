@@ -32,7 +32,7 @@ public class DeliveryManagerService {
         validateDuplicateDeliveryManagerId(command.userId());
 
         DeliveryManagerType type = command.type();
-        DeliverySequence sequence = DeliverySequence.of(getMaxDeliveryManagerSequence(type));
+        DeliverySequence sequence = DeliverySequence.of(getMaxDeliveryManagerSequence(type) + 1);
 
         String slackId = userClient.getUserInfoById(command.userId()).slackId();
 
