@@ -13,7 +13,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,8 @@ public class DeliveryManagerService {
 
     private final DeliveryManagerRepository deliveryManagerRepository;
     private final UserClient userClient;
+
+    private final Map<DeliveryManagerType, Integer> roundRobinIndex = new ConcurrentHashMap<>();
 
     @Transactional
     public DeliveryManagerResult createDeliveryManager(CreateDeliveryManagerCommand command) {
@@ -47,6 +52,20 @@ public class DeliveryManagerService {
     public DeliveryManagerResult getDeliveryManager(UUID deliveryManagerId) {
         DeliveryManager deliveryManager = getDeliveryManagerById(deliveryManagerId);
         return DeliveryManagerResult.from(deliveryManager);
+    }
+
+    @Transactional(readOnly = true)
+    public UUID assignDeliveryManager(DeliveryManagerType type) {
+        List<DeliveryManager> managers = deliveryManagerRepository.findAllByTypeOrderBySequenceAsc(type);
+
+        if (managers.isEmpty()) {
+            throw new DeliveryManagerApplicationException(DeliveryManagerApplicationErrorCode.NOT_FOUND_DELIVERY_MANAGER);
+        }
+
+        int index = roundRobinIndex
+                .compute(type, (key, value) -> value == null ? 0 : (value + 1) % managers.size());
+
+        return managers.get(index).getId();
     }
 
     @Transactional

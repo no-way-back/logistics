@@ -6,6 +6,7 @@ import com.nowayback.delivery.domain.deliverymanager.vo.DeliveryManagerType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,5 +29,10 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepository 
     @Override
     public Optional<DeliveryManager> findById(UUID deliveryManagerId) {
         return deliveryManagerJpaRepository.findByIdAndDeletedAtIsNull(deliveryManagerId);
+    }
+
+    @Override
+    public List<DeliveryManager> findAllByTypeOrderBySequenceAsc(DeliveryManagerType type) {
+        return deliveryManagerJpaRepository.findAllActiveByTypeOrderBySequenceAsc(type);
     }
 }
