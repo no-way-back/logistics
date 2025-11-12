@@ -14,7 +14,6 @@ public record CreateDeliveryResponse(
     UUID companyDeliveryManagerId
 ) {
 
-    // Delivery 서비스의 상태 문자열을 안전하게 매핑하기 위한 팩토리
     public static CreateDeliveryResponse of(
         UUID deliveryId,
         UUID orderId,

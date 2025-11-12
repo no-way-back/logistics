@@ -8,7 +8,7 @@ public enum OrderApplicationErrorCode implements ErrorCode {
     DELIVERY_CREATION_FAILED("ORDER2002", "배송 생성에 실패했습니다.", HttpStatus.FAILED_DEPENDENCY),
     ORDER_NOT_FOUND("ORDER2003", "해당 주문이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     UNAUTHORIZED_ORDER_ACCESS("ORDER2004", "해당 주문에 권한이 없습니다.", HttpStatus.FORBIDDEN),
-    ;
+    STOCK_RESTORE_FAILED("ORDER2005", "상품 재고 복구에 실패했습니다.", HttpStatus.FAILED_DEPENDENCY);
 
     private final String code;
     private final String message;

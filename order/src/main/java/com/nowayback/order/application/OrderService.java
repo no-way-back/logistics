@@ -5,8 +5,11 @@ import com.nowayback.order.application.client.ProductClient;
 import com.nowayback.order.application.client.request.CreateDeliveryRequest;
 import com.nowayback.order.application.client.request.DecreaseStockRequest;
 import com.nowayback.order.application.client.request.DecreaseStockRequest.DecreaseStockItem;
+import com.nowayback.order.application.client.request.RestoreStockRequest;
+import com.nowayback.order.application.client.request.RestoreStockRequest.RestoreStockItem;
 import com.nowayback.order.application.client.response.CreateDeliveryResponse;
 import com.nowayback.order.application.client.response.DecreaseStockResponse;
+import com.nowayback.order.application.client.response.RestoreStockResponse;
 import com.nowayback.order.application.command.CancelOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand.CreateOrderItem;
@@ -28,7 +31,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -58,6 +60,8 @@ public class OrderService {
         Order order = findOrderOrThrow(command.orderId());
 
         order.cancel(command.actor());
+
+        restoreStocks(order);
     }
 
     @Transactional(readOnly = true)
@@ -140,11 +144,29 @@ public class OrderService {
         );
 
         if (response == null || response.deliveryId() == null) {
+            restoreStocks(order);
             throw new OrderApplicationException(OrderApplicationErrorCode.DELIVERY_CREATION_FAILED);
         }
 
         if (!order.getId().equals(response.orderId())) {
+            restoreStocks(order);
             throw new OrderApplicationException(OrderApplicationErrorCode.DELIVERY_CREATION_FAILED);
+        }
+    }
+
+    private void restoreStocks(Order order) {
+        RestoreStockResponse response = productClient.restoreStocks(
+            RestoreStockRequest.of(
+                order.getOrderItems().stream()
+                    .map(item -> RestoreStockItem.of(item.getProductId().getId(),
+                        item.getQuantity()))
+                    .toList()
+            )
+        );
+
+        if (!response.success()) {
+            // TODO: 재고 restore 실패 처리 필요
+            throw new OrderApplicationException(OrderApplicationErrorCode.STOCK_RESTORE_FAILED);
         }
     }
 
