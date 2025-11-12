@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 
 public enum DeliveryRouteApplicationErrorCode implements ErrorCode {
 
-    NOT_FOUND_DELIVERY_ROUTE("DELIVERYROUTE2001", "해당 배송 경로를 찾을 수 없습니다.", HttpStatus.NOT_FOUND)
-
+    NOT_FOUND_DELIVERY_ROUTE("DELIVERYROUTE2001", "해당 배송 경로를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    DUPLICATE_ROUTE_SEQUENCE("DELIVERYROUTE2002", "중복된 경로 시퀀스가 존재합니다.", HttpStatus.BAD_REQUEST),
     ;
 
     private final String code;

@@ -14,7 +14,6 @@ import com.nowayback.delivery.domain.deliveryroute.vo.DeliveryManagerId;
 import com.nowayback.delivery.domain.deliveryroute.vo.RouteInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +29,9 @@ public class DeliveryRouteService {
 
     @Transactional
     public List<DeliveryRouteResult> createDeliveryRoutes(CreateDeliveryRoutesCommand command) {
-        DeliveryId deliveryId = command.deliveryId();
+        validateDuplicateSequence(command.segments());
 
+        DeliveryId deliveryId = command.deliveryId();
         List<DeliveryRoute> deliveryRoutes = command.segments().stream()
                 .map(segment -> createDeliveryRoute(deliveryId, segment))
                 .toList();
@@ -108,5 +108,16 @@ public class DeliveryRouteService {
     private DeliveryRoute getDeliveryRouteById(UUID deliveryRouteId) {
         return deliveryRouteRepository.findById(deliveryRouteId)
                 .orElseThrow(() -> new DeliveryRouteApplicationException(DeliveryRouteApplicationErrorCode.NOT_FOUND_DELIVERY_ROUTE));
+    }
+
+    private void validateDuplicateSequence(List<CreateDeliveryRoutesCommand.DeliveryRouteSegment> segments) {
+        long uniqueCount = segments.stream()
+                .map(CreateDeliveryRoutesCommand.DeliveryRouteSegment::sequence)
+                .distinct()
+                .count();
+
+        if (uniqueCount != segments.size()) {
+            throw new DeliveryRouteApplicationException(DeliveryRouteApplicationErrorCode.DUPLICATE_ROUTE_SEQUENCE);
+        }
     }
 }
