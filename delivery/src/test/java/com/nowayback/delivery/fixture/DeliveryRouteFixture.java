@@ -4,8 +4,11 @@ import com.nowayback.common.security.annotation.UserRole;
 import com.nowayback.delivery.application.command.CreateDeliveryRoutesCommand;
 import com.nowayback.delivery.application.command.UpdateDeliveryRouteInfoCommand;
 import com.nowayback.delivery.application.command.UpdateDeliveryRouteStatusCommand;
+import com.nowayback.delivery.application.dto.DeliveryRouteResult;
 import com.nowayback.delivery.domain.deliveryroute.entity.DeliveryRoute;
 import com.nowayback.delivery.domain.deliveryroute.vo.*;
+import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRouteInfoRequest;
+import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRouteStatusRequest;
 import org.springframework.data.domain.*;
 
 import java.lang.reflect.Field;
@@ -112,6 +115,33 @@ public class DeliveryRouteFixture {
     public static final UpdateDeliveryRouteInfoCommand UPDATE_DELIVERY_ROUTE_INFO_COMMAND = UpdateDeliveryRouteInfoCommand.of(
             ACTUAL_DISTANCE_METERS,
             ACTUAL_DURATION_MINUTES
+    );
+
+    /* delivery route result */
+    public static final DeliveryRouteResult DELIVERY_ROUTE_RESULT = DeliveryRouteResult.from(createDeliveryRoute());
+    public static final Page<DeliveryRouteResult> DELIVERY_ROUTE_RESULT_PAGE = DELIVERY_ROUTES_PAGE.map(DeliveryRouteResult::from);
+
+    public static final DeliveryRouteResult MODIFIED_STATUS_DELIVERY_ROUTE_RESULT = DeliveryRouteResult.from(createDeliveryRoute(DeliveryRouteStatus.TRANSIT_BETWEEN_HUBS));
+    public static DeliveryRouteResult getModifiedInfoDeliveryRouteResult() {
+        DeliveryRoute route = createDeliveryRoute(DeliveryRouteStatus.AT_DESTINATION_HUB);
+        route.updateRouteInfo(MODIFIED_ROUTE_INFO);
+        return DeliveryRouteResult.from(route);
+    }
+
+    /* delivery route request */
+    public static final UpdateDeliveryRouteStatusRequest UPDATE_DELIVERY_ROUTE_STATUS_REQUEST = new UpdateDeliveryRouteStatusRequest(
+            DeliveryRouteStatus.TRANSIT_BETWEEN_HUBS
+    );
+    public static final UpdateDeliveryRouteStatusRequest INVALID_UPDATE_DELIVERY_ROUTE_STATUS_REQUEST = new UpdateDeliveryRouteStatusRequest(
+            null
+    );
+    public static final UpdateDeliveryRouteInfoRequest UPDATE_DELIVERY_ROUTE_INFO_REQUEST = new UpdateDeliveryRouteInfoRequest(
+            ACTUAL_DISTANCE_METERS,
+            ACTUAL_DURATION_MINUTES
+    );
+    public static final UpdateDeliveryRouteInfoRequest INVALID_UPDATE_DELIVERY_ROUTE_INFO_REQUEST = new UpdateDeliveryRouteInfoRequest(
+            -100,
+            100
     );
 
     private static void setPrivateField(Object target, String fieldName, Object value) {
