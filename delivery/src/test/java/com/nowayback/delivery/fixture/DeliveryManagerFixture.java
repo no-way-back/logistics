@@ -1,11 +1,13 @@
 package com.nowayback.delivery.fixture;
 
 import com.nowayback.delivery.application.command.CreateDeliveryManagerCommand;
+import com.nowayback.delivery.application.dto.DeliveryManagerResult;
 import com.nowayback.delivery.application.service.UserClient;
 import com.nowayback.delivery.domain.deliverymanager.entity.DeliveryManager;
 import com.nowayback.delivery.domain.deliverymanager.vo.DeliveryManagerType;
 import com.nowayback.delivery.domain.deliverymanager.vo.DeliverySequence;
 import com.nowayback.delivery.domain.deliverymanager.vo.HubId;
+import com.nowayback.delivery.presentation.dto.request.CreateDeliveryManagerRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -59,5 +61,21 @@ public class DeliveryManagerFixture {
     /* user info */
     public static final UserClient.UserInfo USER_INFO = new UserClient.UserInfo(
             SLACK_ID
+    );
+
+    /* delivery manager result */
+    public static final DeliveryManagerResult DELIVERY_MANAGER_RESULT = DeliveryManagerResult.from(createDeliveryManager());
+
+    /* delivery manager request dto */
+    public static final CreateDeliveryManagerRequest CREATE_DELIVERY_MANAGER_REQUEST = new CreateDeliveryManagerRequest(
+            DELIVERY_MANAGER_UUID,
+            HUB_UUID,
+            MANAGER_TYPE
+    );
+
+    public static final CreateDeliveryManagerRequest INVALID_CREATE_DELIVERY_MANAGER_REQUEST = new CreateDeliveryManagerRequest(
+            null,
+            HUB_UUID,
+            MANAGER_TYPE
     );
 }
