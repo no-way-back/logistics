@@ -15,6 +15,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.user.domain.exception.UserDomainErrorCode;
+import com.nowayback.user.domain.exception.UserDomainException;
 
 @Entity
 @Table(name = "p_users")
@@ -57,22 +59,48 @@ public class User extends BaseEntity {
 	}
 
 	public void approveSignup() {
+		if (this.status != UserStatus.PENDING) {
+			throw new UserDomainException(UserDomainErrorCode.ALREADY_PROCESSED);
+		}
 		this.status = UserStatus.APPROVED;
 	}
 
 	public void rejectSignup() {
+		if (this.status != UserStatus.PENDING) {
+			throw new UserDomainException(UserDomainErrorCode.ALREADY_PROCESSED);
+		}
 		this.status = UserStatus.REJECTED;
 	}
 
-	public void updateStatus(UserStatus status) {
-		this.status = status;
+	public void validateCanLogin() {
+		if (this.status != UserStatus.APPROVED) {
+			throw new UserDomainException(UserDomainErrorCode.INVALID_USER_STATUS);
+		}
 	}
 
-	public void updateSlackId(String slackId) {
-		this.slackId = slackId;
+	public void validateApprovalStatus(UserStatus status) {
+		if (status != UserStatus.APPROVED && status != UserStatus.REJECTED) {
+			throw new UserDomainException(UserDomainErrorCode.INVALID_APPROVAL_STATUS);
+		}
 	}
 
-	public void updatePassword(String password) {
-		this.password = password;
+	public void updateInfo(String newPassword, UserRole newRole, String newSlackId) {
+		if (newPassword != null && !newPassword.isBlank()) {
+			this.password = newPassword;
+		}
+		if (newRole != null) {
+			this.role = newRole;
+		}
+		if (newSlackId != null) {
+			this.slackId = newSlackId;
+		}
+	}
+
+	public void delete(UUID deletedBy) {
+		if (this.getDeletedAt() != null) {
+			throw new UserDomainException(UserDomainErrorCode.USER_ALREADY_DELETED);
+		}
+
+		this.softDelete(deletedBy);
 	}
 }

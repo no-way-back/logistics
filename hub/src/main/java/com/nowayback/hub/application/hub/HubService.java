@@ -1,5 +1,6 @@
 package com.nowayback.hub.application.hub;
 
+import com.nowayback.common.security.annotation.AuthUser;
 import com.nowayback.hub.application.hub.command.CreateHubCommand;
 import com.nowayback.hub.application.hub.command.UpdateHubCommand;
 import com.nowayback.hub.application.hub.dto.CreateHubResult;
@@ -37,9 +38,7 @@ public class HubService {
      */
     @Transactional
     public UpdateHubResult update(UUID hubId, UpdateHubCommand command) {
-        Hub hub = hubRepository.findById(hubId).orElseThrow(
-                () -> new HubApplicationException(HUB_NOT_FOUND_EXCEPTION)
-        );
+        Hub hub = findOrderOrThrow(hubId);
 
         if (command.name() != null && !command.name().equals(hub.getName())) {
             validateDuplicateName(command.name());
@@ -52,6 +51,15 @@ public class HubService {
         hub.update(command);
 
         return UpdateHubResult.of(hub);
+    }
+
+
+    /**
+     * 허브 삭제
+     */
+    public void delete(UUID hubId, UUID userId) {
+        Hub hub = findOrderOrThrow(hubId);
+        hub.delete(userId);
     }
 
     private void validateDuplicateNameAndAddress(String name, String address) {
@@ -69,5 +77,11 @@ public class HubService {
         if (hubRepository.existsByAddress(address)) {
             throw new HubApplicationException(HUB_ADDRESS_ALREADY_EXISTS_EXCEPTION);
         }
+    }
+
+    private Hub findOrderOrThrow(UUID hubId) {
+        return hubRepository.findById(hubId).orElseThrow(
+                () -> new HubApplicationException(HUB_NOT_FOUND_EXCEPTION)
+        );
     }
 }
