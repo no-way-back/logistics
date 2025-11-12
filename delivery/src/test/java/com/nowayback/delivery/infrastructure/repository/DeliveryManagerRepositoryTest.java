@@ -59,6 +59,38 @@ class DeliveryManagerRepositoryTest {
     }
 
     @Nested
+    @DisplayName("배송 담당자 ID에 대한 존재 여부 확인")
+    class ExistsById {
+
+        @Test
+        @DisplayName("존재하는 배송 담당자 ID인 경우 true를 반환한다.")
+        void existsById_WhenExists_ReturnsTrue() {
+            /* given */
+            DeliveryManager deliveryManager = createDeliveryManager();
+
+            entityManager.persist(deliveryManager);
+            entityManager.flush();
+
+            /* when */
+            boolean exists = deliveryManagerRepository.existsById(deliveryManager.getId());
+
+            /* then */
+            assertThat(exists).isTrue();
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 배송 담당자 ID인 경우 false를 반환한다.")
+        void existsById_WhenNotExists_ReturnsFalse() {
+            /* given */
+            /* when */
+            boolean exists = deliveryManagerRepository.existsById(UUID.randomUUID());
+
+            /* then */
+            assertThat(exists).isFalse();
+        }
+    }
+
+    @Nested
     @DisplayName("배송 담당자 타입에 따른 최대 시퀀스 조회")
     class FindMaxSequenceByType {
 
