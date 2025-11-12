@@ -73,6 +73,13 @@ public class Hub extends BaseEntity {
     }
 
     /**
+     * 허브 삭제(delete 상태 값 변경)
+     */
+    public void delete(UUID deletedBy) {
+        super.softDelete(deletedBy);
+    }
+
+    /**
      * 허브 생성 유효성 검사
      */
     private static void validateCommand(CreateHubCommand command) {

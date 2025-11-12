@@ -205,4 +205,63 @@ class HubServiceTest {
             }
         }
     }
+
+    @Nested
+    @DisplayName("허브 삭제")
+    class DeleteHub {
+
+        @Nested
+        @DisplayName("허브 삭제 성공 테스트")
+        class DeleteHubSuccess {
+
+            @Test
+            @DisplayName("유효한 hubId로 허브를 삭제할 수 있다")
+            void delete_hub_success() {
+                // given
+                UUID hubId = UUID.randomUUID();
+                UUID deletedBy = UUID.randomUUID();
+
+                Hub existingHub = Hub.create(new CreateHubCommand(
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780")
+                ));
+
+                when(hubRepository.findById(hubId)).thenReturn(Optional.of(existingHub));
+
+                // when
+                hubService.delete(hubId, deletedBy);
+
+                // then
+                assertThat(existingHub.isDeleted()).isTrue();
+                assertThat(existingHub.getDeletedBy()).isEqualTo(deletedBy);
+                assertThat(existingHub.getDeletedAt()).isNotNull();
+
+                verify(hubRepository, times(1)).findById(hubId);
+            }
+        }
+
+        @Nested
+        @DisplayName("허브 삭제 실패 테스트")
+        class DeleteHubFailure {
+
+            @Test
+            @DisplayName("존재하지 않는 허브 ID로 삭제 시도하면 예외가 발생한다")
+            void delete_hub_with_non_existent_id_throws_exception() {
+                // given
+                UUID hubId = UUID.randomUUID();
+                UUID deletedBy = UUID.randomUUID();
+
+                when(hubRepository.findById(hubId)).thenReturn(Optional.empty());
+
+                // when & then
+                assertThatThrownBy(() -> hubService.delete(hubId, deletedBy))
+                        .isInstanceOf(HubApplicationException.class)
+                        .hasFieldOrPropertyWithValue("errorCode", HUB_NOT_FOUND_EXCEPTION);
+
+                verify(hubRepository, times(1)).findById(hubId);
+            }
+        }
+    }
 }
