@@ -18,6 +18,16 @@ public class DeliveryClientImpl implements DeliveryClient {
     public CreateDeliveryResponse createDelivery(CreateDeliveryRequest request) {
         CreateDeliveryFeignResponse response = deliveryFeignClient.createDelivery(
             CreateDeliveryFeignRequest.from(request));
-        return response.toApplicationResponse();
+        return CreateDeliveryResponse.of(
+            response.deliveryId(),
+            response.orderId(),
+            response.status(),
+            response.sourceHubId(),
+            response.destinationHubId(),
+            response.deliveryAddress(),
+            response.recipientName(),
+            response.recipientSlackId(),
+            response.companyDeliveryManagerId()
+        );
     }
 }

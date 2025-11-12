@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -40,7 +41,7 @@ public class OrderService {
 
     @Transactional
     public OrderCreateResult createOrder(CreateOrderCommand command) {
-        decreaseStock(command.createOrderItems());
+        // decreaseStock(command.createOrderItems());
 
         Order order = command.toEntity();
         orderRepository.save(order);
@@ -138,7 +139,11 @@ public class OrderService {
             )
         );
 
-        if (!response.success()) {
+        if (response == null || response.deliveryId() == null) {
+            throw new OrderApplicationException(OrderApplicationErrorCode.DELIVERY_CREATION_FAILED);
+        }
+
+        if (!order.getId().equals(response.orderId())) {
             throw new OrderApplicationException(OrderApplicationErrorCode.DELIVERY_CREATION_FAILED);
         }
     }
