@@ -1,0 +1,31 @@
+package com.nowayback.product.fixture;
+
+import com.nowayback.product.domain.product.entity.Product;
+import com.nowayback.product.domain.product.vo.CompanyId;
+import com.nowayback.product.domain.product.vo.HubId;
+import com.nowayback.product.domain.product.vo.ProductInfo;
+
+import java.util.UUID;
+
+public class ProductFixture {
+
+    public static final UUID PRODUCT_ID = UUID.randomUUID();
+
+    public static final UUID SUPPLIER_UUID = UUID.randomUUID();
+    public static final UUID HUB_UUID = UUID.randomUUID();
+    public static final String NAME = "Sample Product";
+    public static final int PRICE = 12_000;
+
+    public static final CompanyId SUPPLIER_ID = CompanyId.of(SUPPLIER_UUID);
+    public static final HubId HUB_ID = HubId.of(HUB_UUID);
+    public static final ProductInfo PRODUCT_INFO = ProductInfo.of(NAME, PRICE);
+
+    /* product entity */
+    public static Product createProduct() {
+        return Product.create(
+                SUPPLIER_ID,
+                HUB_ID,
+                PRODUCT_INFO
+        );
+    }
+}
