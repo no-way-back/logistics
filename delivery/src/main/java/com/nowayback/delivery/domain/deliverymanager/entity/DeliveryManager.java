@@ -47,6 +47,7 @@ public class DeliveryManager extends BaseEntity {
     }
 
     public static DeliveryManager create(UUID userId, HubId hubId, DeliveryManagerType type, String slackId, DeliverySequence deliverySequence) {
+        validateUserId(userId);
         validateHubId(hubId);
         validateDeliveryManagerType(type);
         validateSlackId(slackId);
