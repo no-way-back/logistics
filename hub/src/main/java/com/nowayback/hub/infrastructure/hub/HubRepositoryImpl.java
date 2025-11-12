@@ -3,6 +3,8 @@ package com.nowayback.hub.infrastructure.hub;
 import com.nowayback.hub.domain.hub.entity.Hub;
 import com.nowayback.hub.domain.hub.repository.HubRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -17,6 +19,11 @@ public class HubRepositoryImpl implements HubRepository {
     @Override
     public Optional<Hub> findById(UUID hubId) {
         return jpaRepository.findById(hubId);
+    }
+
+    @Override
+    public Page<Hub> findAll(Pageable pageable) {
+        return jpaRepository.findAll(pageable);
     }
 
     @Override
