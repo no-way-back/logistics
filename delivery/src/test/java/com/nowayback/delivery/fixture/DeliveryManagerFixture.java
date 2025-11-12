@@ -1,5 +1,6 @@
 package com.nowayback.delivery.fixture;
 
+import com.nowayback.delivery.domain.deliverymanager.entity.DeliveryManager;
 import com.nowayback.delivery.domain.deliverymanager.vo.DeliveryManagerType;
 import com.nowayback.delivery.domain.deliverymanager.vo.DeliverySequence;
 import com.nowayback.delivery.domain.deliverymanager.vo.HubId;
@@ -18,5 +19,24 @@ public class DeliveryManagerFixture {
     public static final HubId HUB_ID = HubId.of(HUB_UUID);
     public static final DeliverySequence DELIVERY_SEQUENCE = DeliverySequence.of(SEQUENCE);
 
+    /* delivery manager entity */
+    public static DeliveryManager createDeliveryManager() {
+        return DeliveryManager.create(
+                DELIVERY_MANAGER_UUID,
+                HUB_ID,
+                MANAGER_TYPE,
+                SLACK_ID,
+                DELIVERY_SEQUENCE
+        );
+    }
 
+    public static DeliveryManager createDeliveryManager(UUID deliveryManagerId, DeliveryManagerType type, DeliverySequence sequence) {
+        return DeliveryManager.create(
+                deliveryManagerId,
+                HUB_ID,
+                type,
+                SLACK_ID,
+                sequence
+        );
+    }
 }
