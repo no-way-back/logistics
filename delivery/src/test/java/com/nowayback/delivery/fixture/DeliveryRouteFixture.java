@@ -1,9 +1,15 @@
 package com.nowayback.delivery.fixture;
 
+import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.delivery.application.command.CreateDeliveryRoutesCommand;
+import com.nowayback.delivery.application.command.UpdateDeliveryRouteInfoCommand;
+import com.nowayback.delivery.application.command.UpdateDeliveryRouteStatusCommand;
 import com.nowayback.delivery.domain.deliveryroute.entity.DeliveryRoute;
 import com.nowayback.delivery.domain.deliveryroute.vo.*;
+import org.springframework.data.domain.*;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.UUID;
 
 public class DeliveryRouteFixture {
@@ -42,6 +48,12 @@ public class DeliveryRouteFixture {
             ACTUAL_DURATION_MINUTES
     );
 
+    public static final UUID USER_UUID = UUID.randomUUID();
+    public static final UserRole USER_ROLE = UserRole.MASTER;
+
+    public static final int PAGE = 0;
+    public static final int SIZE = 10;
+
     /* delivery route entity */
     public static DeliveryRoute createDeliveryRoute() {
         return DeliveryRoute.create(
@@ -68,6 +80,39 @@ public class DeliveryRouteFixture {
                 ROUTE_INFO
         );
     }
+
+    private static final Sort SORT = Sort.by("sequence").ascending();
+    public static final Pageable PAGEABLE = PageRequest.of(PAGE, SIZE, SORT);
+    public static final List<DeliveryRoute> DELIVERY_ROUTES = List.of(createDeliveryRoute());
+    public static final Page<DeliveryRoute> DELIVERY_ROUTES_PAGE = new PageImpl<>(DELIVERY_ROUTES, PAGEABLE, DELIVERY_ROUTES.size());
+
+    /* delivery route command */
+    public static final CreateDeliveryRoutesCommand.DeliveryRouteSegment DELIVERY_ROUTE_SEGMENT = CreateDeliveryRoutesCommand.DeliveryRouteSegment.of(
+            SEQUENCE,
+            SOURCE_HUB_UUID,
+            DESTINATION_HUB_UUID,
+            EXPECTED_DISTANCE_METERS,
+            EXPECTED_DURATION_MINUTES
+    );
+
+    public static final CreateDeliveryRoutesCommand CREATE_DELIVERY_ROUTES_COMMAND = CreateDeliveryRoutesCommand.of(
+            DELIVERY_UUID,
+            List.of(DELIVERY_ROUTE_SEGMENT)
+    );
+
+    public static final CreateDeliveryRoutesCommand CREATE_DELIVERY_ROUTES_COMMAND_WITH_DUPLICATE_SEQUENCE = CreateDeliveryRoutesCommand.of(
+            DELIVERY_UUID,
+            List.of(DELIVERY_ROUTE_SEGMENT, DELIVERY_ROUTE_SEGMENT)
+    );
+
+    public static final UpdateDeliveryRouteStatusCommand UPDATE_DELIVERY_ROUTE_STATUS_COMMAND = UpdateDeliveryRouteStatusCommand.of(
+            DeliveryRouteStatus.TRANSIT_BETWEEN_HUBS
+    );
+
+    public static final UpdateDeliveryRouteInfoCommand UPDATE_DELIVERY_ROUTE_INFO_COMMAND = UpdateDeliveryRouteInfoCommand.of(
+            ACTUAL_DISTANCE_METERS,
+            ACTUAL_DURATION_MINUTES
+    );
 
     private static void setPrivateField(Object target, String fieldName, Object value) {
         try {
