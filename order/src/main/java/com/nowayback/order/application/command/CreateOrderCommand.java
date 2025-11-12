@@ -1,7 +1,10 @@
 package com.nowayback.order.application.command;
 
+import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.order.application.actor.OrderActorFactory;
 import com.nowayback.order.domain.entity.Order;
 import com.nowayback.order.domain.entity.OrderItem;
+import com.nowayback.order.domain.policy.OrderActor;
 import com.nowayback.order.domain.vo.OrderItems;
 import com.nowayback.order.domain.vo.ProductId;
 import com.nowayback.order.domain.vo.ReceiverCompanyId;
@@ -13,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record CreateOrderCommand(
+    OrderActor actor,
     SupplierCompanyId supplierCompanyId,
     SupplierCompanySnapshot supplierCompanySnapshot,
     ReceiverCompanyId receiverCompanyId,
@@ -22,6 +26,8 @@ public record CreateOrderCommand(
 ) {
 
     public static CreateOrderCommand of(
+        UUID customerId,
+        UserRole customerRole,
         UUID supplierCompanyId,
         String supplierName,
         String supplierAddress,
@@ -36,6 +42,7 @@ public record CreateOrderCommand(
         List<CreateOrderItem> orderItems
     ) {
         return new CreateOrderCommand(
+            OrderActorFactory.from(customerId, customerRole),
             SupplierCompanyId.of(supplierCompanyId),
             SupplierCompanySnapshot.of(
                 supplierName,
@@ -57,6 +64,7 @@ public record CreateOrderCommand(
 
     public Order toEntity() {
         return Order.create(
+            actor.customerId(),
             request,
             supplierCompanyId,
             supplierCompanySnapshot,

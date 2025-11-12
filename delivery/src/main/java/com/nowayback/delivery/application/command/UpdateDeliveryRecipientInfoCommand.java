@@ -1,18 +1,18 @@
 package com.nowayback.delivery.application.command;
 
-import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRecipientInfoRequest;
+import com.nowayback.delivery.domain.delivery.vo.RecipientInfo;
 
 public record UpdateDeliveryRecipientInfoCommand (
-        String deliveryAddress,
-        String recipientName,
-        String recipientSlackId
+        RecipientInfo recipientInfo
 ) {
 
-    public static UpdateDeliveryRecipientInfoCommand from(UpdateDeliveryRecipientInfoRequest request) {
+    public static UpdateDeliveryRecipientInfoCommand of(
+            String deliveryAddress,
+            String recipientName,
+            String recipientSlackId
+    ) {
         return new UpdateDeliveryRecipientInfoCommand(
-                request.deliveryAddress(),
-                request.recipientName(),
-                request.recipientSlackId()
+                RecipientInfo.of(deliveryAddress, recipientName, recipientSlackId)
         );
     }
 }

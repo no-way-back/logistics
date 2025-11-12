@@ -1,26 +1,31 @@
 package com.nowayback.delivery.application.command;
 
-import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;
+import com.nowayback.delivery.domain.delivery.vo.HubId;
+import com.nowayback.delivery.domain.delivery.vo.OrderId;
+import com.nowayback.delivery.domain.delivery.vo.RecipientInfo;
 
 import java.util.UUID;
 
 public record CreateDeliveryCommand (
-        UUID orderId,
-        UUID sourceHubId,
-        UUID destinationHubId,
-        String deliveryAddress,
-        String recipientName,
-        String recipientSlackId
+        OrderId orderId,
+        HubId sourceHubId,
+        HubId destinationHubId,
+        RecipientInfo recipientInfo
 ) {
 
-    public static CreateDeliveryCommand from(CreateDeliveryRequest request) {
+    public static CreateDeliveryCommand of(
+            UUID orderId,
+            UUID sourceHubId,
+            UUID destinationHubId,
+            String deliveryAddress,
+            String recipientName,
+            String recipientSlackId
+    ) {
         return new CreateDeliveryCommand(
-                request.orderId(),
-                request.sourceHubId(),
-                request.destinationHubId(),
-                request.deliveryAddress(),
-                request.recipientName(),
-                request.recipientSlackId()
+                OrderId.of(orderId),
+                HubId.of(sourceHubId),
+                HubId.of(destinationHubId),
+                RecipientInfo.of(deliveryAddress, recipientName, recipientSlackId)
         );
     }
 }
