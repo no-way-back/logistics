@@ -1,5 +1,7 @@
 package com.nowayback.product.application.stock;
 
+import com.nowayback.product.application.stock.command.DecreaseStockCommand;
+import com.nowayback.product.application.stock.command.IncreaseStockCommand;
 import com.nowayback.product.application.stock.dto.StockResult;
 import com.nowayback.product.application.stock.exception.StockApplicationErrorCode;
 import com.nowayback.product.application.stock.exception.StockApplicationException;
@@ -33,22 +35,22 @@ public class StockService {
     }
 
     @Transactional
-    public StockResult increaseStock(UUID productId, int amount) {
-        Stock stock = getStockByProductId(ProductId.of(productId));
+    public StockResult increaseStock(IncreaseStockCommand command) {
+        Stock stock = getStockByProductId(command.productId());
         Quantity quantity = stock.getQuantity();
 
-        Quantity increasedQuantity = quantity.add(Quantity.of(amount));
+        Quantity increasedQuantity = quantity.add(command.amount());
         stock.updateQuantity(increasedQuantity);
 
         return StockResult.from(stock);
     }
 
     @Transactional
-    public StockResult decreaseStock(UUID productId, int amount) {
-        Stock stock = getStockByProductId(ProductId.of(productId));
+    public StockResult decreaseStock(DecreaseStockCommand command) {
+        Stock stock = getStockByProductId(command.productId());
         Quantity quantity = stock.getQuantity();
 
-        Quantity decreasedQuantity = quantity.subtract(Quantity.of(amount));
+        Quantity decreasedQuantity = quantity.subtract(command.amount());
         stock.updateQuantity(decreasedQuantity);
 
         return StockResult.from(stock);
