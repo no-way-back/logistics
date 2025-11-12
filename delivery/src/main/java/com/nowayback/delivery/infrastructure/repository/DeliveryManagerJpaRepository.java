@@ -10,6 +10,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DeliveryManagerJpaRepository extends JpaRepository<DeliveryManager, UUID> {
+
+    boolean existsByIdAndDeletedAtIsNull(UUID userId);
+
     @Query("SELECT COALESCE(MAX(dm.deliverySequence.sequence), 0) " +
             "FROM DeliveryManager dm " +
             "WHERE dm.type = :type AND dm.deletedAt IS NULL")

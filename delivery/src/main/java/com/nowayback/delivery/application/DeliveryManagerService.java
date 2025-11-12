@@ -85,7 +85,7 @@ public class DeliveryManagerService {
     }
 
     private void validateDuplicateDeliveryManagerId(UUID userId) {
-        if (deliveryManagerRepository.findById(userId).isPresent()) {
+        if (deliveryManagerRepository.existsById(userId)) {
             throw new DeliveryManagerApplicationException(DeliveryManagerApplicationErrorCode.DUPLICATE_DELIVERY_MANAGER_ID);
         }
     }

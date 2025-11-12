@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public interface DeliveryManagerRepository {
     DeliveryManager save(DeliveryManager deliveryManager);
+    boolean existsById(UUID userId);
     Integer findMaxSequenceByType(DeliveryManagerType type);
     Optional<DeliveryManager> findById(UUID deliveryManagerId);
     List<DeliveryManager> findAllByTypeOrderBySequenceAsc(DeliveryManagerType type);

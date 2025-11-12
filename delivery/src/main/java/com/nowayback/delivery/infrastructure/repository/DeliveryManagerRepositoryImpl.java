@@ -22,6 +22,11 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepository 
     }
 
     @Override
+    public boolean existsById(UUID userId) {
+        return deliveryManagerJpaRepository.existsByIdAndDeletedAtIsNull(userId);
+    }
+
+    @Override
     public Integer findMaxSequenceByType(DeliveryManagerType type) {
         return deliveryManagerJpaRepository.findMaxSequenceByType(type);
     }
