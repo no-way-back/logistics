@@ -2,9 +2,12 @@ package com.nowayback.product.fixture;
 
 import com.nowayback.product.application.stock.command.DecreaseStockCommand;
 import com.nowayback.product.application.stock.command.IncreaseStockCommand;
+import com.nowayback.product.application.stock.dto.StockResult;
 import com.nowayback.product.domain.stock.entity.Stock;
 import com.nowayback.product.domain.stock.vo.ProductId;
 import com.nowayback.product.domain.stock.vo.Quantity;
+import com.nowayback.product.presentation.stock.dto.request.DecreaseStockRequest;
+import com.nowayback.product.presentation.stock.dto.request.IncreaseStockRequest;
 
 import java.util.UUID;
 
@@ -44,4 +47,14 @@ public class StockFixture {
             PRODUCT_UUID,
             QUANTITY_VALUE + 10
     );
+
+    /* stock result */
+    public static final StockResult STOCK_RESULT = StockResult.from(createStock());
+
+    /* stock request */
+    public static final IncreaseStockRequest VALID_INCREASE_STOCK_REQUEST = new IncreaseStockRequest(QUANTITY_VALUE);
+    public static final IncreaseStockRequest INVALID_INCREASE_STOCK_REQUEST = new IncreaseStockRequest(-10);
+
+    public static final DecreaseStockRequest VALID_DECREASE_STOCK_REQUEST = new DecreaseStockRequest(QUANTITY_VALUE);
+    public static final DecreaseStockRequest INVALID_DECREASE_STOCK_REQUEST = new DecreaseStockRequest(-10);
 }
