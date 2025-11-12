@@ -49,7 +49,7 @@ public class Quantity {
 
     private static void validateQuantity(int quantity) {
         if (quantity < 0) {
-            throw new StockDomainException(StockDomainErrorCode.INSUFFICIENT_STOCK_QUANTITY);
+            throw new StockDomainException(StockDomainErrorCode.NEGATIVE_STOCK_QUANTITY);
         }
     }
 
