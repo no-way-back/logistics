@@ -8,10 +8,10 @@ COPY build.gradle settings.gradle ./
 COPY common/ common/
 
 # 소스 코드 복사
-COPY user/ user/
+COPY company/ company/
 
 # 빌드
-RUN gradle clean :user:bootJar -x test --no-daemon
+RUN gradle clean :company:bootJar -x test --no-daemon
 
 # Runtime stage
 FROM eclipse-temurin:17-jdk-alpine
@@ -21,12 +21,12 @@ RUN apk update && \
 
 WORKDIR /app
 
-COPY --from=build /app/user/build/libs/*.jar app.jar
+COPY --from=build /app/company/build/libs/*.jar app.jar
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8081/actuator/health || exit 1
 
-EXPOSE 18081
+EXPOSE 18082
 
 ENTRYPOINT ["java", \
     "-Xms512m", \

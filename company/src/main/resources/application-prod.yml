@@ -1,0 +1,42 @@
+server:
+  port: 18082
+
+spring:
+  application:
+    name: company-service
+
+  datasource:
+    url: ${COMPANY_SPRING_DATASOURCE_URL}
+    username: ${COMPANY_SPRING_DATASOURCE_USERNAME}
+    password: ${COMPANY_SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 20
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: company_service
+    show-sql: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+    fetch-registry: true
+    register-with-eureka: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    root: WARN
+    com.logistics.company: INFO

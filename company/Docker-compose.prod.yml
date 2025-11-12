@@ -1,0 +1,54 @@
+services:
+  user-postgres:
+    image: postgres:15-alpine
+    container_name: company-postgres-prod
+    environment:
+      POSTGRES_DB: ${COMPANY_POSTGRES_DB}
+      POSTGRES_USER: ${COMPANY_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${COMPANY_POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: "-E UTF8"
+      TZ: Asia/Seoul
+    ports:
+      - "${USER_POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - company-postgres-prod-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - company-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${COMPANY_POSTGRES_USER} -d ${COMPANY_POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user-service:
+    build:
+      context: ..
+      dockerfile: company/Dockerfile
+    container_name: company-service-prod
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      COMPANY_SPRING_DATASOURCE_URL: jdbc:postgresql://company-postgres:${COMPANY_POSTGRES_PORT}/${COMPANY_POSTGRES_DB}
+      COMPANY_SPRING_DATASOURCE_USERNAME: ${COMPANY_POSTGRES_USER}
+      COMPANY_SPRING_DATASOURCE_PASSWORD: ${COMPANY_POSTGRES_PASSWORD}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_SERVER_URL}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "${COMPANY_SERVICE_PORT:-18082}:18082"
+    depends_on:
+      user-postgres:
+        condition: service_healthy
+    networks:
+      - company-network
+      - msa-network
+    restart: unless-stopped
+
+volumes:
+  user-postgres-prod-data:
+    driver: local
+
+networks:
+  user-network:
+    driver: bridge
+  msa-network:
+    external: true
