@@ -1,5 +1,6 @@
 package com.nowayback.product.fixture;
 
+import com.nowayback.product.application.product.command.CreateProductCommand;
 import com.nowayback.product.domain.product.entity.Product;
 import com.nowayback.product.domain.product.vo.CompanyId;
 import com.nowayback.product.domain.product.vo.HubId;
@@ -28,4 +29,12 @@ public class ProductFixture {
                 PRODUCT_INFO
         );
     }
+
+    /* product command */
+    public static final CreateProductCommand CREATE_PRODUCT_COMMAND = CreateProductCommand.of(
+            SUPPLIER_UUID,
+            HUB_UUID,
+            NAME,
+            PRICE
+    );
 }
