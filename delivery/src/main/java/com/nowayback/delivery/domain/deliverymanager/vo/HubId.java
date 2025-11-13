@@ -1,7 +1,7 @@
 package com.nowayback.delivery.domain.deliverymanager.vo;
 
-import com.nowayback.delivery.domain.exception.DeliveryManagerDomainErrorCode;
-import com.nowayback.delivery.domain.exception.DeliveryManagerDomainException;
+import com.nowayback.delivery.domain.deliverymanager.exception.DeliveryManagerDomainErrorCode;
+import com.nowayback.delivery.domain.deliverymanager.exception.DeliveryManagerDomainException;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;

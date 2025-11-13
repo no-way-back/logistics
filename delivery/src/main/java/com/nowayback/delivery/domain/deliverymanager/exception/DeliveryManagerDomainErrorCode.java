@@ -1,4 +1,4 @@
-package com.nowayback.delivery.domain.exception;
+package com.nowayback.delivery.domain.deliverymanager.exception;
 
 import com.nowayback.common.exception.ErrorCode;
 import org.springframework.http.HttpStatus;

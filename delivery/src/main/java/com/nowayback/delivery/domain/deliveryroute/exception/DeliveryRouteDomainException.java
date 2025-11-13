@@ -1,4 +1,4 @@
-package com.nowayback.delivery.domain.exception;
+package com.nowayback.delivery.domain.deliveryroute.exception;
 
 import com.nowayback.common.exception.GlobalException;
 
