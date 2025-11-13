@@ -1,4 +1,4 @@
-package com.nowayback.order.infrastructure.client.feign.request;
+package com.nowayback.order.infrastructure.client.product.feign.request;
 
 import com.nowayback.order.application.client.request.RestoreStockRequest;
 import com.nowayback.order.application.client.request.RestoreStockRequest.RestoreStockItem;

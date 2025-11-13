@@ -1,15 +1,15 @@
-package com.nowayback.order.infrastructure.client;
+package com.nowayback.order.infrastructure.client.product;
 
 import com.nowayback.order.application.client.ProductClient;
 import com.nowayback.order.application.client.request.DecreaseStockRequest;
 import com.nowayback.order.application.client.request.RestoreStockRequest;
 import com.nowayback.order.application.client.response.DecreaseStockResponse;
 import com.nowayback.order.application.client.response.RestoreStockResponse;
-import com.nowayback.order.infrastructure.client.feign.ProductFeignClient;
-import com.nowayback.order.infrastructure.client.feign.request.DecreaseStockFeignRequest;
-import com.nowayback.order.infrastructure.client.feign.request.RestoreStockFeignRequest;
-import com.nowayback.order.infrastructure.client.feign.response.DecreaseStockFeignResponse;
-import com.nowayback.order.infrastructure.client.feign.response.RestoreStockFeignResponse;
+import com.nowayback.order.infrastructure.client.product.feign.ProductFeignClient;
+import com.nowayback.order.infrastructure.client.product.feign.request.DecreaseStockFeignRequest;
+import com.nowayback.order.infrastructure.client.product.feign.request.RestoreStockFeignRequest;
+import com.nowayback.order.infrastructure.client.product.feign.response.DecreaseStockFeignResponse;
+import com.nowayback.order.infrastructure.client.product.feign.response.RestoreStockFeignResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

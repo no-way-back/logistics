@@ -1,4 +1,4 @@
-package com.nowayback.order.infrastructure.client.feign.response;
+package com.nowayback.order.infrastructure.client.delivery.feign.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.UUID;

@@ -1,14 +1,17 @@
 package com.nowayback.order.application;
 
 import com.nowayback.order.application.client.DeliveryClient;
+import com.nowayback.order.application.client.GeminiClient;
 import com.nowayback.order.application.client.ProductClient;
 import com.nowayback.order.application.client.request.CreateDeliveryRequest;
 import com.nowayback.order.application.client.request.DecreaseStockRequest;
 import com.nowayback.order.application.client.request.DecreaseStockRequest.DecreaseStockItem;
+import com.nowayback.order.application.client.request.GeminiDeadlinePrompt;
 import com.nowayback.order.application.client.request.RestoreStockRequest;
 import com.nowayback.order.application.client.request.RestoreStockRequest.RestoreStockItem;
 import com.nowayback.order.application.client.response.CreateDeliveryResponse;
 import com.nowayback.order.application.client.response.DecreaseStockResponse;
+import com.nowayback.order.application.client.response.GeminiDeadlineResponse;
 import com.nowayback.order.application.client.response.RestoreStockResponse;
 import com.nowayback.order.application.command.CancelOrderCommand;
 import com.nowayback.order.application.command.CreateOrderCommand;
@@ -41,6 +44,8 @@ public class OrderService {
     private final DeliveryClient deliveryClient;
     private final OrderRepository orderRepository;
 
+    private final GeminiClient geminiClient;
+
     @Transactional
     public OrderCreateResult createOrder(CreateOrderCommand command) {
         // decreaseStock(command.createOrderItems());
@@ -48,10 +53,11 @@ public class OrderService {
         Order order = command.toEntity();
         orderRepository.save(order);
 
-        createDelivery(order);
+        CreateDeliveryResponse createDeliveryResponse = createDelivery(order);
 
         order.completeCreation();
 
+        getDeadLineMessage(order, createDeliveryResponse);
         return OrderCreateResult.of(order.getId());
     }
 
@@ -127,10 +133,12 @@ public class OrderService {
      *
      * @param order
      */
-    private void createDelivery(Order order) {
+    private CreateDeliveryResponse createDelivery(Order order) {
         // TODO: hub id 추가 필요
-        String fullAddress = order.getReceiverCompanySnapshot().getAddress() + " "
-            + order.getReceiverCompanySnapshot().getDetailAddress();
+        String fullAddress = joinAddress(
+            order.getReceiverCompanySnapshot().getAddress(),
+            order.getReceiverCompanySnapshot().getDetailAddress()
+        );
 
         CreateDeliveryResponse response = deliveryClient.createDelivery(
             CreateDeliveryRequest.of(
@@ -152,6 +160,8 @@ public class OrderService {
             restoreStocks(order);
             throw new OrderApplicationException(OrderApplicationErrorCode.DELIVERY_CREATION_FAILED);
         }
+
+        return response;
     }
 
     private void restoreStocks(Order order) {
@@ -175,5 +185,63 @@ public class OrderService {
                 throw new OrderApplicationException(OrderApplicationErrorCode.ORDER_NOT_FOUND);
             }
         );
+    }
+
+    private void getDeadLineMessage(Order order, CreateDeliveryResponse createDeliveryResponse) {
+        GeminiDeadlinePrompt prompt = createPrompt(order, createDeliveryResponse);
+
+        GeminiDeadlineResponse deadline = geminiClient.generateDeadline(prompt);
+
+        log.info("Final dispatch deadline for order {}: {}",
+            order.getId(), deadline.finalDispatchDeadline());
+    }
+
+    private GeminiDeadlinePrompt createPrompt(
+        Order order,
+        CreateDeliveryResponse createDeliveryResponse
+    ) {
+        String itemsSummary = order.getOrderItems().stream()
+            .map(item -> item.getName() + " x" + item.getQuantity())
+            .reduce((a, b) -> a + ", " + b)
+            .orElse("");
+
+        String toAddress = (createDeliveryResponse.deliveryAddress() != null
+            && !createDeliveryResponse.deliveryAddress().isBlank())
+            ? createDeliveryResponse.deliveryAddress()
+            : joinAddress(
+                order.getReceiverCompanySnapshot().getAddress(),
+                order.getReceiverCompanySnapshot().getDetailAddress()
+            );
+
+        GeminiDeadlinePrompt.Location from =
+            new GeminiDeadlinePrompt.Location(
+                order.getSupplierCompanySnapshot().getName(),
+                order.getSupplierCompanySnapshot().getAddress()
+            );
+
+        GeminiDeadlinePrompt.Location to =
+            new GeminiDeadlinePrompt.Location(
+                order.getReceiverCompanySnapshot().getName(),
+                toAddress
+            );
+
+        GeminiDeadlinePrompt.WorkingHours workingHours =
+            new GeminiDeadlinePrompt.WorkingHours(9, 18);
+
+        return new GeminiDeadlinePrompt(
+            order.getId(),
+            itemsSummary,
+            order.getRequest(),
+            from,
+            to,
+            workingHours,
+            order.getCreatedAt(),
+            "ko-KR"
+        );
+    }
+    private static String joinAddress(String address, String detailAddress) {
+        if (address == null) return detailAddress == null ? "" : detailAddress;
+        if (detailAddress == null || detailAddress.isBlank()) return address;
+        return address + " " + detailAddress;
     }
 }

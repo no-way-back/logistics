@@ -1,4 +1,4 @@
-package com.nowayback.order.infrastructure.client.feign.response;
+package com.nowayback.order.infrastructure.client.product.feign.response;
 
 import com.nowayback.order.application.client.response.RestoreStockResponse;
 

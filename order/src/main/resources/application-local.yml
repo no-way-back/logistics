@@ -14,7 +14,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -40,3 +40,8 @@ logging:
   level:
     com.logistics.order: DEBUG
     org.hibernate.SQL: DEBUG
+
+gemini:
+  base-url: https://generativelanguage.googleapis.com
+  model: gemini-2.5-flash
+  api-key: AIzaSyDULwOtFhMZ0e5550UgS3veZqGzx-nMSMA
