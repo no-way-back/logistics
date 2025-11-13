@@ -14,5 +14,6 @@ public interface HubRepository {
     Hub save(Hub hub);
     Optional<Hub> findById(UUID hubId);
     List<Hub> findAllById(Iterable<UUID> hubIds);
+    Page<Hub> findByNameContaining(String name, Pageable pageable);
     Page<Hub> findAll(Pageable pageable);
 }

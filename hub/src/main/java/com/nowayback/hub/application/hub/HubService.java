@@ -75,6 +75,15 @@ public class HubService {
     }
 
     /**
+     * 허브 이름으로 검색
+     */
+    @Transactional(readOnly = true)
+    public Page<GetHubResult> searchHubsByName(String name, Pageable pageable) {
+        Page<Hub> hubs = hubRepository.findByNameContaining(name, pageable);
+        return GetHubResult.of(hubs);
+    }
+
+    /**
      * 허브 삭제
      */
     public void delete(UUID hubId, UUID userId) {

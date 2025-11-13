@@ -15,12 +15,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static com.nowayback.hub.application.hub.exception.HubApplicationErrorCode.*;
@@ -613,6 +616,232 @@ class HubControllerTest {
                         .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
 
                 verify(hubService, never()).delete(any(UUID.class), any(UUID.class));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /hubs/search - 허브 이름 검색 테스트")
+    class SearchHubs {
+
+        @Nested
+        @DisplayName("허브 검색 성공 테스트")
+        class SearchHubsSuccess {
+
+            @Test
+            @DisplayName("검색 키워드로 허브를 검색할 수 있다")
+            void search_hubs_success() throws Exception {
+                // given
+                String searchKeyword = "서울";
+                Pageable pageable = PageRequest.of(0, 10);
+
+                GetHubResult result1 = new GetHubResult(
+                        UUID.randomUUID(),
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780"),
+                        LocalDateTime.now(),
+                        UUID.randomUUID(),
+                        null,
+                        null
+                );
+
+                GetHubResult result2 = new GetHubResult(
+                        UUID.randomUUID(),
+                        "서울 강북 센터",
+                        "서울시 강북구",
+                        new BigDecimal("37.6398"),
+                        new BigDecimal("127.0253"),
+                        LocalDateTime.now(),
+                        UUID.randomUUID(),
+                        null,
+                        null
+                );
+
+                List<GetHubResult> results = Arrays.asList(result1, result2);
+                Page<GetHubResult> hubPage = new PageImpl<>(results, pageable, results.size());
+
+                when(hubService.searchHubsByName(eq(searchKeyword), any(Pageable.class)))
+                        .thenReturn(hubPage);
+
+                // when & then
+                mockMvc.perform(get("/hubs/search")
+                                .param("name", searchKeyword)
+                                .param("page", "0")
+                                .param("size", "10"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.items").isArray())
+                        .andExpect(jsonPath("$.items.length()").value(2))
+                        .andExpect(jsonPath("$.items[0].name").value("서울특별시 센터"))
+                        .andExpect(jsonPath("$.items[1].name").value("서울 강북 센터"))
+                        .andExpect(jsonPath("$.totalElements").value(2))
+                        .andExpect(jsonPath("$.totalPages").value(1))
+                        .andExpect(jsonPath("$.pageSize").value(10))
+                        .andExpect(jsonPath("$.currentPage").value(1));
+
+                verify(hubService, times(1))
+                        .searchHubsByName(eq(searchKeyword), any(Pageable.class));
+            }
+
+            @Test
+            @DisplayName("검색 결과가 없으면 빈 배열을 반환한다")
+            void search_hubs_returns_empty_result() throws Exception {
+                // given
+                String searchKeyword = "제주";
+                Pageable pageable = PageRequest.of(0, 10);
+                Page<GetHubResult> emptyPage = new PageImpl<>(List.of(), pageable, 0);
+
+                when(hubService.searchHubsByName(eq(searchKeyword), any(Pageable.class)))
+                        .thenReturn(emptyPage);
+
+                // when & then
+                mockMvc.perform(get("/hubs/search")
+                                .param("name", searchKeyword)
+                                .param("page", "0")
+                                .param("size", "10"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.items").isArray())
+                        .andExpect(jsonPath("$.items.length()").value(0))
+                        .andExpect(jsonPath("$.totalElements").value(0))
+                        .andExpect(jsonPath("$.totalPages").value(0));
+
+                verify(hubService, times(1))
+                        .searchHubsByName(eq(searchKeyword), any(Pageable.class));
+            }
+
+            @Test
+            @DisplayName("페이징과 정렬을 적용하여 검색할 수 있다")
+            void search_hubs_with_pagination_and_sort() throws Exception {
+                // given
+                String searchKeyword = "센터";
+                Pageable pageable = PageRequest.of(1, 5, Sort.by("createdAt").descending());
+
+                GetHubResult result1 = new GetHubResult(
+                        UUID.randomUUID(),
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780"),
+                        LocalDateTime.now(),
+                        UUID.randomUUID(),
+                        null,
+                        null
+                );
+
+                List<GetHubResult> results = List.of(result1);
+                Page<GetHubResult> hubPage = new PageImpl<>(results, pageable, 10);
+
+                when(hubService.searchHubsByName(eq(searchKeyword), any(Pageable.class)))
+                        .thenReturn(hubPage);
+
+                // when & then
+                mockMvc.perform(get("/hubs/search")
+                                .param("name", searchKeyword)
+                                .param("page", "1")
+                                .param("size", "5")
+                                .param("sort", "createdAt,desc"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.items").isArray())
+                        .andExpect(jsonPath("$.items.length()").value(1))
+                        .andExpect(jsonPath("$.totalElements").value(10))
+                        .andExpect(jsonPath("$.totalPages").value(2))
+                        .andExpect(jsonPath("$.pageSize").value(5))
+                        .andExpect(jsonPath("$.currentPage").value(2)); // 페이지는 1부터 시작
+
+                verify(hubService, times(1))
+                        .searchHubsByName(eq(searchKeyword), any(Pageable.class));
+            }
+
+            @Test
+            @DisplayName("인증 없이도 허브를 검색할 수 있다")
+            void search_hubs_without_authentication() throws Exception {
+                // given
+                String searchKeyword = "서울";
+                Pageable pageable = PageRequest.of(0, 10);
+
+                GetHubResult result = new GetHubResult(
+                        UUID.randomUUID(),
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780"),
+                        LocalDateTime.now(),
+                        UUID.randomUUID(),
+                        null,
+                        null
+                );
+
+                Page<GetHubResult> hubPage = new PageImpl<>(List.of(result), pageable, 1);
+
+                when(hubService.searchHubsByName(eq(searchKeyword), any(Pageable.class)))
+                        .thenReturn(hubPage);
+
+                // when & then - 인증 헤더 없이 요청
+                mockMvc.perform(get("/hubs/search")
+                                .param("name", searchKeyword))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.items").isArray())
+                        .andExpect(jsonPath("$.items.length()").value(1));
+
+                verify(hubService, times(1))
+                        .searchHubsByName(eq(searchKeyword), any(Pageable.class));
+            }
+        }
+
+        @Nested
+        @DisplayName("허브 검색 실패 테스트")
+        class SearchHubsFailure {
+
+            @Test
+            @DisplayName("검색 키워드가 없으면 400 에러를 반환한다")
+            void search_hubs_without_keyword_returns_bad_request() throws Exception {
+                // when & then
+                mockMvc.perform(get("/hubs/search")
+                                .param("page", "0")
+                                .param("size", "10"))
+                        .andExpect(status().isBadRequest());
+
+                verify(hubService, never())
+                        .searchHubsByName(any(), any(Pageable.class));
+            }
+
+            @Test
+            @DisplayName("빈 검색 키워드로 요청하면 모든 허브를 검색한다")
+            void search_hubs_with_empty_keyword() throws Exception {
+                // given
+                String emptyKeyword = "";
+                Pageable pageable = PageRequest.of(0, 10);
+
+                GetHubResult result = new GetHubResult(
+                        UUID.randomUUID(),
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780"),
+                        LocalDateTime.now(),
+                        UUID.randomUUID(),
+                        null,
+                        null
+                );
+
+                Page<GetHubResult> hubPage = new PageImpl<>(List.of(result), pageable, 1);
+
+                when(hubService.searchHubsByName(eq(emptyKeyword), any(Pageable.class)))
+                        .thenReturn(hubPage);
+
+                // when & then
+                mockMvc.perform(get("/hubs/search")
+                                .param("name", emptyKeyword)
+                                .param("page", "0")
+                                .param("size", "10"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.items").isArray())
+                        .andExpect(jsonPath("$.items.length()").value(1))
+                        .andExpect(jsonPath("$.totalElements").value(1));
+
+                verify(hubService, times(1))
+                        .searchHubsByName(eq(emptyKeyword), any(Pageable.class));
             }
         }
     }

@@ -15,8 +15,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -322,6 +328,167 @@ class HubServiceTest {
                         .hasFieldOrPropertyWithValue("errorCode", HUB_NOT_FOUND_EXCEPTION);
 
                 verify(hubRepository, times(1)).findById(hubId);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("허브 이름 검색")
+    class SearchHubsByName {
+
+        @Nested
+        @DisplayName("허브 이름 검색 성공 테스트")
+        class SearchHubsByNameSuccess {
+
+            @Test
+            @DisplayName("검색 키워드로 허브를 검색할 수 있다")
+            void search_hubs_by_name_success() {
+                // given
+                String searchKeyword = "서울";
+                Pageable pageable = PageRequest.of(0, 10);
+
+                Hub hub1 = Hub.create(new CreateHubCommand(
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780")
+                ));
+
+                Hub hub2 = Hub.create(new CreateHubCommand(
+                        "서울 강북 센터",
+                        "서울시 강북구",
+                        new BigDecimal("37.6398"),
+                        new BigDecimal("127.0253")
+                ));
+
+                List<Hub> hubs = Arrays.asList(hub1, hub2);
+                Page<Hub> hubPage = new PageImpl<>(hubs, pageable, hubs.size());
+
+                when(hubRepository.findByNameContaining(searchKeyword, pageable))
+                        .thenReturn(hubPage);
+
+                // when
+                Page<GetHubResult> result = hubService.searchHubsByName(searchKeyword, pageable);
+
+                // then
+                assertThat(result.getContent()).hasSize(2);
+                assertThat(result.getTotalElements()).isEqualTo(2);
+                assertThat(result.getContent())
+                        .extracting(GetHubResult::name)
+                        .containsExactlyInAnyOrder("서울특별시 센터", "서울 강북 센터");
+
+                verify(hubRepository, times(1))
+                        .findByNameContaining(searchKeyword, pageable);
+            }
+
+            @Test
+            @DisplayName("검색 결과가 없으면 빈 페이지를 반환한다")
+            void search_hubs_by_name_returns_empty_page() {
+                // given
+                String searchKeyword = "제주";
+                Pageable pageable = PageRequest.of(0, 10);
+                Page<Hub> emptyPage = new PageImpl<>(List.of(), pageable, 0);
+
+                when(hubRepository.findByNameContaining(searchKeyword, pageable))
+                        .thenReturn(emptyPage);
+
+                // when
+                Page<GetHubResult> result = hubService.searchHubsByName(searchKeyword, pageable);
+
+                // then
+                assertThat(result.getContent()).isEmpty();
+                assertThat(result.getTotalElements()).isZero();
+
+                verify(hubRepository, times(1))
+                        .findByNameContaining(searchKeyword, pageable);
+            }
+
+            @Test
+            @DisplayName("부분 문자열로 검색할 수 있다")
+            void search_hubs_by_partial_name() {
+                // given
+                String searchKeyword = "센터";
+                Pageable pageable = PageRequest.of(0, 10);
+
+                Hub hub1 = Hub.create(new CreateHubCommand(
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780")
+                ));
+
+                Hub hub2 = Hub.create(new CreateHubCommand(
+                        "경기도 센터",
+                        "경기도 의정부시",
+                        new BigDecimal("37.7381"),
+                        new BigDecimal("127.0336")
+                ));
+
+                Hub hub3 = Hub.create(new CreateHubCommand(
+                        "부산 센터",
+                        "부산시 해운대구",
+                        new BigDecimal("35.1796"),
+                        new BigDecimal("129.0756")
+                ));
+
+                List<Hub> hubs = Arrays.asList(hub1, hub2, hub3);
+                Page<Hub> hubPage = new PageImpl<>(hubs, pageable, hubs.size());
+
+                when(hubRepository.findByNameContaining(searchKeyword, pageable))
+                        .thenReturn(hubPage);
+
+                // when
+                Page<GetHubResult> result = hubService.searchHubsByName(searchKeyword, pageable);
+
+                // then
+                assertThat(result.getContent()).hasSize(3);
+                assertThat(result.getTotalElements()).isEqualTo(3);
+                assertThat(result.getContent())
+                        .extracting(GetHubResult::name)
+                        .allMatch(name -> name.contains("센터"));
+
+                verify(hubRepository, times(1))
+                        .findByNameContaining(searchKeyword, pageable);
+            }
+
+            @Test
+            @DisplayName("페이징이 적용된 검색 결과를 반환한다")
+            void search_hubs_by_name_with_pagination() {
+                // given
+                String searchKeyword = "센터";
+                Pageable pageable = PageRequest.of(0, 2);
+
+                Hub hub1 = Hub.create(new CreateHubCommand(
+                        "서울특별시 센터",
+                        "서울시 송파구 송파대로 55",
+                        new BigDecimal("37.5665"),
+                        new BigDecimal("126.9780")
+                ));
+
+                Hub hub2 = Hub.create(new CreateHubCommand(
+                        "경기도 센터",
+                        "경기도 의정부시",
+                        new BigDecimal("37.7381"),
+                        new BigDecimal("127.0336")
+                ));
+
+                List<Hub> hubs = Arrays.asList(hub1, hub2);
+                Page<Hub> hubPage = new PageImpl<>(hubs, pageable, 5); // 전체 5개 중 2개
+
+                when(hubRepository.findByNameContaining(searchKeyword, pageable))
+                        .thenReturn(hubPage);
+
+                // when
+                Page<GetHubResult> result = hubService.searchHubsByName(searchKeyword, pageable);
+
+                // then
+                assertThat(result.getContent()).hasSize(2);
+                assertThat(result.getTotalElements()).isEqualTo(5);
+                assertThat(result.getTotalPages()).isEqualTo(3);
+                assertThat(result.getNumber()).isZero(); // 첫 페이지
+
+                verify(hubRepository, times(1))
+                        .findByNameContaining(searchKeyword, pageable);
             }
         }
     }

@@ -47,6 +47,17 @@ public class HubController {
                 );
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<PageResponse<GetHubResponse>> searchHubs(
+            @RequestParam String name,
+            Pageable pageable) {
+        Page<GetHubResponse> hubPage = GetHubResponse.from(
+                hubService.searchHubsByName(name, pageable)
+        );
+
+        return ResponseEntity.ok(PageResponse.fromPage(hubPage));
+    }
+
     @PostMapping
     @RequireRole(UserRole.MASTER)
     public ResponseEntity<CreateHubResponse> create(

@@ -28,6 +28,11 @@ public class HubRepositoryImpl implements HubRepository {
     }
 
     @Override
+    public Page<Hub> findByNameContaining(String name, Pageable pageable) {
+        return jpaRepository.findByNameContaining(name, pageable);
+    }
+
+    @Override
     public Page<Hub> findAll(Pageable pageable) {
         return jpaRepository.findAll(pageable);
     }
