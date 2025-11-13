@@ -1,4 +1,4 @@
-package com.nowayback.delivery.presentation.dto.response;
+package com.nowayback.delivery.presentation.deliveryroute.dto.response;
 
 import com.nowayback.delivery.application.deliveryroute.dto.DeliveryRouteResult;
 import com.nowayback.delivery.domain.deliveryroute.vo.DeliveryRouteStatus;

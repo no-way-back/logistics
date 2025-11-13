@@ -6,10 +6,10 @@ import com.nowayback.delivery.application.delivery.command.UpdateDeliveryStatusC
 import com.nowayback.delivery.application.delivery.dto.DeliveryResult;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.vo.*;
-import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;
-import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRecipientInfoRequest;
-import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryStatusRequest;
-import com.nowayback.delivery.presentation.dto.response.DeliveryResponse;
+import com.nowayback.delivery.presentation.delivery.dto.request.CreateDeliveryRequest;
+import com.nowayback.delivery.presentation.delivery.dto.request.UpdateDeliveryRecipientInfoRequest;
+import com.nowayback.delivery.presentation.delivery.dto.request.UpdateDeliveryStatusRequest;
+import com.nowayback.delivery.presentation.delivery.dto.response.DeliveryResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;

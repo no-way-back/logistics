@@ -7,7 +7,7 @@ import com.nowayback.delivery.domain.deliverymanager.entity.DeliveryManager;
 import com.nowayback.delivery.domain.deliverymanager.vo.DeliveryManagerType;
 import com.nowayback.delivery.domain.deliverymanager.vo.DeliverySequence;
 import com.nowayback.delivery.domain.deliverymanager.vo.HubId;
-import com.nowayback.delivery.presentation.dto.request.CreateDeliveryManagerRequest;
+import com.nowayback.delivery.presentation.deliverymanager.dto.request.CreateDeliveryManagerRequest;
 
 import java.util.List;
 import java.util.UUID;

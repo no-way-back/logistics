@@ -7,8 +7,8 @@ import com.nowayback.delivery.application.deliveryroute.command.UpdateDeliveryRo
 import com.nowayback.delivery.application.deliveryroute.dto.DeliveryRouteResult;
 import com.nowayback.delivery.domain.deliveryroute.entity.DeliveryRoute;
 import com.nowayback.delivery.domain.deliveryroute.vo.*;
-import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRouteInfoRequest;
-import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRouteStatusRequest;
+import com.nowayback.delivery.presentation.deliveryroute.dto.request.UpdateDeliveryRouteInfoRequest;
+import com.nowayback.delivery.presentation.deliveryroute.dto.request.UpdateDeliveryRouteStatusRequest;
 import org.springframework.data.domain.*;
 
 import java.lang.reflect.Field;

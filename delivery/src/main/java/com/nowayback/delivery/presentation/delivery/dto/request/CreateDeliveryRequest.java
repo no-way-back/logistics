@@ -1,4 +1,4 @@
-package com.nowayback.delivery.presentation.dto.request;
+package com.nowayback.delivery.presentation.delivery.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

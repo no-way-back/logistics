@@ -1,4 +1,4 @@
-package com.nowayback.delivery.presentation;
+package com.nowayback.delivery.presentation.delivery;
 
 import com.nowayback.common.dto.PageResponse;
 import com.nowayback.common.security.annotation.AuthUser;
@@ -10,10 +10,10 @@ import com.nowayback.delivery.application.delivery.command.CreateDeliveryCommand
 import com.nowayback.delivery.application.delivery.command.UpdateDeliveryRecipientInfoCommand;
 import com.nowayback.delivery.application.delivery.command.UpdateDeliveryStatusCommand;
 import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
-import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;
-import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRecipientInfoRequest;
-import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryStatusRequest;
-import com.nowayback.delivery.presentation.dto.response.DeliveryResponse;
+import com.nowayback.delivery.presentation.delivery.dto.request.CreateDeliveryRequest;
+import com.nowayback.delivery.presentation.delivery.dto.request.UpdateDeliveryRecipientInfoRequest;
+import com.nowayback.delivery.presentation.delivery.dto.request.UpdateDeliveryStatusRequest;
+import com.nowayback.delivery.presentation.delivery.dto.response.DeliveryResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

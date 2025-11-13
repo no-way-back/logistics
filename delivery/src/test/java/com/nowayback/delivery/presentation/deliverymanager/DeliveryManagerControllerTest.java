@@ -1,10 +1,11 @@
-package com.nowayback.delivery.presentation;
+package com.nowayback.delivery.presentation.deliverymanager;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowayback.common.security.annotation.UserRole;
 import com.nowayback.delivery.application.deliverymanager.DeliveryManagerService;
 import com.nowayback.delivery.application.deliverymanager.dto.DeliveryManagerResult;
-import com.nowayback.delivery.presentation.dto.request.CreateDeliveryManagerRequest;
+import com.nowayback.delivery.presentation.ControllerTest;
+import com.nowayback.delivery.presentation.deliverymanager.dto.request.CreateDeliveryManagerRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.nowayback.delivery.presentation.dto.request;
+package com.nowayback.delivery.presentation.deliveryroute.dto.request;
 
 import jakarta.validation.constraints.PositiveOrZero;
 

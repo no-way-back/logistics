@@ -1,4 +1,4 @@
-package com.nowayback.delivery.presentation;
+package com.nowayback.delivery.presentation.deliveryroute;
 
 import com.nowayback.common.dto.PageResponse;
 import com.nowayback.common.security.annotation.AuthUser;
@@ -9,9 +9,9 @@ import com.nowayback.delivery.application.deliveryroute.DeliveryRouteService;
 import com.nowayback.delivery.application.deliveryroute.command.UpdateDeliveryRouteInfoCommand;
 import com.nowayback.delivery.application.deliveryroute.command.UpdateDeliveryRouteStatusCommand;
 import com.nowayback.delivery.application.deliveryroute.dto.DeliveryRouteResult;
-import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRouteInfoRequest;
-import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRouteStatusRequest;
-import com.nowayback.delivery.presentation.dto.response.DeliveryRouteResponse;
+import com.nowayback.delivery.presentation.deliveryroute.dto.request.UpdateDeliveryRouteInfoRequest;
+import com.nowayback.delivery.presentation.deliveryroute.dto.request.UpdateDeliveryRouteStatusRequest;
+import com.nowayback.delivery.presentation.deliveryroute.dto.response.DeliveryRouteResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

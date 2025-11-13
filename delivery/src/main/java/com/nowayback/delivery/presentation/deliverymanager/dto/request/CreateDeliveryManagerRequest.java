@@ -1,4 +1,4 @@
-package com.nowayback.delivery.presentation.dto.request;
+package com.nowayback.delivery.presentation.deliverymanager.dto.request;
 
 import com.nowayback.delivery.domain.deliverymanager.vo.DeliveryManagerType;
 import jakarta.validation.constraints.NotNull;
