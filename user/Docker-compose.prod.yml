@@ -9,7 +9,7 @@ services:
       POSTGRES_INITDB_ARGS: "-E UTF8"
       TZ: Asia/Seoul
     ports:
-      - "${USER_POSTGRES_PORT:-5432}:5432"
+      - "${USER_POSTGRES_PORT:-5431}:5431"
     volumes:
       - user-postgres-prod-data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql

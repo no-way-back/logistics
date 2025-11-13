@@ -6,7 +6,6 @@ spring:
     name: user-service
 
   datasource:
-    # 기본값: 로컬 PostgreSQL
     url: ${USER_SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5431/user_db}
     username: ${USER_SPRING_DATASOURCE_USERNAME:user}
     password: ${USER_SPRING_DATASOURCE_PASSWORD:1234}

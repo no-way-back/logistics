@@ -1,4 +1,11 @@
 package com.nowayback.company.application.exception;
 
-public class CompanyApplicationException {
+import com.nowayback.common.exception.ErrorCode;
+import com.nowayback.common.exception.GlobalException;
+
+public class CompanyApplicationException extends GlobalException {
+
+	public CompanyApplicationException(ErrorCode errorCode) {
+		super(errorCode);
+	}
 }

@@ -23,6 +23,15 @@ spring:
         default_schema: company_service
     show-sql: false
 
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: FULL
+
 eureka:
   client:
     service-url:

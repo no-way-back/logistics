@@ -23,6 +23,15 @@ spring:
           create_namespaces: true
     show-sql: true
 
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: FULL
+
 eureka:
   client:
     service-url:
