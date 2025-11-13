@@ -44,4 +44,4 @@ logging:
 gemini:
   base-url: https://generativelanguage.googleapis.com
   model: gemini-2.5-flash
-  api-key: AIzaSyDULwOtFhMZ0e5550UgS3veZqGzx-nMSMA
+  api-key: ${GEMINI_API_KEY}
