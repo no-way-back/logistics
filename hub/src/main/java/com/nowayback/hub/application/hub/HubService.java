@@ -9,6 +9,8 @@ import com.nowayback.hub.application.hub.exception.HubApplicationException;
 import com.nowayback.hub.domain.hub.entity.Hub;
 import com.nowayback.hub.domain.hub.repository.HubRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +62,15 @@ public class HubService {
     public GetHubResult getHub(UUID hubId) {
         Hub hub = findHubOrThrow(hubId);
         return GetHubResult.of(hub);
+    }
+
+    /**
+     * 허브 전체 조회
+     */
+    @Transactional(readOnly = true)
+    public Page<GetHubResult> getHubList(Pageable pageable) {
+        Page<Hub> hubs = hubRepository.findAll(pageable);
+        return GetHubResult.of(hubs);
     }
 
     /**

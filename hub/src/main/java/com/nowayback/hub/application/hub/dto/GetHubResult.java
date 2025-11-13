@@ -1,6 +1,7 @@
 package com.nowayback.hub.application.hub.dto;
 
 import com.nowayback.hub.domain.hub.entity.Hub;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,5 +30,9 @@ public record GetHubResult(
                 hub.getUpdatedAt(),
                 hub.getUpdatedBy()
         );
+    }
+
+    public static Page<GetHubResult> of(Page<Hub> hubs) {
+        return hubs.map(GetHubResult::of);
     }
 }

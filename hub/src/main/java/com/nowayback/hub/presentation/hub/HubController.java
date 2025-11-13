@@ -1,5 +1,6 @@
 package com.nowayback.hub.presentation.hub;
 
+import com.nowayback.common.dto.PageResponse;
 import com.nowayback.common.security.annotation.AuthUser;
 import com.nowayback.common.security.annotation.CurrentUser;
 import com.nowayback.common.security.annotation.RequireRole;
@@ -14,6 +15,8 @@ import com.nowayback.hub.presentation.hub.response.GetHubResponse;
 import com.nowayback.hub.presentation.hub.response.UpdateHubResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,10 +31,19 @@ public class HubController {
     private final HubService hubService;
 
     @GetMapping("/{hubId}")
-    public ResponseEntity<GetHubResponse> get(@PathVariable UUID hubId) {
+    public ResponseEntity<GetHubResponse> getHub(@PathVariable UUID hubId) {
         return ResponseEntity.
                 ok(GetHubResponse.from(
                         hubService.getHub(hubId))
+                );
+    }
+
+    @GetMapping
+    public ResponseEntity<PageResponse<GetHubResponse>> getHubList(Pageable pageable) {
+        Page<GetHubResponse> hubPage = GetHubResponse.from(hubService.getHubList(pageable));
+
+        return ResponseEntity
+                .ok( PageResponse.fromPage(hubPage)
                 );
     }
 
