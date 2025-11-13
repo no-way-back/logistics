@@ -3,6 +3,8 @@ package com.nowayback.hub.domain.hub.entity;
 import com.nowayback.common.audit.BaseEntity;
 import com.nowayback.hub.application.hub.command.CreateHubCommand;
 import com.nowayback.hub.application.hub.command.UpdateHubCommand;
+import com.nowayback.hub.domain.hub.exception.HubDomainErrorCode;
+import com.nowayback.hub.domain.hub.exception.HubDomainException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,6 +12,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+
+import static com.nowayback.hub.domain.hub.exception.HubDomainErrorCode.*;
 
 @Entity
 @Table(name = "p_hubs")
@@ -95,7 +99,7 @@ public class Hub extends BaseEntity {
      */
     private static void validateName(String name) {
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("허브 이름은 필수입니다.");
+            throw new HubDomainException(HUB_NAME_MISSING_EXCEPTION);
         }
     }
 
@@ -105,7 +109,7 @@ public class Hub extends BaseEntity {
      */
     private static void validateAddress(String address) {
         if (address == null || address.isBlank()) {
-            throw new IllegalArgumentException("주소는 필수입니다.");
+            throw new HubDomainException(HUB_ADDRESS_MISSING_EXCEPTION);
         }
     }
 
@@ -116,10 +120,10 @@ public class Hub extends BaseEntity {
      */
     private static void validateLatitude(BigDecimal latitude) {
         if (latitude == null) {
-            throw new IllegalArgumentException("위도는 필수입니다.");
+            throw new HubDomainException(HUB_LATITUDE_MISSING_EXCEPTION);
         }
         if (latitude.compareTo(MIN_LATITUDE) < 0 || latitude.compareTo(MAX_LATITUDE) > 0) {
-            throw new IllegalArgumentException("위도는 -90 이상 90 이하여야 합니다.");
+            throw new HubDomainException(HUB_LATITUDE_RANGE_EXCEPTION);
         }
     }
 
@@ -128,12 +132,12 @@ public class Hub extends BaseEntity {
      *  - 경도는 필수입니다.
      *  - 경도는 -180 이상 180 이하여야 합니다.
      */
-    private static void validateLongitude(BigDecimal longitude) {
+        private static void validateLongitude(BigDecimal longitude) {
         if (longitude == null) {
-            throw new IllegalArgumentException("경도는 필수입니다.");
+            throw new HubDomainException(HUB_LONGITUDE_MISSING_EXCEPTION);
         }
         if (longitude.compareTo(MIN_LONGITUDE) < 0 || longitude.compareTo(MAX_LONGITUDE) > 0) {
-            throw new IllegalArgumentException("경도는 -180 이상 180 이하여야 합니다.");
+            throw new HubDomainException(HUB_LONGITUDE_RANGE_EXCEPTION);
         }
     }
 
