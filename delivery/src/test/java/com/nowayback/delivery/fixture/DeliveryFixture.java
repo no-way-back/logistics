@@ -1,9 +1,9 @@
 package com.nowayback.delivery.fixture;
 
-import com.nowayback.delivery.application.command.CreateDeliveryCommand;
-import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
-import com.nowayback.delivery.application.command.UpdateDeliveryStatusCommand;
-import com.nowayback.delivery.application.dto.DeliveryResult;
+import com.nowayback.delivery.application.delivery.command.CreateDeliveryCommand;
+import com.nowayback.delivery.application.delivery.command.UpdateDeliveryRecipientInfoCommand;
+import com.nowayback.delivery.application.delivery.command.UpdateDeliveryStatusCommand;
+import com.nowayback.delivery.application.delivery.dto.DeliveryResult;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.vo.*;
 import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;

@@ -1,6 +1,6 @@
 package com.nowayback.delivery.presentation.dto.response;
 
-import com.nowayback.delivery.application.dto.DeliveryResult;
+import com.nowayback.delivery.application.delivery.dto.DeliveryResult;
 import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
 
 import java.util.UUID;

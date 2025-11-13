@@ -1,4 +1,4 @@
-package com.nowayback.delivery.application.command;
+package com.nowayback.delivery.application.delivery.command;
 
 import com.nowayback.delivery.domain.delivery.vo.HubId;
 import com.nowayback.delivery.domain.delivery.vo.OrderId;

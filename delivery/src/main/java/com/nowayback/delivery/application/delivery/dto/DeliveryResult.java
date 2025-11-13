@@ -1,4 +1,4 @@
-package com.nowayback.delivery.application.dto;
+package com.nowayback.delivery.application.delivery.dto;
 
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
