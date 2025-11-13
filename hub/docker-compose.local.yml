@@ -11,7 +11,7 @@ services:
       POSTGRES_INITDB_ARGS: "-E UTF8"
       TZ: Asia/Seoul
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - hub-postgres-data:/var/lib/postgresql/data
     networks:
@@ -31,13 +31,13 @@ services:
     container_name: hub-service
     environment:
       SPRING_PROFILES_ACTIVE: local
-      HUB_SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/hub_db
+      HUB_SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5433/hub_db
       HUB_SPRING_DATASOURCE_USERNAME: user
       HUB_SPRING_DATASOURCE_PASSWORD: 1234
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://localhost:8761/eureka/
       JWT_SECRET: local-secret
     ports:
-      - "18081:18081"
+      - "18083:18083"
     depends_on:
       hub-postgres:
         condition: service_healthy

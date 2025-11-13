@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 import static com.nowayback.hub.application.hub.exception.HubApplicationErrorCode.*;
@@ -81,6 +82,19 @@ public class HubService {
         hub.delete(userId);
     }
 
+    /**
+     * 여러 개의 허브 조회
+     */
+    public List<Hub> getHubsByIds(Iterable<UUID> hubIds) {
+        return hubRepository.findAllById(hubIds);
+    }
+
+    public Hub findHubOrThrow(UUID hubId) {
+        return hubRepository.findById(hubId).orElseThrow(
+                () -> new HubApplicationException(HUB_NOT_FOUND_EXCEPTION)
+        );
+    }
+
     private void validateDuplicateNameAndAddress(String name, String address) {
         validateDuplicateName(name);
         validateDuplicateAddress(address);
@@ -98,9 +112,4 @@ public class HubService {
         }
     }
 
-    private Hub findHubOrThrow(UUID hubId) {
-        return hubRepository.findById(hubId).orElseThrow(
-                () -> new HubApplicationException(HUB_NOT_FOUND_EXCEPTION)
-        );
-    }
 }

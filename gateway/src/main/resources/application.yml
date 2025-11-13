@@ -33,7 +33,7 @@ spring:
         - id: hub-service
           uri: lb://hub-service
           predicates:
-            - Path=/hubs/**
+            - Path=/hubs/**, /hub-connections/**
           filters:
             - name: JwtAuthenticationFilter
 
