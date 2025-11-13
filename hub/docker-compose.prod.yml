@@ -11,7 +11,7 @@ services:
       POSTGRES_INITDB_ARGS: "-E UTF8"
       TZ: Asia/Seoul
     ports:
-      - "${HUB_POSTGRES_PORT:-5432}:5432"
+      - "${HUB_POSTGRES_PORT:-5433}:5432"
     volumes:
       - hub-postgres-prod-data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql

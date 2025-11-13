@@ -7,14 +7,14 @@ spring:
 
   datasource:
     # 기본값: 로컬 PostgreSQL
-    url: ${USER_SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/hub_db}
+    url: ${USER_SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/hub_db?sslmode=disable}
     username: ${USER_SPRING_DATASOURCE_USERNAME:user}
     password: ${USER_SPRING_DATASOURCE_PASSWORD:1234}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
