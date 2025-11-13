@@ -1,5 +1,6 @@
 package com.nowayback.delivery.application.delivery;
 
+import com.nowayback.common.exception.GlobalException;
 import com.nowayback.delivery.application.delivery.command.CreateDeliveryCommand;
 import com.nowayback.delivery.application.delivery.command.UpdateDeliveryRecipientInfoCommand;
 import com.nowayback.delivery.application.delivery.command.UpdateDeliveryStatusCommand;
@@ -8,6 +9,8 @@ import com.nowayback.delivery.application.delivery.exception.DeliveryApplication
 import com.nowayback.delivery.application.delivery.exception.DeliveryApplicationException;
 import com.nowayback.delivery.application.delivery.service.HubClient;
 import com.nowayback.delivery.application.deliverymanager.DeliveryManagerService;
+import com.nowayback.delivery.application.deliveryroute.DeliveryRouteService;
+import com.nowayback.delivery.application.deliveryroute.command.CreateDeliveryRoutesCommand;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.repository.DeliveryRepository;
 import com.nowayback.delivery.domain.delivery.vo.*;
@@ -17,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,6 +28,7 @@ import java.util.UUID;
 public class DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
+    private final DeliveryRouteService deliveryRouteService;
     private final DeliveryManagerService deliveryManagerService;
     private final HubClient hubClient;
 
@@ -32,6 +37,8 @@ public class DeliveryService {
         validateDuplicateOrderId(command.orderId());
         validateHubExists(command.sourceHubId());
         validateHubExists(command.destinationHubId());
+
+        HubClient.HubRoutesInfo hubRoutesInfo = hubClient.getHubRoutesInfo(command.sourceHubId().getId(), command.destinationHubId().getId());
 
         DeliveryManagerId companyDeliveryManagerId = assignDeliveryManager();
 
@@ -44,8 +51,7 @@ public class DeliveryService {
         );
 
         Delivery savedDelivery = deliveryRepository.save(delivery);
-
-        // TODO: 배송 경로 생성 로직 추가 필요
+        createDeliveryRoutes(savedDelivery, hubRoutesInfo);
 
         return DeliveryResult.from(savedDelivery);
     }
@@ -55,6 +61,28 @@ public class DeliveryService {
             return DeliveryManagerId.of(deliveryManagerService.assignDeliveryManager(DeliveryManagerType.COMPANY));
         } catch (Exception e) {
             throw new DeliveryApplicationException(DeliveryApplicationErrorCode.FAILED_TO_ASSIGN_DELIVERY_MANAGER);
+        }
+    }
+
+    private void createDeliveryRoutes(Delivery delivery, HubClient.HubRoutesInfo hubRoutesInfo) {
+        List<CreateDeliveryRoutesCommand.DeliveryRouteSegment> segments = hubRoutesInfo.segments().stream()
+                .map(routeInfo -> CreateDeliveryRoutesCommand.DeliveryRouteSegment.of(
+                        routeInfo.sequence(),
+                        routeInfo.fromHubId(),
+                        routeInfo.toHubId(),
+                        routeInfo.distanceM(),
+                        routeInfo.estimatedDurationMin()
+                )).toList();
+
+        try {
+            deliveryRouteService.createDeliveryRoutes(
+                    CreateDeliveryRoutesCommand.of(
+                            delivery.getId(),
+                            segments
+                    )
+            );
+        } catch (GlobalException e) {
+            throw new DeliveryApplicationException(DeliveryApplicationErrorCode.FAILED_TO_CREATE_DELIVERY_ROUTES);
         }
     }
 

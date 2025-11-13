@@ -1,5 +1,6 @@
 package com.nowayback.delivery.application.delivery;
 
+import com.nowayback.common.exception.GlobalException;
 import com.nowayback.delivery.application.delivery.command.CreateDeliveryCommand;
 import com.nowayback.delivery.application.delivery.command.UpdateDeliveryRecipientInfoCommand;
 import com.nowayback.delivery.application.delivery.command.UpdateDeliveryStatusCommand;
@@ -10,6 +11,10 @@ import com.nowayback.delivery.application.delivery.service.HubClient;
 import com.nowayback.delivery.application.deliverymanager.DeliveryManagerService;
 import com.nowayback.delivery.application.deliverymanager.exception.DeliveryManagerApplicationErrorCode;
 import com.nowayback.delivery.application.deliverymanager.exception.DeliveryManagerApplicationException;
+import com.nowayback.delivery.application.deliveryroute.DeliveryRouteService;
+import com.nowayback.delivery.application.deliveryroute.command.CreateDeliveryRoutesCommand;
+import com.nowayback.delivery.application.deliveryroute.exception.DeliveryRouteApplicationErrorCode;
+import com.nowayback.delivery.application.deliveryroute.exception.DeliveryRouteApplicationException;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.repository.DeliveryRepository;
 import com.nowayback.delivery.domain.delivery.vo.*;
@@ -23,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +41,9 @@ class DeliveryServiceTest {
 
     @Mock
     private DeliveryRepository deliveryRepository;
+
+    @Mock
+    private DeliveryRouteService deliveryRouteService;
 
     @Mock
     private DeliveryManagerService deliveryManagerService;
@@ -59,11 +68,16 @@ class DeliveryServiceTest {
             UUID sourceHubId = command.sourceHubId().getId();
             UUID destinationHubId = command.destinationHubId().getId();
 
+            Delivery savedDelivery = spy(delivery);
+            when(savedDelivery.getId()).thenReturn(DELIVERY_UUID);
+
             when(deliveryRepository.existsByOrderId(any(OrderId.class))).thenReturn(false);
             when(hubClient.existsById(sourceHubId)).thenReturn(true);
             when(hubClient.existsById(destinationHubId)).thenReturn(true);
+            when(hubClient.getHubRoutesInfo(sourceHubId, destinationHubId)).thenReturn(HUB_ROUTES_INFO);
             when(deliveryManagerService.assignDeliveryManager(DeliveryManagerType.COMPANY)).thenReturn(COMPANY_DELIVERY_MANAGER_UUID);
-            when(deliveryRepository.save(any(Delivery.class))).thenReturn(delivery);
+            when(deliveryRepository.save(any(Delivery.class))).thenReturn(savedDelivery);
+            when(deliveryRouteService.createDeliveryRoutes(any())).thenReturn(Collections.emptyList());
 
             /* when */
             DeliveryResult result = deliveryService.createDelivery(command);
@@ -82,6 +96,7 @@ class DeliveryServiceTest {
             verify(hubClient, times(1)).existsById(sourceHubId);
             verify(hubClient, times(1)).existsById(destinationHubId);
             verify(deliveryRepository).save(any(Delivery.class));
+            verify(deliveryRouteService).createDeliveryRoutes(any());
         }
 
         @Test
@@ -153,6 +168,33 @@ class DeliveryServiceTest {
             assertThatThrownBy(() -> deliveryService.createDelivery(command))
                     .isInstanceOf(DeliveryApplicationException.class)
                     .hasFieldOrPropertyWithValue("errorCode", DeliveryApplicationErrorCode.FAILED_TO_ASSIGN_DELIVERY_MANAGER);
+        }
+
+        @Test
+        @DisplayName("배송 경로 생성에 실패하면 예외가 발생한다.")
+        void createDelivery_FailedToCreateDeliveryRoutes_throwsException() {
+            /* given */
+            CreateDeliveryCommand command = CREATE_DELIVERY_COMMAND;
+            UUID sourceHubId = command.sourceHubId().getId();
+            UUID destinationHubId = command.destinationHubId().getId();
+
+            Delivery savedDelivery = spy(createDelivery());
+            when(savedDelivery.getId()).thenReturn(DELIVERY_UUID);
+
+            when(deliveryRepository.existsByOrderId(any(OrderId.class))).thenReturn(false);
+            when(hubClient.existsById(sourceHubId)).thenReturn(true);
+            when(hubClient.existsById(destinationHubId)).thenReturn(true);
+            when(hubClient.getHubRoutesInfo(sourceHubId, destinationHubId)).thenReturn(HUB_ROUTES_INFO);
+            when(deliveryManagerService.assignDeliveryManager(DeliveryManagerType.COMPANY)).thenReturn(COMPANY_DELIVERY_MANAGER_UUID);
+            when(deliveryRepository.save(any(Delivery.class))).thenReturn(savedDelivery);
+            when(deliveryRouteService.createDeliveryRoutes(any()))
+                    .thenThrow(new DeliveryRouteApplicationException(DeliveryRouteApplicationErrorCode.DUPLICATE_ROUTE_SEQUENCE));
+
+            /* when */
+            /* then */
+            assertThatThrownBy(() -> deliveryService.createDelivery(command))
+                    .isInstanceOf(DeliveryApplicationException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", DeliveryApplicationErrorCode.FAILED_TO_CREATE_DELIVERY_ROUTES);
         }
     }
 
