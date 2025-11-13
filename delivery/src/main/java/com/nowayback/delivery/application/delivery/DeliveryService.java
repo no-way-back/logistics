@@ -119,7 +119,12 @@ public class DeliveryService {
     @Transactional
     public void deleteDelivery(UUID actorId, UUID deliveryId) {
         Delivery delivery = getDeliveryById(deliveryId);
+        deleteDeliveryRoute(actorId, deliveryId);
         delivery.delete(actorId);
+    }
+
+    private void deleteDeliveryRoute(UUID deletedBy, UUID deliveryId) {
+        deliveryRouteService.deleteDeliveryRoutesByDeliveryId(deletedBy, deliveryId);
     }
 
     private Delivery getDeliveryById(UUID deliveryId) {

@@ -347,6 +347,7 @@ class DeliveryServiceTest {
 
             /* then */
             verify(deliveryRepository, times(1)).findById(DELIVERY_UUID);
+            verify(deliveryRouteService, times(1)).deleteDeliveryRoutesByDeliveryId(actorId, DELIVERY_UUID);
         }
 
         @Test
