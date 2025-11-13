@@ -1,4 +1,4 @@
-package com.nowayback.delivery.infrastructure.repository.deliveryroute;
+package com.nowayback.delivery.infrastructure.deliveryroute.repository;
 
 import com.nowayback.delivery.domain.deliveryroute.entity.DeliveryRoute;
 import com.nowayback.delivery.domain.deliveryroute.repository.DeliveryRouteRepository;
