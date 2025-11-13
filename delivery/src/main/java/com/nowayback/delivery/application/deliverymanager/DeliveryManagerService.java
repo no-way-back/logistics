@@ -1,9 +1,9 @@
-package com.nowayback.delivery.application;
+package com.nowayback.delivery.application.deliverymanager;
 
-import com.nowayback.delivery.application.command.CreateDeliveryManagerCommand;
-import com.nowayback.delivery.application.dto.DeliveryManagerResult;
-import com.nowayback.delivery.application.exception.DeliveryManagerApplicationErrorCode;
-import com.nowayback.delivery.application.exception.DeliveryManagerApplicationException;
+import com.nowayback.delivery.application.deliverymanager.command.CreateDeliveryManagerCommand;
+import com.nowayback.delivery.application.deliverymanager.dto.DeliveryManagerResult;
+import com.nowayback.delivery.application.deliverymanager.exception.DeliveryManagerApplicationErrorCode;
+import com.nowayback.delivery.application.deliverymanager.exception.DeliveryManagerApplicationException;
 import com.nowayback.delivery.application.service.UserClient;
 import com.nowayback.delivery.domain.deliverymanager.entity.DeliveryManager;
 import com.nowayback.delivery.domain.deliverymanager.repository.DeliveryManagerRepository;

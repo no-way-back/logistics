@@ -1,7 +1,7 @@
 package com.nowayback.delivery.fixture;
 
-import com.nowayback.delivery.application.command.CreateDeliveryManagerCommand;
-import com.nowayback.delivery.application.dto.DeliveryManagerResult;
+import com.nowayback.delivery.application.deliverymanager.command.CreateDeliveryManagerCommand;
+import com.nowayback.delivery.application.deliverymanager.dto.DeliveryManagerResult;
 import com.nowayback.delivery.application.service.UserClient;
 import com.nowayback.delivery.domain.deliverymanager.entity.DeliveryManager;
 import com.nowayback.delivery.domain.deliverymanager.vo.DeliveryManagerType;

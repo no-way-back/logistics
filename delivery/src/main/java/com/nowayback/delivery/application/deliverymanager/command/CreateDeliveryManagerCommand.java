@@ -1,4 +1,4 @@
-package com.nowayback.delivery.application.command;
+package com.nowayback.delivery.application.deliverymanager.command;
 
 import com.nowayback.delivery.domain.deliverymanager.vo.DeliveryManagerType;
 import com.nowayback.delivery.domain.deliverymanager.vo.HubId;

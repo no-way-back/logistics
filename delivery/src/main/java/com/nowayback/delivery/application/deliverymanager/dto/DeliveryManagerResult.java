@@ -1,4 +1,4 @@
-package com.nowayback.delivery.application.dto;
+package com.nowayback.delivery.application.deliverymanager.dto;
 
 import com.nowayback.delivery.domain.deliverymanager.entity.DeliveryManager;
 import com.nowayback.delivery.domain.deliverymanager.vo.DeliveryManagerType;
