@@ -2,8 +2,8 @@ package com.nowayback.delivery.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nowayback.common.security.annotation.UserRole;
-import com.nowayback.delivery.application.DeliveryRouteService;
-import com.nowayback.delivery.application.dto.DeliveryRouteResult;
+import com.nowayback.delivery.application.deliveryroute.DeliveryRouteService;
+import com.nowayback.delivery.application.deliveryroute.dto.DeliveryRouteResult;
 import com.nowayback.delivery.fixture.DeliveryRouteFixture;
 import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRouteInfoRequest;
 import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRouteStatusRequest;

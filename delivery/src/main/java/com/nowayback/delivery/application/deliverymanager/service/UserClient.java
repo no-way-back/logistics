@@ -1,4 +1,4 @@
-package com.nowayback.delivery.application.service;
+package com.nowayback.delivery.application.deliverymanager.service;
 
 import java.util.UUID;
 

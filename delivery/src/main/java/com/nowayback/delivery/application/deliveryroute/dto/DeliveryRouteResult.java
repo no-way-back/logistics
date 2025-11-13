@@ -1,4 +1,4 @@
-package com.nowayback.delivery.application.dto;
+package com.nowayback.delivery.application.deliveryroute.dto;
 
 import com.nowayback.delivery.domain.deliveryroute.entity.DeliveryRoute;
 import com.nowayback.delivery.domain.deliveryroute.vo.DeliveryRouteStatus;

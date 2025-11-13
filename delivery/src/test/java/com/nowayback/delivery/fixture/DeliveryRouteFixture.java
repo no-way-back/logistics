@@ -1,10 +1,10 @@
 package com.nowayback.delivery.fixture;
 
 import com.nowayback.common.security.annotation.UserRole;
-import com.nowayback.delivery.application.command.CreateDeliveryRoutesCommand;
-import com.nowayback.delivery.application.command.UpdateDeliveryRouteInfoCommand;
-import com.nowayback.delivery.application.command.UpdateDeliveryRouteStatusCommand;
-import com.nowayback.delivery.application.dto.DeliveryRouteResult;
+import com.nowayback.delivery.application.deliveryroute.command.CreateDeliveryRoutesCommand;
+import com.nowayback.delivery.application.deliveryroute.command.UpdateDeliveryRouteInfoCommand;
+import com.nowayback.delivery.application.deliveryroute.command.UpdateDeliveryRouteStatusCommand;
+import com.nowayback.delivery.application.deliveryroute.dto.DeliveryRouteResult;
 import com.nowayback.delivery.domain.deliveryroute.entity.DeliveryRoute;
 import com.nowayback.delivery.domain.deliveryroute.vo.*;
 import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRouteInfoRequest;

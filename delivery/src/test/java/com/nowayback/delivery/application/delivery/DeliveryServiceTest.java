@@ -6,7 +6,7 @@ import com.nowayback.delivery.application.delivery.command.UpdateDeliveryStatusC
 import com.nowayback.delivery.application.delivery.dto.DeliveryResult;
 import com.nowayback.delivery.application.delivery.exception.DeliveryApplicationErrorCode;
 import com.nowayback.delivery.application.delivery.exception.DeliveryApplicationException;
-import com.nowayback.delivery.application.service.HubClient;
+import com.nowayback.delivery.application.delivery.service.HubClient;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.repository.DeliveryRepository;
 import com.nowayback.delivery.domain.delivery.vo.*;

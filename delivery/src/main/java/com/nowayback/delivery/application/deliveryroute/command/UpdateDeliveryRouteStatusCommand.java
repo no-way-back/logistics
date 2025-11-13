@@ -1,4 +1,4 @@
-package com.nowayback.delivery.application.command;
+package com.nowayback.delivery.application.deliveryroute.command;
 
 import com.nowayback.delivery.domain.deliveryroute.vo.DeliveryRouteStatus;
 
