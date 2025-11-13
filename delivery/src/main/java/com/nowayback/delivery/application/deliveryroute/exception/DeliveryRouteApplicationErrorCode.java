@@ -7,6 +7,7 @@ public enum DeliveryRouteApplicationErrorCode implements ErrorCode {
 
     NOT_FOUND_DELIVERY_ROUTE("DELIVERYROUTE2001", "해당 배송 경로를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     DUPLICATE_ROUTE_SEQUENCE("DELIVERYROUTE2002", "중복된 경로 시퀀스가 존재합니다.", HttpStatus.BAD_REQUEST),
+    FAILED_TO_ASSIGN_DELIVERY_MANAGER("DELIVERYROUTE2003", "배송 관리자 할당에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR)
     ;
 
     private final String code;

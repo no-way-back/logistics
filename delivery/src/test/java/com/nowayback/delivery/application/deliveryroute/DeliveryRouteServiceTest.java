@@ -1,5 +1,8 @@
 package com.nowayback.delivery.application.deliveryroute;
 
+import com.nowayback.delivery.application.deliverymanager.DeliveryManagerService;
+import com.nowayback.delivery.application.deliverymanager.exception.DeliveryManagerApplicationErrorCode;
+import com.nowayback.delivery.application.deliverymanager.exception.DeliveryManagerApplicationException;
 import com.nowayback.delivery.application.deliveryroute.command.CreateDeliveryRoutesCommand;
 import com.nowayback.delivery.application.deliveryroute.command.UpdateDeliveryRouteInfoCommand;
 import com.nowayback.delivery.application.deliveryroute.command.UpdateDeliveryRouteStatusCommand;
@@ -37,6 +40,9 @@ class DeliveryRouteServiceTest {
     @Mock
     private DeliveryRouteRepository deliveryRouteRepository;
 
+    @Mock
+    private DeliveryManagerService deliveryManagerService;
+
     @InjectMocks
     private DeliveryRouteService deliveryRouteService;
 
@@ -53,6 +59,8 @@ class DeliveryRouteServiceTest {
 
             when(deliveryRouteRepository.saveAll(anyList()))
                     .thenReturn(List.of(route));
+            when(deliveryManagerService.assignDeliveryManager(any()))
+                    .thenReturn(DELIVERY_MANAGER_UUID);
 
             /* when */
             List<DeliveryRouteResult> results = deliveryRouteService.createDeliveryRoutes(command);
@@ -83,6 +91,22 @@ class DeliveryRouteServiceTest {
             assertThatThrownBy(() -> deliveryRouteService.createDeliveryRoutes(command))
                     .isInstanceOf(DeliveryRouteApplicationException.class)
                     .hasFieldOrPropertyWithValue("errorCode", DeliveryRouteApplicationErrorCode.DUPLICATE_ROUTE_SEQUENCE);
+        }
+
+        @Test
+        @DisplayName("할당 가능한 배송 담당자가 없을 경우 예외가 발생한다.")
+        void createDeliveryRoutes_NoAvailableDeliveryManager_ShouldThrowException() {
+            /* given */
+            CreateDeliveryRoutesCommand command = CREATE_DELIVERY_ROUTES_COMMAND;
+
+            when(deliveryManagerService.assignDeliveryManager(any()))
+                    .thenThrow(new DeliveryManagerApplicationException(DeliveryManagerApplicationErrorCode.NOT_FOUND_DELIVERY_MANAGER));
+
+            /* when */
+            /* then */
+            assertThatThrownBy(() -> deliveryRouteService.createDeliveryRoutes(command))
+                    .isInstanceOf(DeliveryRouteApplicationException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", DeliveryRouteApplicationErrorCode.FAILED_TO_ASSIGN_DELIVERY_MANAGER);
         }
     }
 

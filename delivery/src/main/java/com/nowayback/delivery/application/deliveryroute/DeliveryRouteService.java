@@ -1,12 +1,15 @@
 package com.nowayback.delivery.application.deliveryroute;
 
+import com.nowayback.common.exception.GlobalException;
 import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.delivery.application.deliverymanager.DeliveryManagerService;
 import com.nowayback.delivery.application.deliveryroute.command.CreateDeliveryRoutesCommand;
 import com.nowayback.delivery.application.deliveryroute.command.UpdateDeliveryRouteInfoCommand;
 import com.nowayback.delivery.application.deliveryroute.command.UpdateDeliveryRouteStatusCommand;
 import com.nowayback.delivery.application.deliveryroute.dto.DeliveryRouteResult;
 import com.nowayback.delivery.application.deliveryroute.exception.DeliveryRouteApplicationErrorCode;
 import com.nowayback.delivery.application.deliveryroute.exception.DeliveryRouteApplicationException;
+import com.nowayback.delivery.domain.deliverymanager.vo.DeliveryManagerType;
 import com.nowayback.delivery.domain.deliveryroute.entity.DeliveryRoute;
 import com.nowayback.delivery.domain.deliveryroute.repository.DeliveryRouteRepository;
 import com.nowayback.delivery.domain.deliveryroute.vo.DeliveryId;
@@ -26,6 +29,7 @@ import java.util.UUID;
 public class DeliveryRouteService {
 
     private final DeliveryRouteRepository deliveryRouteRepository;
+    private final DeliveryManagerService deliveryManagerService;
 
     @Transactional
     public List<DeliveryRouteResult> createDeliveryRoutes(CreateDeliveryRoutesCommand command) {
@@ -44,8 +48,7 @@ public class DeliveryRouteService {
     }
 
     private DeliveryRoute createDeliveryRoute(DeliveryId deliveryId, CreateDeliveryRoutesCommand.DeliveryRouteSegment segment) {
-        // TODO: Delivery Manager 할당 로직 추가 필요
-        DeliveryManagerId deliveryManagerId =DeliveryManagerId.of(UUID.randomUUID());
+        DeliveryManagerId deliveryManagerId = assignDeliveryManager();
 
         RouteInfo routeInfo = RouteInfo.of(
                 segment.expectedDistanceMeters(),
@@ -61,6 +64,14 @@ public class DeliveryRouteService {
                 deliveryManagerId,
                 routeInfo
         );
+    }
+
+    private DeliveryManagerId assignDeliveryManager() {
+        try {
+            return DeliveryManagerId.of(deliveryManagerService.assignDeliveryManager(DeliveryManagerType.HUB));
+        } catch (GlobalException e) {
+            throw new DeliveryRouteApplicationException(DeliveryRouteApplicationErrorCode.FAILED_TO_ASSIGN_DELIVERY_MANAGER);
+        }
     }
 
     @Transactional(readOnly = true)
