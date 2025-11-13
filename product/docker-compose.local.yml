@@ -1,0 +1,53 @@
+services:
+  product-postgres:
+    image: postgres:15-alpine
+    container_name: product-postgres
+    environment:
+      - POSTGRES_DB=product_db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=1234
+      - TZ=Asia/Seoul
+    ports:
+      - "5434:5432"
+    volumes:
+      - product-postgres-data:/var/lib/postgresql/data
+    networks:
+      - product-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d product_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  product-service:
+    build:
+      context: ..
+      dockerfile: product/Dockerfile
+      platforms:
+        - linux/amd64
+    image: product-service:latest
+    container_name: product-service
+    environment:
+        - SPRING_PROFILES_ACTIVE=local
+        - PRODUCT_SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5434/product_db
+        - PRODUCT_SPRING_DATASOURCE_USERNAME=user
+        - PRODUCT_SPRING_DATASOURCE_PASSWORD=1234
+    ports:
+      - "18084:18084"
+    depends_on:
+      product-postgres:
+        condition: service_healthy
+    networks:
+      - product-network
+      - msa-network
+    restart: unless-stopped
+
+volumes:
+  product-postgres-data:
+    driver: local
+
+networks:
+  product-network:
+    driver: bridge
+  msa-network:
+    external: true
