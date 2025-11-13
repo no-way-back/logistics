@@ -1,4 +1,4 @@
-package com.nowayback.delivery.infrastructure.repository;
+package com.nowayback.delivery.infrastructure.delivery;
 
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.vo.OrderId;

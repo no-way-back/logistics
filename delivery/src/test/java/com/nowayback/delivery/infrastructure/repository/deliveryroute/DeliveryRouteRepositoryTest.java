@@ -1,9 +1,10 @@
-package com.nowayback.delivery.infrastructure.repository;
+package com.nowayback.delivery.infrastructure.repository.deliveryroute;
 
 import com.nowayback.delivery.domain.deliveryroute.entity.DeliveryRoute;
 import com.nowayback.delivery.domain.deliveryroute.repository.DeliveryRouteRepository;
 import com.nowayback.delivery.domain.deliveryroute.vo.DeliveryId;
 import com.nowayback.delivery.domain.deliveryroute.vo.RouteSequence;
+import com.nowayback.delivery.infrastructure.deliveryroute.DeliveryRouteRepositoryImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.nowayback.delivery.infrastructure.repository;
+package com.nowayback.delivery.infrastructure.repository.delivery;
 
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.repository.DeliveryRepository;
@@ -6,6 +6,8 @@ import com.nowayback.delivery.domain.delivery.vo.DeliveryStatus;
 import com.nowayback.delivery.domain.delivery.vo.HubId;
 import com.nowayback.delivery.domain.delivery.vo.OrderId;
 import com.nowayback.delivery.infrastructure.config.QueryDslConfig;
+import com.nowayback.delivery.infrastructure.delivery.DeliveryCustomRepositoryImpl;
+import com.nowayback.delivery.infrastructure.delivery.DeliveryRepositoryImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
