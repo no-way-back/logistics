@@ -7,9 +7,13 @@ import com.nowayback.delivery.application.delivery.dto.DeliveryResult;
 import com.nowayback.delivery.application.delivery.exception.DeliveryApplicationErrorCode;
 import com.nowayback.delivery.application.delivery.exception.DeliveryApplicationException;
 import com.nowayback.delivery.application.delivery.service.HubClient;
+import com.nowayback.delivery.application.deliverymanager.DeliveryManagerService;
+import com.nowayback.delivery.application.deliverymanager.exception.DeliveryManagerApplicationErrorCode;
+import com.nowayback.delivery.application.deliverymanager.exception.DeliveryManagerApplicationException;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.repository.DeliveryRepository;
 import com.nowayback.delivery.domain.delivery.vo.*;
+import com.nowayback.delivery.domain.deliverymanager.vo.DeliveryManagerType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,6 +35,9 @@ class DeliveryServiceTest {
 
     @Mock
     private DeliveryRepository deliveryRepository;
+
+    @Mock
+    private DeliveryManagerService deliveryManagerService;
 
     @Mock
     private HubClient hubClient;
@@ -55,6 +62,7 @@ class DeliveryServiceTest {
             when(deliveryRepository.existsByOrderId(any(OrderId.class))).thenReturn(false);
             when(hubClient.existsById(sourceHubId)).thenReturn(true);
             when(hubClient.existsById(destinationHubId)).thenReturn(true);
+            when(deliveryManagerService.assignDeliveryManager(DeliveryManagerType.COMPANY)).thenReturn(COMPANY_DELIVERY_MANAGER_UUID);
             when(deliveryRepository.save(any(Delivery.class))).thenReturn(delivery);
 
             /* when */
@@ -124,6 +132,27 @@ class DeliveryServiceTest {
             assertThatThrownBy(() -> deliveryService.createDelivery(command))
                     .isInstanceOf(DeliveryApplicationException.class)
                     .hasFieldOrPropertyWithValue("errorCode", DeliveryApplicationErrorCode.NON_EXISTENT_HUB);
+        }
+
+        @Test
+        @DisplayName("업체 배송 관리자 할당에 실패하면 예외가 발생한다.")
+        void createDelivery_FailedToAssignDeliveryManager_throwsException() {
+            /* given */
+            CreateDeliveryCommand command = CREATE_DELIVERY_COMMAND;
+            UUID sourceHubId = command.sourceHubId().getId();
+            UUID destinationHubId = command.destinationHubId().getId();
+
+            when(deliveryRepository.existsByOrderId(any(OrderId.class))).thenReturn(false);
+            when(hubClient.existsById(sourceHubId)).thenReturn(true);
+            when(hubClient.existsById(destinationHubId)).thenReturn(true);
+            when(deliveryManagerService.assignDeliveryManager(DeliveryManagerType.COMPANY))
+                    .thenThrow(new DeliveryManagerApplicationException(DeliveryManagerApplicationErrorCode.NOT_FOUND_DELIVERY_MANAGER));
+
+            /* when */
+            /* then */
+            assertThatThrownBy(() -> deliveryService.createDelivery(command))
+                    .isInstanceOf(DeliveryApplicationException.class)
+                    .hasFieldOrPropertyWithValue("errorCode", DeliveryApplicationErrorCode.FAILED_TO_ASSIGN_DELIVERY_MANAGER);
         }
     }
 
