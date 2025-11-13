@@ -339,10 +339,11 @@ class DeliveryServiceTest {
         @DisplayName("유효한 ID로 배송을 삭제하면 배송이 삭제된다.")
         void deleteDelivery_success() {
             /* given */
+            UUID actorId = UUID.randomUUID();
             when(deliveryRepository.findById(DELIVERY_UUID)).thenReturn(Optional.of(createDelivery()));
 
             /* when */
-            deliveryService.deleteDelivery(DELIVERY_UUID);
+            deliveryService.deleteDelivery(actorId, DELIVERY_UUID);
 
             /* then */
             verify(deliveryRepository, times(1)).findById(DELIVERY_UUID);
@@ -352,11 +353,12 @@ class DeliveryServiceTest {
         @DisplayName("존재하지 않는 ID로 배송을 삭제하면 예외가 발생한다.")
         void deleteDelivery_WithNonExistentId_throwsException() {
             /* given */
+            UUID actorId = UUID.randomUUID();
             when(deliveryRepository.findById(DELIVERY_UUID)).thenReturn(Optional.empty());
 
             /* when */
             /* then */
-            assertThatThrownBy(() -> deliveryService.deleteDelivery(DELIVERY_UUID))
+            assertThatThrownBy(() -> deliveryService.deleteDelivery(actorId, DELIVERY_UUID))
                     .isInstanceOf(DeliveryApplicationException.class)
                     .hasFieldOrPropertyWithValue("errorCode", DeliveryApplicationErrorCode.NOT_FOUND_DELIVERY);
         }

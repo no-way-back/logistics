@@ -115,7 +115,7 @@ public class DeliveryController {
             @CurrentUser AuthUser authUser,
             @PathVariable UUID deliveryId
     ) {
-        deliveryService.deleteDelivery(deliveryId);
+        deliveryService.deleteDelivery(authUser.userId(), deliveryId);
 
         return ResponseEntity.noContent().build();
     }

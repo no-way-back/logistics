@@ -117,11 +117,9 @@ public class DeliveryService {
     }
 
     @Transactional
-    public void deleteDelivery(UUID deliveryId) {
+    public void deleteDelivery(UUID actorId, UUID deliveryId) {
         Delivery delivery = getDeliveryById(deliveryId);
-
-        // TODO: 배송 삭제자 기록 필요
-        delivery.delete(UUID.randomUUID());
+        delivery.delete(actorId);
     }
 
     private Delivery getDeliveryById(UUID deliveryId) {
