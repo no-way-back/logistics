@@ -16,27 +16,9 @@ public class OptimalRouteResult {
     private final String originHubName;
     private final UUID destinationHubId;
     private final String destinationHubName;
-    private final Integer totalDistanceKm;
+    private final Integer totalDistanceM;
     private final Integer totalDurationMin;
     private final List<RouteSegment> segments;
-
-    private OptimalRouteResult(
-            UUID originHubId,
-            String originHubName,
-            UUID destinationHubId,
-            String destinationHubName,
-            Integer totalDistanceKm,
-            Integer totalDurationMin,
-            List<RouteSegment> segments
-    ) {
-        this.originHubId = originHubId;
-        this.originHubName = originHubName;
-        this.destinationHubId = destinationHubId;
-        this.destinationHubName = destinationHubName;
-        this.totalDistanceKm = totalDistanceKm;
-        this.totalDurationMin = totalDurationMin;
-        this.segments = segments;
-    }
 
     public static OptimalRouteResult of(OptimalRoute route, Map<UUID, Hub> hubMap) {
         List<UUID> hubIds = route.getHubIds();
@@ -64,7 +46,7 @@ public class OptimalRouteResult {
                 originHub.getName(),
                 destinationHub.getId(),
                 destinationHub.getName(),
-                route.getTotalDistanceM() / 1000,
+                route.getTotalDistanceM(),
                 route.getTotalDurationMin(),
                 segments
         );
@@ -127,5 +109,23 @@ public class OptimalRouteResult {
                     durationMin
             );
         }
+    }
+
+    private OptimalRouteResult(
+            UUID originHubId,
+            String originHubName,
+            UUID destinationHubId,
+            String destinationHubName,
+            Integer totalDistanceM,
+            Integer totalDurationMin,
+            List<RouteSegment> segments
+    ) {
+        this.originHubId = originHubId;
+        this.originHubName = originHubName;
+        this.destinationHubId = destinationHubId;
+        this.destinationHubName = destinationHubName;
+        this.totalDistanceM = totalDistanceM;
+        this.totalDurationMin = totalDurationMin;
+        this.segments = segments;
     }
 }
