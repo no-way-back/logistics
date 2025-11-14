@@ -1,27 +1,36 @@
 server:
-  port: 18081
+  port: 18082
 
 spring:
   application:
-    name: user-service
+    name: company-service
 
   datasource:
-    url: ${USER_SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5431/user_db}
-    username: ${USER_SPRING_DATASOURCE_USERNAME:user}
-    password: ${USER_SPRING_DATASOURCE_PASSWORD:1234}
+    url: ${COMPANY_SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/company_db}
+    username: ${COMPANY_SPRING_DATASOURCE_USERNAME:user}
+    password: ${COMPANY_SPRING_DATASOURCE_PASSWORD:1234}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-        default_schema: user_service
+        default_schema: company_service
         hbm2ddl:
           create_namespaces: true
     show-sql: true
+
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: FULL
 
 eureka:
   client:
@@ -29,10 +38,6 @@ eureka:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
     fetch-registry: true
     register-with-eureka: true
-
-jwt:
-  secret: ${JWT_SECRET:abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ12}
-  expiration-time: 86400000
 
 management:
   endpoints:
@@ -42,5 +47,5 @@ management:
 
 logging:
   level:
-    com.logistics.user: DEBUG
+    com.logistics.company: DEBUG
     org.hibernate.SQL: DEBUG
