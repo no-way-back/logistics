@@ -34,8 +34,3 @@ management:
       exposure:
         include: health,info,metrics
 
-logging:
-  level:
-    com.logistics.order: DEBUG
-    org.hibernate.SQL: DEBUG
-
