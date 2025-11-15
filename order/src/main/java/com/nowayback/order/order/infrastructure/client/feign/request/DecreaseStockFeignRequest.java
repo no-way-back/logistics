@@ -1,7 +1,7 @@
-package com.nowayback.order.infrastructure.client.feign.request;
+package com.nowayback.order.order.infrastructure.client.feign.request;
 
-import com.nowayback.order.application.client.request.DecreaseStockRequest;
-import com.nowayback.order.application.client.request.DecreaseStockRequest.DecreaseStockItem;
+import com.nowayback.order.order.application.client.request.DecreaseStockRequest;
+import com.nowayback.order.order.application.client.request.DecreaseStockRequest.DecreaseStockItem;
 import java.util.List;
 import java.util.UUID;
 

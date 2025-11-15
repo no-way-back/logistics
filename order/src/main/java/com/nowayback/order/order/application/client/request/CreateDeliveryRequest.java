@@ -1,4 +1,4 @@
-package com.nowayback.order.application.client.request;
+package com.nowayback.order.order.application.client.request;
 
 import java.util.UUID;
 

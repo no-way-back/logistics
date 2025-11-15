@@ -1,6 +1,6 @@
-package com.nowayback.order.infrastructure.client.feign.response;
+package com.nowayback.order.order.infrastructure.client.feign.response;
 
-import com.nowayback.order.application.client.response.CreateDeliveryResponse;
+import com.nowayback.order.order.application.client.response.CreateDeliveryResponse;
 
 public record CreateDeliveryFeignResponse(
     boolean success

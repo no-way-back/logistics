@@ -1,7 +1,7 @@
-package com.nowayback.order.application.client;
+package com.nowayback.order.order.application.client;
 
-import com.nowayback.order.application.client.request.DecreaseStockRequest;
-import com.nowayback.order.application.client.response.DecreaseStockResponse;
+import com.nowayback.order.order.application.client.request.DecreaseStockRequest;
+import com.nowayback.order.order.application.client.response.DecreaseStockResponse;
 
 public interface ProductClient {
     DecreaseStockResponse decreaseStocks(DecreaseStockRequest request);

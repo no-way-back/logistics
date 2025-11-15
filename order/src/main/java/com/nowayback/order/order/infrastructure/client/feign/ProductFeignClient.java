@@ -1,7 +1,7 @@
-package com.nowayback.order.infrastructure.client.feign;
+package com.nowayback.order.order.infrastructure.client.feign;
 
-import com.nowayback.order.infrastructure.client.feign.request.DecreaseStockFeignRequest;
-import com.nowayback.order.infrastructure.client.feign.response.DecreaseStockFeignResponse;
+import com.nowayback.order.order.infrastructure.client.feign.request.DecreaseStockFeignRequest;
+import com.nowayback.order.order.infrastructure.client.feign.response.DecreaseStockFeignResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;

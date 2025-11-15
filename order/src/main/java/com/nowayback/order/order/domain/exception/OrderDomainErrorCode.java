@@ -1,4 +1,4 @@
-package com.nowayback.order.domain.exception;
+package com.nowayback.order.order.domain.exception;
 
 import com.nowayback.common.exception.ErrorCode;
 import org.springframework.http.HttpStatus;

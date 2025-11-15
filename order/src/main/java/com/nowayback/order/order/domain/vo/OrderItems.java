@@ -1,9 +1,9 @@
-package com.nowayback.order.domain.vo;
+package com.nowayback.order.order.domain.vo;
 
-import static com.nowayback.order.domain.util.DomainPreconditions.nonEmpty;
+import static com.nowayback.order.order.domain.util.DomainPreconditions.nonEmpty;
 
-import com.nowayback.order.domain.entity.OrderItem;
-import com.nowayback.order.domain.exception.OrderDomainErrorCode;
+import com.nowayback.order.order.domain.entity.OrderItem;
+import com.nowayback.order.order.domain.exception.OrderDomainErrorCode;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;

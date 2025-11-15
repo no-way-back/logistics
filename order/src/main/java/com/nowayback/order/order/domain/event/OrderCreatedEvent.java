@@ -1,8 +1,8 @@
-package com.nowayback.order.domain.event;
+package com.nowayback.order.order.domain.event;
 
-import com.nowayback.order.domain.entity.Order;
-import com.nowayback.order.domain.entity.OrderItem;
-import com.nowayback.order.domain.vo.ReceiverCompanyId;
+import com.nowayback.order.order.domain.entity.Order;
+import com.nowayback.order.order.domain.entity.OrderItem;
+import com.nowayback.order.order.domain.vo.ReceiverCompanyId;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

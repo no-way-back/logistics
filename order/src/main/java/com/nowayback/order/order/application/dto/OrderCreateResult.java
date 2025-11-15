@@ -1,4 +1,4 @@
-package com.nowayback.order.application.dto;
+package com.nowayback.order.order.application.dto;
 
 import java.util.UUID;
 

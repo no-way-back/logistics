@@ -1,7 +1,7 @@
-package com.nowayback.order.application.eventlistener;
+package com.nowayback.order.order.application.eventlistener;
 
 
-import com.nowayback.order.domain.event.OrderCreatedEvent;
+import com.nowayback.order.order.domain.event.OrderCreatedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

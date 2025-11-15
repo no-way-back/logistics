@@ -1,4 +1,4 @@
-package com.nowayback.order.domain.vo;
+package com.nowayback.order.order.domain.vo;
 
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;

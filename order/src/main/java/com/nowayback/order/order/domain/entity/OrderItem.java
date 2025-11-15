@@ -1,11 +1,11 @@
-package com.nowayback.order.domain.entity;
+package com.nowayback.order.order.domain.entity;
 
-import static com.nowayback.order.domain.util.DomainPreconditions.hasText;
-import static com.nowayback.order.domain.util.DomainPreconditions.nonNegative;
-import static com.nowayback.order.domain.util.DomainPreconditions.notNull;
+import static com.nowayback.order.order.domain.util.DomainPreconditions.hasText;
+import static com.nowayback.order.order.domain.util.DomainPreconditions.nonNegative;
+import static com.nowayback.order.order.domain.util.DomainPreconditions.notNull;
 
-import com.nowayback.order.domain.exception.OrderDomainErrorCode;
-import com.nowayback.order.domain.vo.ProductId;
+import com.nowayback.order.order.domain.exception.OrderDomainErrorCode;
+import com.nowayback.order.order.domain.vo.ProductId;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;

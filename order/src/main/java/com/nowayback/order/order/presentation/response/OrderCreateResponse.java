@@ -1,6 +1,6 @@
-package com.nowayback.order.presentation.response;
+package com.nowayback.order.order.presentation.response;
 
-import com.nowayback.order.application.dto.OrderCreateResult;
+import com.nowayback.order.order.application.dto.OrderCreateResult;
 import java.util.UUID;
 
 public record OrderCreateResponse(

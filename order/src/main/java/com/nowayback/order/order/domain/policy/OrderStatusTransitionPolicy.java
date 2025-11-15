@@ -1,9 +1,9 @@
-package com.nowayback.order.domain.policy;
+package com.nowayback.order.order.domain.policy;
 
-import com.nowayback.order.domain.entity.Order;
-import com.nowayback.order.domain.exception.OrderDomainErrorCode;
-import com.nowayback.order.domain.exception.OrderDomainException;
-import com.nowayback.order.domain.vo.OrderStatus;
+import com.nowayback.order.order.domain.entity.Order;
+import com.nowayback.order.order.domain.exception.OrderDomainErrorCode;
+import com.nowayback.order.order.domain.exception.OrderDomainException;
+import com.nowayback.order.order.domain.vo.OrderStatus;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;

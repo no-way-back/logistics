@@ -1,4 +1,4 @@
-package com.nowayback.order.domain.vo;
+package com.nowayback.order.order.domain.vo;
 
 public enum OrderStatus {
     CREATE_PENDING("주문 생성 대기"),

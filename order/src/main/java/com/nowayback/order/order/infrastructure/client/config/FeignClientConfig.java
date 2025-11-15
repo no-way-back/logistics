@@ -1,4 +1,4 @@
-package com.nowayback.order.infrastructure.client.config;
+package com.nowayback.order.order.infrastructure.client.config;
 
 import feign.RequestInterceptor;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +9,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Configuration
-@EnableFeignClients("com.nowayback.order.infrastructure.client")
+@EnableFeignClients("com.nowayback.order.order.infrastructure.client")
 public class FeignClientConfig {
 
     private static final String USER_ID_HEADER = "X-User-Id";

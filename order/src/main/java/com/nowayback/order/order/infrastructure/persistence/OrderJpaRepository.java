@@ -1,6 +1,6 @@
-package com.nowayback.order.infrastructure.persistence;
+package com.nowayback.order.order.infrastructure.persistence;
 
-import com.nowayback.order.domain.entity.Order;
+import com.nowayback.order.order.domain.entity.Order;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 

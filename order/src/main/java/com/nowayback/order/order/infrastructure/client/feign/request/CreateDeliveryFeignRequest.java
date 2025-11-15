@@ -1,6 +1,6 @@
-package com.nowayback.order.infrastructure.client.feign.request;
+package com.nowayback.order.order.infrastructure.client.feign.request;
 
-import com.nowayback.order.application.client.request.CreateDeliveryRequest;
+import com.nowayback.order.order.application.client.request.CreateDeliveryRequest;
 import java.util.UUID;
 
 public record CreateDeliveryFeignRequest(

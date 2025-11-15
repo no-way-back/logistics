@@ -1,13 +1,13 @@
-package com.nowayback.order.application.command;
+package com.nowayback.order.order.application.command;
 
-import com.nowayback.order.domain.entity.Order;
-import com.nowayback.order.domain.entity.OrderItem;
-import com.nowayback.order.domain.vo.OrderItems;
-import com.nowayback.order.domain.vo.ProductId;
-import com.nowayback.order.domain.vo.ReceiverCompanyId;
-import com.nowayback.order.domain.vo.ReceiverCompanySnapshot;
-import com.nowayback.order.domain.vo.SupplierCompanyId;
-import com.nowayback.order.domain.vo.SupplierCompanySnapshot;
+import com.nowayback.order.order.domain.entity.Order;
+import com.nowayback.order.order.domain.entity.OrderItem;
+import com.nowayback.order.order.domain.vo.OrderItems;
+import com.nowayback.order.order.domain.vo.ProductId;
+import com.nowayback.order.order.domain.vo.ReceiverCompanyId;
+import com.nowayback.order.order.domain.vo.ReceiverCompanySnapshot;
+import com.nowayback.order.order.domain.vo.SupplierCompanyId;
+import com.nowayback.order.order.domain.vo.SupplierCompanySnapshot;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;

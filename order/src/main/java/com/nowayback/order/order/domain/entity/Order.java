@@ -1,16 +1,16 @@
-package com.nowayback.order.domain.entity;
+package com.nowayback.order.order.domain.entity;
 
-import static com.nowayback.order.domain.util.DomainPreconditions.notNull;
+import static com.nowayback.order.order.domain.util.DomainPreconditions.notNull;
 
 import com.nowayback.common.audit.BaseEntity;
-import com.nowayback.order.domain.exception.OrderDomainErrorCode;
-import com.nowayback.order.domain.policy.OrderStatusTransitionPolicy;
-import com.nowayback.order.domain.vo.OrderItems;
-import com.nowayback.order.domain.vo.OrderStatus;
-import com.nowayback.order.domain.vo.ReceiverCompanyId;
-import com.nowayback.order.domain.vo.ReceiverCompanySnapshot;
-import com.nowayback.order.domain.vo.SupplierCompanyId;
-import com.nowayback.order.domain.vo.SupplierCompanySnapshot;
+import com.nowayback.order.order.domain.exception.OrderDomainErrorCode;
+import com.nowayback.order.order.domain.policy.OrderStatusTransitionPolicy;
+import com.nowayback.order.order.domain.vo.OrderItems;
+import com.nowayback.order.order.domain.vo.OrderStatus;
+import com.nowayback.order.order.domain.vo.ReceiverCompanyId;
+import com.nowayback.order.order.domain.vo.ReceiverCompanySnapshot;
+import com.nowayback.order.order.domain.vo.SupplierCompanyId;
+import com.nowayback.order.order.domain.vo.SupplierCompanySnapshot;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;

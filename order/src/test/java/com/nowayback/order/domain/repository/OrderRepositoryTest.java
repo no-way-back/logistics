@@ -3,8 +3,9 @@ package com.nowayback.order.domain.repository;
 import static com.nowayback.order.fixture.OrderFixture.createOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.nowayback.order.domain.entity.Order;
-import com.nowayback.order.infrastructure.persistence.OrderRepositoryImpl;
+import com.nowayback.order.order.domain.entity.Order;
+import com.nowayback.order.order.domain.repository.OrderRepository;
+import com.nowayback.order.order.infrastructure.persistence.OrderRepositoryImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
