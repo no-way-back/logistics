@@ -112,6 +112,17 @@ public class OrderFixture {
         );
     }
 
+    public static CreateOrderCommand createInvalidOrderCommand() {
+        return new CreateOrderCommand(
+            null,
+            SUPPLIER_COMPANY_SNAPSHOT,
+            RECEIVER_COMPANY_ID,
+            RECEIVER_COMPANY_SNAPSHOT,
+            REQUEST,
+            CREATE_ORDER_ITEMS
+        );
+    }
+
     private static void setPrivateField(Object target, String fieldName, Object value) {
         try {
             Field field = target.getClass().getDeclaredField(fieldName);
