@@ -13,11 +13,13 @@ import com.nowayback.order.application.dto.OrderCreateResult;
 import com.nowayback.order.application.exception.OrderApplicationErrorCode;
 import com.nowayback.order.application.exception.OrderApplicationException;
 import com.nowayback.order.domain.entity.Order;
+import com.nowayback.order.domain.event.OrderCreatedEvent;
 import com.nowayback.order.domain.repository.OrderRepository;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,17 +32,21 @@ public class OrderService {
     private final DeliveryClient deliveryClient;
     private final OrderRepository orderRepository;
 
+    private final ApplicationEventPublisher applicationEventPublisher;
+
     @Transactional
     public OrderCreateResult createOrder(CreateOrderCommand command) {
-        decreaseStock(command.createOrderItems());
+        // decreaseStock(command.createOrderItems());
 
         Order order = command.toEntity();
-        orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
 
-        createDelivery(order);
+        // createDelivery(savedOrder);
 
-        order.completeCreation();
+        savedOrder.completeCreation();
 
+        // 이벤트 발행
+        applicationEventPublisher.publishEvent(OrderCreatedEvent.of(savedOrder));
         return OrderCreateResult.of(order.getId());
     }
 
