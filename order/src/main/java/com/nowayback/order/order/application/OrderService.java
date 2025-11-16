@@ -42,7 +42,6 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
 
         // createDelivery(savedOrder);
-
         savedOrder.completeCreation();
 
         // 이벤트 발행

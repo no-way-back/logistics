@@ -26,6 +26,8 @@ public class Payment {
 
     private UUID orderId;
 
+    private UUID userId;
+
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
@@ -33,9 +35,10 @@ public class Payment {
 
     private LocalDateTime createdAt;
 
-    public static Payment create(UUID orderId, BigDecimal amount) {
+    public static Payment create(UUID orderId, UUID userID, BigDecimal amount) {
         Payment payment = new Payment();
         payment.orderId = orderId;
+        payment.userId = userID;
         payment.amount = amount;
         payment.status = PaymentStatus.PENDING;
         payment.createdAt = LocalDateTime.now();

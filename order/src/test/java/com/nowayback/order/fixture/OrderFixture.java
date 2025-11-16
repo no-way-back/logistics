@@ -112,6 +112,23 @@ public class OrderFixture {
         );
     }
 
+    public static CreateOrderCommand createOrderCommandWithOrderItems(List<CreateOrderItem> orderItems) {
+        return CreateOrderCommand.of(
+            SUPPLIER_COMPANY_ID_UUID,
+            SUPPLIER_COMPANY_NAME,
+            SUPPLIER_COMPANY_ADDRESS,
+            SUPPLIER_COMPANY_DETAIL_ADDRESS,
+            SUPPLIER_COMPANY_CONTACT,
+            RECEIVER_COMPANY_ID_UUID,
+            RECEIVER_COMPANY_NAME,
+            RECEIVER_COMPANY_ADDRESS,
+            RECEIVER_COMPANY_DETAIL_ADDRESS,
+            RECEIVER_COMPANY_CONTACT,
+            REQUEST,
+            orderItems
+        );
+    }
+
     public static CreateOrderCommand createInvalidOrderCommand() {
         return new CreateOrderCommand(
             null,
