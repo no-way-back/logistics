@@ -73,13 +73,16 @@
                   .processEvent(any(OrderCreatedEvent.class));
           });
   }
-	```
+  ```
+  <img width="1661" height="250" alt="STEP3_events_ShouldBeProcessedAsynchronously" src="https://github.com/user-attachments/assets/8069415c-9b55-43ca-bde6-9ffe40d9673e" />
+
+  
 - 전체 플로우 통합 테스트
   ```java
-	  @Test
-    @DisplayName("주문 생성부터 재고 차감까지 전체 플로우가 정상 동작한다")
-    void fullOrderFlow_ShouldWorkCorrectly() throws InterruptedException {
-        // given
+  @Test
+  @DisplayName("주문 생성부터 재고 차감까지 전체 플로우가 정상 동작한다")
+  void fullOrderFlow_ShouldWorkCorrectly() throws InterruptedException {
+  		// given
         Product product = Product.builder()
             .id(UUID.randomUUID())
             .name("테스트 상품")
@@ -114,8 +117,8 @@
                 Product updatedProduct = productRepository.findById(product.getId()).orElseThrow();
                 assertThat(updatedProduct.getStock()).isEqualTo(90);
             });
-    }
-	```
+  }
+  ```
 - 🔗 관련 코드
   - [`OrderServiceEventTest.java`](https://github.com/no-way-back/logistics/blob/feat/event-listener/order/src/test/java/com/nowayback/order/application/OrderServiceEventTest.java)
   - [`PaymentEventListenerTest.java`](https://github.com/no-way-back/logistics/blob/feat/event-listener/order/src/test/java/com/nowayback/order/payment/application/eventlistener/PaymentEventListenerTest.java)
