@@ -22,7 +22,7 @@ public class OrderCreatedEvent {
             order.getReceiverCompanyId().getId(),
             order.getOrderItems().stream()
                 .map(item -> new OrderItemSnapshot(
-                    item.getProductId().getId(),   // ProductId VO면 .getId()
+                    item.getProductId().getId(),
                     item.getName(),
                     item.getPrice(),
                     item.getQuantity()

@@ -3,12 +3,13 @@ package com.nowayback.order.order.application.eventlistener;
 
 import com.nowayback.order.order.domain.event.OrderCreatedEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class OrderEventListener {
-    //@EventListener
+    @EventListener
     public void handleOrderCreated(OrderCreatedEvent event) {
         log.info("주문 생성 이벤트 수신 - 주문 ID: {}, 상품 ID: {}, ReceiverCompanyId: {}",
             event.getOrderId(),
