@@ -10,5 +10,5 @@ spring:
       hibernate:
         format_sql: true
         hbm2ddl:
-          create_namespaces: true   # 스키마 자동 생성 허용
+          create_namespaces: true
       hibernate.format_sql: true
