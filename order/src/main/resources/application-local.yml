@@ -21,22 +21,3 @@ spring:
         format_sql: true
         default_schema: order_service
     show-sql: true
-
-eureka:
-  client:
-    service-url:
-      # 기본값: 로컬 유레카 서버
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
-    fetch-registry: true
-    register-with-eureka: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-
-logging:
-  level:
-    com.logistics.order: DEBUG
-    org.hibernate.SQL: DEBUG

@@ -1,5 +1,6 @@
 package com.nowayback.order.payment.domain.event;
 
+import com.nowayback.order.common.event.DomainEvent;
 import com.nowayback.order.order.domain.vo.OrderItemSnapshot;
 import com.nowayback.order.payment.domain.entity.Payment;
 import java.math.BigDecimal;
@@ -11,7 +12,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PaymentCompletedEvent {
+public class PaymentCompletedEvent implements DomainEvent {
 
     private final UUID paymentId;
     private final UUID orderId;
@@ -32,6 +33,11 @@ public class PaymentCompletedEvent {
                 .toList(),
             LocalDateTime.now()
         );
+    }
+
+    @Override
+    public UUID getAggregateId() {
+        return paymentId;
     }
 
     public record PaidItem(

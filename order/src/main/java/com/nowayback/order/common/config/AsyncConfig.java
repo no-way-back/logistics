@@ -1,4 +1,4 @@
-package com.nowayback.order.global.config;
+package com.nowayback.order.common.config;
 
 import java.util.concurrent.Executor;
 import lombok.extern.slf4j.Slf4j;

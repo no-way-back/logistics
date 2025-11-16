@@ -1,5 +1,6 @@
 package com.nowayback.order.order.application;
 
+import com.nowayback.order.common.event.EventPublisher;
 import com.nowayback.order.order.application.client.DeliveryClient;
 import com.nowayback.order.order.application.client.ProductClient;
 import com.nowayback.order.order.application.client.request.CreateDeliveryRequest;
@@ -32,7 +33,7 @@ public class OrderService {
     private final DeliveryClient deliveryClient;
     private final OrderRepository orderRepository;
 
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     public OrderCreateResult createOrder(CreateOrderCommand command) {
@@ -45,7 +46,7 @@ public class OrderService {
         savedOrder.completeCreation();
 
         // 이벤트 발행
-        applicationEventPublisher.publishEvent(OrderCreatedEvent.of(savedOrder));
+        eventPublisher.publish(OrderCreatedEvent.of(savedOrder));
         return OrderCreateResult.of(order.getId());
     }
 

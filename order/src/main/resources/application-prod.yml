@@ -22,21 +22,3 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         default_schema: order_service
     show-sql: false
-
-eureka:
-  client:
-    service-url:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
-    fetch-registry: true
-    register-with-eureka: true
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-
-logging:
-  level:
-    root: WARN
-    com.logistics.order: INFO

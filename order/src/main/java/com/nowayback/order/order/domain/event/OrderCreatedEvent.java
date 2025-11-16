@@ -1,5 +1,6 @@
 package com.nowayback.order.order.domain.event;
 
+import com.nowayback.order.common.event.DomainEvent;
 import com.nowayback.order.order.domain.entity.Order;
 import com.nowayback.order.order.domain.vo.OrderItemSnapshot;
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class OrderCreatedEvent {
+public class OrderCreatedEvent implements DomainEvent {
     private final UUID orderId;
     private final UUID receiverCompanyId;
     private final List<OrderItemSnapshot> orderItems;
@@ -30,5 +31,10 @@ public class OrderCreatedEvent {
                 .toList(),
             LocalDateTime.now()
         );
+    }
+
+    @Override
+    public UUID getAggregateId() {
+        return orderId;
     }
 }

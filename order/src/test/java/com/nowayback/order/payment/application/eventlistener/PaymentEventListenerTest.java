@@ -50,7 +50,7 @@ class PaymentEventListenerTest {
             .isInstanceOf(OrderDomainException.class);
 
         verify(paymentEventListener, never())
-            .handleOrderCreated(any(OrderCreatedEvent.class));
+            .processEvent(any(OrderCreatedEvent.class));
     }
 
     @Test
@@ -63,8 +63,14 @@ class PaymentEventListenerTest {
         orderService.createOrder(orderCommand);
 
         // then
-        verify(paymentEventListener, times(1))
-            .handleOrderCreated(any(OrderCreatedEvent.class));
+        await()
+            .atMost(2, TimeUnit.SECONDS)
+            .pollInterval(100, TimeUnit.MILLISECONDS)
+            .untilAsserted(() -> {
+                verify(paymentEventListener, times(1))
+                    .processEvent(any(OrderCreatedEvent.class));
+            });
+
     }
 
     @Test
@@ -84,7 +90,7 @@ class PaymentEventListenerTest {
             .pollInterval(100, TimeUnit.MILLISECONDS)
             .untilAsserted(() -> {
                 verify(paymentEventListener, times(1))
-                    .handleOrderCreatedAsync(any(OrderCreatedEvent.class));
+                    .processEvent(any(OrderCreatedEvent.class));
             });
     }
 
@@ -96,7 +102,7 @@ class PaymentEventListenerTest {
 
         doThrow(new RuntimeException("결제 실패"))
             .when(paymentEventListener)
-            .handleOrderCreatedAsync(any(OrderCreatedEvent.class));
+            .processEvent(any(OrderCreatedEvent.class));
 
         // when & then
         assertThatCode(() -> orderService.createOrder(orderCommand))

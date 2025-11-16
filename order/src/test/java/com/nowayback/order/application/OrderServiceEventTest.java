@@ -37,7 +37,7 @@ class OrderServiceEventTest {
         // then
         // 이벤트 리스너가 호출되었는지 검증
         verify(orderEventListener, times(1))
-            .handleOrderCreated(any(OrderCreatedEvent.class));
+            .processEvent(any(OrderCreatedEvent.class));
     }
 }
 

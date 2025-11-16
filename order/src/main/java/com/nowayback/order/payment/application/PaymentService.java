@@ -1,5 +1,6 @@
 package com.nowayback.order.payment.application;
 
+import com.nowayback.order.common.event.EventPublisher;
 import com.nowayback.order.order.domain.vo.OrderItemSnapshot;
 import com.nowayback.order.payment.domain.entity.Payment;
 import com.nowayback.order.payment.domain.event.PaymentCompletedEvent;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     public void processPayment(UUID orderId, UUID userId, List<OrderItemSnapshot> orderItems) {
@@ -30,7 +31,7 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         // 결제 완료 이벤트 발행
-        eventPublisher.publishEvent(PaymentCompletedEvent.of(payment, orderItems));
+        eventPublisher.publish(PaymentCompletedEvent.of(payment, orderItems));
     }
 
     private BigDecimal calculateAmount(List<OrderItemSnapshot> orderItems) {
