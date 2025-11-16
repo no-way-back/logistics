@@ -115,7 +115,7 @@
                 assertThat(updatedProduct.getStock()).isEqualTo(90);
             });
     }
-		```
+	```
 - 🔗 관련 코드
   - [`OrderServiceEventTest.java`](https://github.com/no-way-back/logistics/blob/feat/event-listener/order/src/test/java/com/nowayback/order/application/OrderServiceEventTest.java)
   - [`PaymentEventListenerTest.java`](https://github.com/no-way-back/logistics/blob/feat/event-listener/order/src/test/java/com/nowayback/order/payment/application/eventlistener/PaymentEventListenerTest.java)
