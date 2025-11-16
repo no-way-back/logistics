@@ -1,6 +1,8 @@
 package com.nowayback.order.payment.domain.event;
 
 import com.nowayback.order.common.event.DomainEvent;
+import com.nowayback.order.common.eventstore.vo.AggregateType;
+import com.nowayback.order.common.eventstore.vo.EventType;
 import com.nowayback.order.order.domain.vo.OrderItemSnapshot;
 import com.nowayback.order.payment.domain.entity.Payment;
 import java.math.BigDecimal;
@@ -38,6 +40,16 @@ public class PaymentCompletedEvent implements DomainEvent {
     @Override
     public UUID getAggregateId() {
         return paymentId;
+    }
+
+    @Override
+    public AggregateType getAggregateType() {
+        return AggregateType.PAYMENT;
+    }
+
+    @Override
+    public EventType getEventType() {
+        return EventType.PAYMENT_COMPLETED;
     }
 
     public record PaidItem(

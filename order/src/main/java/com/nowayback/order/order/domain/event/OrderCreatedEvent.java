@@ -1,6 +1,8 @@
 package com.nowayback.order.order.domain.event;
 
 import com.nowayback.order.common.event.DomainEvent;
+import com.nowayback.order.common.eventstore.vo.AggregateType;
+import com.nowayback.order.common.eventstore.vo.EventType;
 import com.nowayback.order.order.domain.entity.Order;
 import com.nowayback.order.order.domain.vo.OrderItemSnapshot;
 import java.time.LocalDateTime;
@@ -36,5 +38,15 @@ public class OrderCreatedEvent implements DomainEvent {
     @Override
     public UUID getAggregateId() {
         return orderId;
+    }
+
+    @Override
+    public AggregateType getAggregateType() {
+        return AggregateType.ORDER;
+    }
+
+    @Override
+    public EventType getEventType() {
+        return EventType.ORDER_CREATED;
     }
 }
