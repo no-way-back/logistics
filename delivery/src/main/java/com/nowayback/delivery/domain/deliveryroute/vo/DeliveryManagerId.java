@@ -1,7 +1,7 @@
 package com.nowayback.delivery.domain.deliveryroute.vo;
 
-import com.nowayback.delivery.domain.exception.DeliveryRouteDomainErrorCode;
-import com.nowayback.delivery.domain.exception.DeliveryRouteDomainException;
+import com.nowayback.delivery.domain.deliveryroute.exception.DeliveryRouteDomainErrorCode;
+import com.nowayback.delivery.domain.deliveryroute.exception.DeliveryRouteDomainException;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;

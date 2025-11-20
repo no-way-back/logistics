@@ -1,15 +1,16 @@
 package com.nowayback.delivery.fixture;
 
-import com.nowayback.delivery.application.command.CreateDeliveryCommand;
-import com.nowayback.delivery.application.command.UpdateDeliveryRecipientInfoCommand;
-import com.nowayback.delivery.application.command.UpdateDeliveryStatusCommand;
-import com.nowayback.delivery.application.dto.DeliveryResult;
+import com.nowayback.delivery.application.delivery.command.CreateDeliveryCommand;
+import com.nowayback.delivery.application.delivery.command.UpdateDeliveryRecipientInfoCommand;
+import com.nowayback.delivery.application.delivery.command.UpdateDeliveryStatusCommand;
+import com.nowayback.delivery.application.delivery.dto.DeliveryResult;
+import com.nowayback.delivery.application.delivery.service.HubClient;
 import com.nowayback.delivery.domain.delivery.entity.Delivery;
 import com.nowayback.delivery.domain.delivery.vo.*;
-import com.nowayback.delivery.presentation.dto.request.CreateDeliveryRequest;
-import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryRecipientInfoRequest;
-import com.nowayback.delivery.presentation.dto.request.UpdateDeliveryStatusRequest;
-import com.nowayback.delivery.presentation.dto.response.DeliveryResponse;
+import com.nowayback.delivery.presentation.delivery.dto.request.CreateDeliveryRequest;
+import com.nowayback.delivery.presentation.delivery.dto.request.UpdateDeliveryRecipientInfoRequest;
+import com.nowayback.delivery.presentation.delivery.dto.request.UpdateDeliveryStatusRequest;
+import com.nowayback.delivery.presentation.delivery.dto.response.DeliveryResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -116,6 +117,20 @@ public class DeliveryFixture {
     public static final DeliveryResult DELIVERY_RESULT_TRANSIT_BETWEEN_HUBS = DeliveryResult.from(createDeliveryWithStatus(DeliveryStatus.TRANSIT_BETWEEN_HUBS));
 
     public static final Page<DeliveryResult> DELIVERY_RESULT_PAGE = DELIVERY_PAGE.map(DeliveryResult::from);
+
+    /* external dto */
+    private static  final HubClient.RouteSegment HUB_ROUTE_SEGMENT = new HubClient.RouteSegment(
+            1, SOURCE_HUB_UUID, "출발 허브", DESTINATION_HUB_UUID, "도착 허브", 1000, 15);
+    private static final List<HubClient.RouteSegment> HUB_ROUTE_SEGMENTS = List.of(HUB_ROUTE_SEGMENT);
+    public static final HubClient.HubRoutesInfo HUB_ROUTES_INFO = new HubClient.HubRoutesInfo(
+            SOURCE_HUB_UUID,
+            "출발 허브",
+            DESTINATION_HUB_UUID,
+            "도착 허브",
+            1000,
+            15,
+            HUB_ROUTE_SEGMENTS
+    );
 
     /* delivery request dto */
     public static final CreateDeliveryRequest VALID_CREATE_DELIVERY_REQUEST = new CreateDeliveryRequest(

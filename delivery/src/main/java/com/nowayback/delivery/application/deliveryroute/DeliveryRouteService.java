@@ -1,0 +1,134 @@
+package com.nowayback.delivery.application.deliveryroute;
+
+import com.nowayback.common.exception.GlobalException;
+import com.nowayback.common.security.annotation.UserRole;
+import com.nowayback.delivery.application.deliverymanager.DeliveryManagerService;
+import com.nowayback.delivery.application.deliveryroute.command.CreateDeliveryRoutesCommand;
+import com.nowayback.delivery.application.deliveryroute.command.UpdateDeliveryRouteInfoCommand;
+import com.nowayback.delivery.application.deliveryroute.command.UpdateDeliveryRouteStatusCommand;
+import com.nowayback.delivery.application.deliveryroute.dto.DeliveryRouteResult;
+import com.nowayback.delivery.application.deliveryroute.exception.DeliveryRouteApplicationErrorCode;
+import com.nowayback.delivery.application.deliveryroute.exception.DeliveryRouteApplicationException;
+import com.nowayback.delivery.domain.deliverymanager.vo.DeliveryManagerType;
+import com.nowayback.delivery.domain.deliveryroute.entity.DeliveryRoute;
+import com.nowayback.delivery.domain.deliveryroute.repository.DeliveryRouteRepository;
+import com.nowayback.delivery.domain.deliveryroute.vo.DeliveryId;
+import com.nowayback.delivery.domain.deliveryroute.vo.DeliveryManagerId;
+import com.nowayback.delivery.domain.deliveryroute.vo.RouteInfo;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class DeliveryRouteService {
+
+    private final DeliveryRouteRepository deliveryRouteRepository;
+    private final DeliveryManagerService deliveryManagerService;
+
+    @Transactional
+    public List<DeliveryRouteResult> createDeliveryRoutes(CreateDeliveryRoutesCommand command) {
+        validateDuplicateSequence(command.segments());
+
+        DeliveryId deliveryId = command.deliveryId();
+        List<DeliveryRoute> deliveryRoutes = command.segments().stream()
+                .map(segment -> createDeliveryRoute(deliveryId, segment))
+                .toList();
+
+        List<DeliveryRoute> savedRoutes = deliveryRouteRepository.saveAll(deliveryRoutes);
+
+        return savedRoutes.stream()
+                .map(DeliveryRouteResult::from)
+                .toList();
+    }
+
+    private DeliveryRoute createDeliveryRoute(DeliveryId deliveryId, CreateDeliveryRoutesCommand.DeliveryRouteSegment segment) {
+        DeliveryManagerId deliveryManagerId = assignDeliveryManager();
+
+        RouteInfo routeInfo = RouteInfo.of(
+                segment.expectedDistanceMeters(),
+                segment.expectedDurationMinutes(),
+                null,
+                null
+        );
+
+        return DeliveryRoute.create(
+                deliveryId,
+                segment.sequence(),
+                segment.hubRoute(),
+                deliveryManagerId,
+                routeInfo
+        );
+    }
+
+    private DeliveryManagerId assignDeliveryManager() {
+        try {
+            return DeliveryManagerId.of(deliveryManagerService.assignDeliveryManager(DeliveryManagerType.HUB));
+        } catch (GlobalException e) {
+            throw new DeliveryRouteApplicationException(DeliveryRouteApplicationErrorCode.FAILED_TO_ASSIGN_DELIVERY_MANAGER);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public DeliveryRouteResult getDelivery(UUID userId, UserRole role, UUID deliveryRouteId) {
+        DeliveryRoute deliveryRoute = getDeliveryRouteById(deliveryRouteId);
+        return DeliveryRouteResult.from(deliveryRoute);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<DeliveryRouteResult> searchDeliveryRoutes(UUID userId, UserRole role, UUID deliveryId, Pageable pageable) {
+        Page<DeliveryRoute> deliveryRoutes = deliveryRouteRepository.findAllByDeliveryId(DeliveryId.of(deliveryId), pageable);
+        return deliveryRoutes.map(DeliveryRouteResult::from);
+    }
+
+    @Transactional
+    public DeliveryRouteResult updateDeliveryRouteStatus(UUID userId, UserRole role, UUID deliveryRouteId, UpdateDeliveryRouteStatusCommand command) {
+        DeliveryRoute deliveryRoute = getDeliveryRouteById(deliveryRouteId);
+
+        deliveryRoute.updateStatus(command.status());
+        return DeliveryRouteResult.from(deliveryRoute);
+    }
+
+    @Transactional
+    public DeliveryRouteResult updateDeliveryRouteInfo(UUID userId, UserRole role, UUID deliveryRouteId, UpdateDeliveryRouteInfoCommand command) {
+        DeliveryRoute deliveryRoute = getDeliveryRouteById(deliveryRouteId);
+        RouteInfo oldRouteInfo = deliveryRoute.getRouteInfo();
+
+        RouteInfo routeInfo = RouteInfo.of(
+                oldRouteInfo.getExpectedDistanceMeters(),
+                oldRouteInfo.getExpectedDurationMinutes(),
+                command.actualDistanceMeters(),
+                command.actualDurationMinutes()
+        );
+
+        deliveryRoute.updateRouteInfo(routeInfo);
+        return DeliveryRouteResult.from(deliveryRoute);
+    }
+
+    @Transactional
+    public void deleteDeliveryRoutesByDeliveryId(UUID userId, UUID deliveryId) {
+        List<DeliveryRoute> routes = deliveryRouteRepository.findAllByDeliveryId(DeliveryId.of(deliveryId));
+        routes.forEach(route -> route.delete(userId));
+    }
+
+    private DeliveryRoute getDeliveryRouteById(UUID deliveryRouteId) {
+        return deliveryRouteRepository.findById(deliveryRouteId)
+                .orElseThrow(() -> new DeliveryRouteApplicationException(DeliveryRouteApplicationErrorCode.NOT_FOUND_DELIVERY_ROUTE));
+    }
+
+    private void validateDuplicateSequence(List<CreateDeliveryRoutesCommand.DeliveryRouteSegment> segments) {
+        long uniqueCount = segments.stream()
+                .map(CreateDeliveryRoutesCommand.DeliveryRouteSegment::sequence)
+                .distinct()
+                .count();
+
+        if (uniqueCount != segments.size()) {
+            throw new DeliveryRouteApplicationException(DeliveryRouteApplicationErrorCode.DUPLICATE_ROUTE_SEQUENCE);
+        }
+    }
+}

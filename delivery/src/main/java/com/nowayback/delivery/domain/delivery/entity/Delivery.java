@@ -1,9 +1,9 @@
 package com.nowayback.delivery.domain.delivery.entity;
 
 import com.nowayback.common.audit.BaseEntity;
-import com.nowayback.delivery.domain.exception.DeliveryDomainErrorCode;
+import com.nowayback.delivery.domain.delivery.exception.DeliveryDomainErrorCode;
 import com.nowayback.delivery.domain.delivery.vo.*;
-import com.nowayback.delivery.domain.exception.DeliveryDomainException;
+import com.nowayback.delivery.domain.delivery.exception.DeliveryDomainException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

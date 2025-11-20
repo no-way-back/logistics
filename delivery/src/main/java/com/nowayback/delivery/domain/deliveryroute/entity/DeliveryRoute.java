@@ -2,8 +2,8 @@ package com.nowayback.delivery.domain.deliveryroute.entity;
 
 import com.nowayback.common.audit.BaseEntity;
 import com.nowayback.delivery.domain.deliveryroute.vo.*;
-import com.nowayback.delivery.domain.exception.DeliveryRouteDomainErrorCode;
-import com.nowayback.delivery.domain.exception.DeliveryRouteDomainException;
+import com.nowayback.delivery.domain.deliveryroute.exception.DeliveryRouteDomainErrorCode;
+import com.nowayback.delivery.domain.deliveryroute.exception.DeliveryRouteDomainException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

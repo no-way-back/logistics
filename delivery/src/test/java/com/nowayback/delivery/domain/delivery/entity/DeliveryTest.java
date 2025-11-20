@@ -1,7 +1,7 @@
 package com.nowayback.delivery.domain.delivery.entity;
 
 import com.nowayback.delivery.domain.delivery.vo.*;
-import com.nowayback.delivery.domain.exception.DeliveryDomainException;
+import com.nowayback.delivery.domain.delivery.exception.DeliveryDomainException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
