@@ -1,4 +1,5 @@
 ## ✦  요구사항 분석 및 아키텍처 설계
+[🗺️ 관련 탐구 질문](https://github.com/no-way-back/logistics/blob/feat/aws-deploy/docs/EXPLORATORY_QUESTIONS.md)
 
 ### ✧ 자동 복구
 - 장애 시나리오 표
