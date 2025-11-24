@@ -9,7 +9,7 @@
     | App 크래시 | OutOfMemoryError | 🟢 가능 | Task 자동 재시작 | 30초 | ECS Health Check |
     | 물리 서버 문제 | Fargate 물리 호스트에 하드웨어 문제 | 🟢 가능 | AWS의 비정상 호스트 감지 → 자동으로 새 호스트에서 Task 재배치, ECS의 DesiredCount 유지 | 60초 | CloudWatch Container Insights, ECS Health Check, ECS 자동 복구 기능 (desiredCount) |
     | AZ 장애 | 특정 AZ 다운 | 🟢 가능 | 다른 AZ로 Task 재배포 | 1-2분 | Multi-AZ 배포, ALB |
-    |  | Primary DB 다운 | 🟢 가능 | Standby로 자동 페일오버 | 1-2분 | RDS Multi-AZ |
+    | 데이터베이스 장애 | Primary DB 다운 | 🟢 가능 | Standby로 자동 페일오버 | 1-2분 | RDS Multi-AZ |
     | 네트워크 장애 | NAT Gateway 장애 | 🟢 가능 | 다른 AZ의 NAT Gateway 사용 | 1분 | Multi-AZ NAT Gateway |
     | DB 장애 | 디스크 풀 | ❌ 불가능 | 데이터 정리 또는 스토리지 확장 | 5-15분 | RDS Storage Autoscaling, CloudWatch Alarm |
     | 애플리케이션 버그 | 애플리케이션 버그 | ❌ 불가능 | 이전 버전 롤백 또는 핫픽스 배포 | 10-30분 | ECS Deployment Circuit Breaker |
