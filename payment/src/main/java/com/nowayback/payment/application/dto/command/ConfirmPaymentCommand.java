@@ -8,4 +8,18 @@ public record ConfirmPaymentCommand (
         String pgOrderId,
         String pgMethod
 ){
+
+    public static ConfirmPaymentCommand of(
+            UUID orderId,
+            String pgMethod,
+            String pgPaymentKey,
+            String pgOrderId
+    ) {
+        return new ConfirmPaymentCommand(
+                orderId,
+                pgPaymentKey,
+                pgOrderId,
+                pgMethod
+        );
+    }
 }

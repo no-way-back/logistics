@@ -6,4 +6,14 @@ public record CancelPaymentCommand (
         UUID paymentId,
         String cancelReason
 ) {
+
+    public static CancelPaymentCommand of(
+            UUID paymentId,
+            String cancelReason
+    ) {
+        return new CancelPaymentCommand(
+                paymentId,
+                cancelReason
+        );
+    }
 }
