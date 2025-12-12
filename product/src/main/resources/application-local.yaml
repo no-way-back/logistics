@@ -3,17 +3,22 @@ server:
 
 spring:
   datasource:
-    url: ${PRODUCT_SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5434/product_db}
+    url: ${PRODUCT_SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/product_db}
     username: ${PRODUCT_SPRING_DATASOURCE_USERNAME:user}
     password: ${PRODUCT_SPRING_DATASOURCE_PASSWORD:1234}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         default_schema: product_service
     show_sql: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    consumer:
+      group-id: product-service
