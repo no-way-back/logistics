@@ -2,15 +2,19 @@ package com.nowayback.order.application.event.saga;
 
 import com.nowayback.common.event.Event;
 import com.nowayback.order.application.OrderService;
+import com.nowayback.order.application.event.OrderCreatedEvent;
 import com.nowayback.order.application.event.OrderPaymentEvent;
 import com.nowayback.order.application.event.StockDecreaseEvent;
+import com.nowayback.order.application.event.StockIncreaseEvent;
+import com.nowayback.order.application.event.payload.OrderCreatedEventPayload;
 import com.nowayback.order.application.event.payload.OrderPaymentEventPayload;
+import com.nowayback.order.application.event.payload.OrderPaymentFailedEventPayload;
+import com.nowayback.order.application.event.payload.OrderPaymentSucceededEventPayload;
 import com.nowayback.order.application.event.payload.StockDecreaseEventPayload;
 import com.nowayback.order.application.event.payload.StockDecreaseFailedEventPayload;
 import com.nowayback.order.application.event.payload.StockDecreaseSucceedEventPayload;
+import com.nowayback.order.application.event.payload.StockIncreaseEventPayload;
 import com.nowayback.order.application.event.publisher.KafkaEventPublisher;
-import com.nowayback.order.application.event.OrderCreatedEvent;
-import com.nowayback.order.application.event.payload.OrderCreatedEventPayload;
 import com.nowayback.order.application.exception.OrderApplicationErrorCode;
 import com.nowayback.order.application.exception.OrderApplicationException;
 import com.nowayback.order.domain.entity.Order;
@@ -71,4 +75,44 @@ public class SagaStateService {
         UUID orderId = event.getPayload().getOrderId();
         orderService.failedDecreaseStock(orderId);
     }
+
+    @Transactional
+    public void handlePaymentSucceeded(Event<OrderPaymentSucceededEventPayload> event) {
+        log.info("[SagaStateService.handlePaymentSucceeded] {}", event);
+        UUID orderId = event.getPayload().getOrderId();
+
+        Order order = orderRepository.findById(orderId).orElseThrow(
+            () -> new OrderApplicationException(OrderApplicationErrorCode.ORDER_NOT_FOUND));
+
+        order.completeCreation();
+    }
+
+    @Transactional
+    public void handlePaymentFailed(Event<OrderPaymentFailedEventPayload> event) {
+        log.info("[SagaStateService.handlePaymentFailed] {}", event);
+        UUID orderId = event.getPayload().getOrderId();
+
+        Order order = orderRepository.findById(orderId).orElseThrow(
+            () -> new OrderApplicationException(OrderApplicationErrorCode.ORDER_NOT_FOUND));
+
+        order.failPayment();
+
+        publishStockIncreaseEvent(orderId);
+    }
+
+    private void publishStockIncreaseEvent(UUID orderId) {
+        log.info("[SagaStateService.publishStockIncreaseEvent] {}", orderId);
+
+        Order order = orderRepository.findById(orderId).orElseThrow(
+            () -> new OrderApplicationException(OrderApplicationErrorCode.ORDER_NOT_FOUND));
+
+        kafkaEventPublisher.publish(
+            StockIncreaseEvent.of(
+                order.getId(),
+                StockIncreaseEventPayload.from(order)
+            )
+        );
+    }
+
+
 }

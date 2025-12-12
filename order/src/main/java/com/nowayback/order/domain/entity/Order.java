@@ -153,6 +153,10 @@ public class Order extends BaseEntity {
         this.status = OrderStatus.STOCK_DECREASE_FAILED;
     }
 
+    public void failPayment() {
+        this.status = OrderStatus.PAYMENT_FAILED;
+    }
+
     public List<OrderItem> getOrderItems() {
         return orderItems.asReadOnly();
     }
@@ -172,4 +176,6 @@ public class Order extends BaseEntity {
     private static void validateOrderItems(OrderItems orderItems) {
         orderItems.validate();
     }
+
+
 }
