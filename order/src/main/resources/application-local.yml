@@ -22,6 +22,11 @@ spring:
         default_schema: order_service
     show-sql: true
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    consumer:
+      group-id: order-service
+
 eureka:
   client:
     service-url:
