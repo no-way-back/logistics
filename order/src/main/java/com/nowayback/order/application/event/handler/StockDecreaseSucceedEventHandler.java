@@ -23,6 +23,6 @@ public class StockDecreaseSucceedEventHandler implements EventHandler<StockDecre
 
     @Override
     public boolean supports(Event<StockDecreaseSucceedEventPayload> event) {
-        return event.getType() == OrderEventType.STOCK_DECREASE_SUCCEED;
+        return event.getType() == OrderEventType.STOCK_DECREASE_SUCCEEDED;
     }
 }

@@ -1,6 +1,7 @@
 package com.nowayback.order.application.event;
 
 import com.nowayback.common.event.EventType;
+import com.nowayback.order.application.event.payload.OrderPaymentEventPayload;
 import com.nowayback.order.application.event.payload.StockDecreaseEventPayload;
 import com.nowayback.order.application.event.payload.StockDecreaseFailedEventPayload;
 import com.nowayback.order.application.event.payload.StockDecreaseSucceedEventPayload;
@@ -21,7 +22,7 @@ public enum OrderEventType implements EventType {
         StockDecreaseEventPayload.class,
         "order-stock-decrease"
     ),
-    STOCK_DECREASE_SUCCEED(
+    STOCK_DECREASE_SUCCEEDED(
         "STOCK_DECREASE_SUCCEED",
         StockDecreaseSucceedEventPayload.class,
         "order-stock-decrease-succeed"
@@ -30,11 +31,21 @@ public enum OrderEventType implements EventType {
         "STOCK_DECREASE_FAILED",
         StockDecreaseFailedEventPayload.class,
         "order-stock-decrease-failed"
-    );
+    ),
+    ORDER_PAYMENT(
+        "ORDER_PAYMENT",
+        OrderPaymentEventPayload.class,
+        "order-payment"
+    )
+    ;
 
     private final String type;
     private final Class<?> payloadClass;
     private final String topic;
+
+    public static OrderEventType from(String typeString) {
+        return valueOf(typeString.toUpperCase());
+    }
 
     @Override
     public String getType() {

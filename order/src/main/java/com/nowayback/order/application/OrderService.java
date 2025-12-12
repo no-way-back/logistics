@@ -102,6 +102,13 @@ public class OrderService {
         return orders.map(OrderResult::of);
     }
 
+    @Transactional
+    public void failedDecreaseStock(UUID orderId) {
+        Order order = findOrderOrThrow(orderId);
+
+        order.failStockDecrease();
+    }
+
     private void assertReadable(Order order, OrderActor actor) {
         if (actor.role() == OrderActorRole.MASTER) {
             return;

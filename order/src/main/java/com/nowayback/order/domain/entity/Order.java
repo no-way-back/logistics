@@ -142,10 +142,15 @@ public class Order extends BaseEntity {
 
         this.status = OrderStatus.CREATED;
     }
+
     public void cancel(OrderActor actor) {
         OrderStatusTransitionPolicy.assertCanCancel(this, actor);
 
         this.status = OrderStatus.CANCELED;
+    }
+
+    public void failStockDecrease() {
+        this.status = OrderStatus.STOCK_DECREASE_FAILED;
     }
 
     public List<OrderItem> getOrderItems() {
