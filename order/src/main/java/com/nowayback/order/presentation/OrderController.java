@@ -60,7 +60,7 @@ public class OrderController {
                 .toList()
         );
 
-        OrderCreateResult result = orderService.createOrder(command);
+        OrderCreateResult result = orderService.createOrderWithEvent(command);
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(OrderCreateResponse.from(result));

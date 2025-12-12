@@ -14,9 +14,13 @@ import com.nowayback.order.application.command.GetOrderCommand;
 import com.nowayback.order.application.command.GetOrdersCommand;
 import com.nowayback.order.application.dto.OrderCreateResult;
 import com.nowayback.order.application.dto.OrderResult;
+import com.nowayback.order.application.event.publisher.EventPublisher;
 import com.nowayback.order.application.exception.OrderApplicationErrorCode;
 import com.nowayback.order.application.exception.OrderApplicationException;
 import com.nowayback.order.domain.entity.Order;
+import com.nowayback.order.application.event.OrderCreatedEvent;
+import com.nowayback.order.application.event.payload.OrderCreatedEventPayload;
+import com.nowayback.order.application.event.payload.OrderCreatedEventPayload.OrderItemLine;
 import com.nowayback.order.domain.policy.OrderActor;
 import com.nowayback.order.domain.policy.OrderActorRole;
 import com.nowayback.order.domain.repository.OrderRepository;
@@ -37,6 +41,7 @@ public class OrderService {
     private final ProductClient productClient;
     private final DeliveryClient deliveryClient;
     private final OrderRepository orderRepository;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     public OrderCreateResult createOrder(CreateOrderCommand command) {
@@ -48,6 +53,17 @@ public class OrderService {
         createDelivery(order);
 
         order.completeCreation();
+
+        return OrderCreateResult.of(order.getId());
+    }
+
+    @Transactional
+    public OrderCreateResult createOrderWithEvent(CreateOrderCommand command) {
+        Order order = command.toEntity();
+        orderRepository.save(order);
+        log.info("[OrderService.createOrderWithEvent] order = {}", order);
+
+        publishOrderCreatedEvent(order);
 
         return OrderCreateResult.of(order.getId());
     }
@@ -147,6 +163,20 @@ public class OrderService {
         return orderRepository.findById(orderId).orElseThrow(() -> {
                 throw new OrderApplicationException(OrderApplicationErrorCode.ORDER_NOT_FOUND);
             }
+        );
+    }
+
+    private void publishOrderCreatedEvent(Order order) {
+        eventPublisher.publish(
+            OrderCreatedEvent.of(
+                order.getId(),
+                new OrderCreatedEventPayload(
+                    order.getId(),
+                    order.getOrderItems().stream()
+                        .map(item -> new OrderItemLine(item.getProductId().getId(), item.getQuantity()))
+                        .toList()
+                )
+            )
         );
     }
 }
