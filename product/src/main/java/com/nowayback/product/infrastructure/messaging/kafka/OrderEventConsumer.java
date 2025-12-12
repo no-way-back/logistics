@@ -30,6 +30,17 @@ public class OrderEventConsumer {
         ack.acknowledge();
     }
 
+    @KafkaListener(topics = "order-stock-increase", groupId = "${spring.kafka.consumer.group-id}")
+    public void onIncreaseStock(String message, Acknowledgment ack) {
+        log.info("[OrderEventConsumer.onIncreaseStock] message={}", message);
+
+        Event<? extends EventPayload> event = getEvent(message);
+
+        eventDispatcher.dispatch(event);
+
+        ack.acknowledge();
+    }
+
     private static Event<? extends EventPayload> getEvent(String message) {
         EventRaw raw = Event.toRaw(message);
         String typeString = raw.getType();
