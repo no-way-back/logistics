@@ -20,7 +20,10 @@ import com.nowayback.order.application.event.publisher.KafkaEventPublisher;
 import com.nowayback.order.application.exception.OrderApplicationErrorCode;
 import com.nowayback.order.application.exception.OrderApplicationException;
 import com.nowayback.order.domain.entity.Order;
+import com.nowayback.order.domain.event.entity.SagaStatus;
+import com.nowayback.order.domain.event.vo.SagaState;
 import com.nowayback.order.domain.repository.OrderRepository;
+import com.nowayback.order.domain.repository.SagaStatusRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +38,7 @@ public class SagaStateService {
     private final OrderService orderService;
     private final OrderRepository orderRepository;
     private final KafkaEventPublisher kafkaEventPublisher;
+    private final SagaStatusRepository sagaStatusRepository;
 
     @Transactional
     public void startOrderCreationSaga(OrderCreatedEvent event) {
@@ -44,14 +48,24 @@ public class SagaStateService {
 
         StockDecreaseEventPayload stockPayload = StockDecreaseEventPayload.from(payload);
 
+        UUID sagaId = UUID.randomUUID();
         StockDecreaseEvent stockDecreaseEvent = StockDecreaseEvent.of(
+            sagaId,
             event.getAggregateId(),
             stockPayload
+        );
+
+        sagaStatusRepository.save(
+            SagaStatus.create(
+                sagaId,
+                payload.getOrderId()
+            )
         );
 
         kafkaEventPublisher.publish(stockDecreaseEvent);
     }
 
+    @Transactional
     public void handleStockDecreaseSucceeded(Event<StockDecreaseSucceedEventPayload> event) {
         log.info("[SagaStateService.handleStockDecreaseSucceeded] {}", event);
 
@@ -61,6 +75,7 @@ public class SagaStateService {
             () -> new OrderApplicationException(OrderApplicationErrorCode.ORDER_NOT_FOUND));
 
         OrderPaymentEvent orderPaymentEvent = OrderPaymentEvent.create(
+            event.getSagaId(),
             OrderPaymentEventPayload.create(
                 order.getId(),
                 order.getCustomerId().getId(),
@@ -68,14 +83,19 @@ public class SagaStateService {
             )
         );
 
+        updateSagaStatus(event.getSagaId(), SagaState.STOCK_REDUCED);
+
         log.info("[SagaStateService.handleStockDecreaseSucceeded] publish {}", orderPaymentEvent);
         kafkaEventPublisher.publish(orderPaymentEvent);
     }
 
+    @Transactional
     public void handleStockDecreaseFailed(Event<StockDecreaseFailedEventPayload> event) {
         log.info("[SagaStateService.handleStockDecreaseFailed] {}", event);
         UUID orderId = event.getPayload().getOrderId();
         orderService.failedDecreaseStock(orderId);
+
+        updateSagaStatus(event.getSagaId(), SagaState.STOCK_REDUCTION_FAILED);
     }
 
     @Transactional
@@ -87,6 +107,8 @@ public class SagaStateService {
             () -> new OrderApplicationException(OrderApplicationErrorCode.ORDER_NOT_FOUND));
 
         order.completeCreation();
+
+        updateSagaStatus(event.getSagaId(), SagaState.PAYMENT_SUCCEEDED);
     }
 
     @Transactional
@@ -99,21 +121,24 @@ public class SagaStateService {
 
         order.failPayment();
 
-        publishStockIncreaseEvent(orderId);
+        updateSagaStatus(event.getSagaId(), SagaState.STOCK_COMPENSATING);
+
+        publishStockIncreaseEvent(event.getSagaId(), orderId);
     }
 
+    @Transactional
     public void handleStockIncreaseFailed(Event<StockIncreaseFailedEventPayload> event) {
-
+        updateSagaStatus(event.getSagaId(), SagaState.STOCK_COMPENSATED_FAILED);
     }
 
+    @Transactional
     public void handleStockIncreaseSucceeded(Event<StockIncreaseSucceedEventPayload> event) {
         log.info("[SagaStateService.handleStockIncreaseSucceeded] {}", event);
 
-        Order order = orderRepository.findById(event.getPayload().getOrderId()).orElseThrow(
-            () -> new OrderApplicationException(OrderApplicationErrorCode.ORDER_NOT_FOUND));
+        updateSagaStatus(event.getSagaId(), SagaState.STOCK_COMPENSATED);
     }
 
-    private void publishStockIncreaseEvent(UUID orderId) {
+    private void publishStockIncreaseEvent(UUID sagaId, UUID orderId) {
         log.info("[SagaStateService.publishStockIncreaseEvent] {}", orderId);
 
         Order order = orderRepository.findById(orderId).orElseThrow(
@@ -121,9 +146,15 @@ public class SagaStateService {
 
         kafkaEventPublisher.publish(
             StockIncreaseEvent.of(
+                sagaId,
                 order.getId(),
                 StockIncreaseEventPayload.from(order)
             )
         );
+    }
+
+    private void updateSagaStatus(UUID sagaId, SagaState newStatus) {
+        SagaStatus sagaStatus = sagaStatusRepository.findById(sagaId).orElseThrow();
+        sagaStatus.updateState(newStatus);
     }
 }

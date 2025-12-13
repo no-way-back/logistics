@@ -9,8 +9,9 @@ import lombok.ToString;
 @ToString
 public class StockDecreaseEvent extends Event<StockDecreaseEventPayload> {
 
-    public static StockDecreaseEvent of(UUID orderId, StockDecreaseEventPayload payload) {
+    public static StockDecreaseEvent of(UUID sagaId, UUID orderId, StockDecreaseEventPayload payload) {
         StockDecreaseEvent event = new StockDecreaseEvent();
+        event.sagaId = sagaId;
         event.eventId = UUID.randomUUID();
         event.aggregateId = orderId;
         event.aggregateType = AggregateType.ORDER;

@@ -8,8 +8,9 @@ import lombok.ToString;
 
 @ToString
 public class OrderPaymentEvent extends Event<OrderPaymentEventPayload> {
-    public static OrderPaymentEvent create(OrderPaymentEventPayload payload) {
+    public static OrderPaymentEvent create(UUID sagaId, OrderPaymentEventPayload payload) {
         OrderPaymentEvent event = new OrderPaymentEvent();
+        event.sagaId = sagaId;
         event.eventId = UUID.randomUUID();
         event.aggregateId = payload.getOrderId();
         event.type = OrderEventType.ORDER_PAYMENT;

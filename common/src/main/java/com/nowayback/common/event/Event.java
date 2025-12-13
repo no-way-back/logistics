@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public class Event<T extends EventPayload> {
 
+    protected UUID sagaId;
     protected UUID eventId;
     protected UUID aggregateId;
     protected EventType type;
@@ -12,6 +13,7 @@ public class Event<T extends EventPayload> {
     protected T payload;
 
     public static Event<EventPayload> of(
+        UUID sagaId,
         UUID eventId,
         UUID aggregateId,
         EventType eventType,
@@ -19,6 +21,7 @@ public class Event<T extends EventPayload> {
         EventPayload eventPayload
     ) {
         Event<EventPayload> event = new Event<>();
+        event.sagaId = sagaId;
         event.eventId = eventId;
         event.aggregateId = aggregateId;
         event.type = eventType;
@@ -37,6 +40,7 @@ public class Event<T extends EventPayload> {
         }
 
         Event<T> event = new Event<>();
+        event.sagaId = raw.getSagaId();
         event.eventId = raw.getEventId();
         event.aggregateId = raw.getAggregateId();
         event.aggregateType = raw.getAggregateType();
@@ -53,12 +57,14 @@ public class Event<T extends EventPayload> {
     }
 
     public static class EventRaw {
+        private UUID sagaId;
         private UUID eventId;
         private UUID aggregateId;
         private AggregateType aggregateType;
         private String type;
         private Object payload;
 
+        public UUID getSagaId() {return sagaId;}
         public UUID getEventId() { return eventId; }
         public UUID getAggregateId() { return aggregateId; }
         public AggregateType getAggregateType() { return aggregateType; }
@@ -68,6 +74,7 @@ public class Event<T extends EventPayload> {
         }
     }
 
+    public UUID getSagaId() {return sagaId;}
     public UUID getEventId() { return eventId; }
     public UUID getAggregateId() { return aggregateId; }
     public EventType getType() { return type; }

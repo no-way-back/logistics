@@ -52,7 +52,7 @@ public class OrderPaymentEventHandler implements EventHandler<OrderPaymentEventP
             )
         );
 
-        publishPaymentResult(paymentResult);
+        publishPaymentResult(event.getSagaId(), paymentResult);
     }
 
     @Override
@@ -60,17 +60,18 @@ public class OrderPaymentEventHandler implements EventHandler<OrderPaymentEventP
         return PaymentEventType.ORDER_PAYMENT == event.getType();
     }
 
-    private void publishPaymentResult(PaymentResult paymentResult) {
+    private void publishPaymentResult(UUID sagaId, PaymentResult paymentResult) {
         if (paymentResult.status() == PaymentStatus.FAILED) {
-            publishPaymentFailed(paymentResult);
+            publishPaymentFailed(sagaId, paymentResult);
             return;
         }
 
-        publishPaymentSucceeded(paymentResult);
+        publishPaymentSucceeded(sagaId, paymentResult);
     }
 
-    private void publishPaymentSucceeded(PaymentResult paymentResult) {
+    private void publishPaymentSucceeded(UUID sagaId, PaymentResult paymentResult) {
         Event<EventPayload> event = Event.of(
+            sagaId,
             UUID.randomUUID(),
             paymentResult.id(),
             PaymentEventType.ORDER_PAYMENT_SUCCEEDED,
@@ -81,8 +82,9 @@ public class OrderPaymentEventHandler implements EventHandler<OrderPaymentEventP
         eventPublisher.publish(event);
     }
 
-    private void publishPaymentFailed(PaymentResult paymentResult) {
+    private void publishPaymentFailed(UUID sagaId, PaymentResult paymentResult) {
         Event<EventPayload> event = Event.of(
+            sagaId,
             UUID.randomUUID(),
             paymentResult.id(),
             PaymentEventType.ORDER_PAYMENT_FAILED,

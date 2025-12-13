@@ -2,7 +2,6 @@ package com.nowayback.order.domain.event.vo;
 
 public enum SagaState {
     PENDING,
-    ORDER_CREATED,
     STOCK_REQUESTED,
     STOCK_REDUCED,
     STOCK_REDUCTION_FAILED,
@@ -10,7 +9,7 @@ public enum SagaState {
     PAYMENT_SUCCEEDED,
     PAYMENT_FAILED,
     COMPLETED,
-    COMPENSATING,
-    COMPENSATED,
-    FAILED
+    STOCK_COMPENSATED_FAILED,
+    STOCK_COMPENSATING,
+    STOCK_COMPENSATED,
 }

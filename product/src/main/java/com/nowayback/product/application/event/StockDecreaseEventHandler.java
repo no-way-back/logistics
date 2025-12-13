@@ -56,6 +56,7 @@ public class StockDecreaseEventHandler implements EventHandler<StockDecreaseEven
             StockDecreaseSucceedEventPayload.from(sourceEvent.getPayload());
 
         Event<EventPayload> event = Event.of(
+            sourceEvent.getSagaId(),
             UUID.randomUUID(),
             sourceEvent.getAggregateId(),
             ProductEventType.STOCK_DECREASE_SUCCEEDED,
@@ -71,6 +72,7 @@ public class StockDecreaseEventHandler implements EventHandler<StockDecreaseEven
             StockDecreaseFailedEventPayload.from(sourceEvent.getPayload(), reason);
 
         Event<EventPayload> event = Event.of(
+            sourceEvent.getSagaId(),
             UUID.randomUUID(),
             sourceEvent.getAggregateId(),
             ProductEventType.STOCK_DECREASE_FAILED,

@@ -11,8 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StockIncreaseEvent extends Event<StockIncreaseEventPayload> {
 
-    public static StockIncreaseEvent of(UUID orderId, StockIncreaseEventPayload payload) {
+    public static StockIncreaseEvent of(UUID sagaId, UUID orderId, StockIncreaseEventPayload payload) {
         StockIncreaseEvent event = new StockIncreaseEvent();
+        event.sagaId = sagaId;
         event.eventId = UUID.randomUUID();
         event.aggregateId = orderId;
         event.aggregateType = AggregateType.ORDER;

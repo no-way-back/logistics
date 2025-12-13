@@ -3,7 +3,6 @@ package com.nowayback.order.application.event.handler;
 import com.nowayback.common.event.Event;
 import com.nowayback.common.event.EventHandler;
 import com.nowayback.order.application.event.OrderEventType;
-import com.nowayback.order.application.event.payload.StockDecreaseSucceedEventPayload;
 import com.nowayback.order.application.event.payload.StockIncreaseSucceedEventPayload;
 import com.nowayback.order.application.event.saga.SagaStateService;
 import lombok.RequiredArgsConstructor;
