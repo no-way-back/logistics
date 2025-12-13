@@ -16,7 +16,7 @@ public class StockIncreaseEvent extends Event<StockIncreaseEventPayload> {
         event.eventId = UUID.randomUUID();
         event.aggregateId = orderId;
         event.aggregateType = AggregateType.ORDER;
-        event.type = OrderEventType.STOCK_DECREASE;
+        event.type = OrderEventType.STOCK_INCREASE;
         event.payload = payload;
         return event;
     }

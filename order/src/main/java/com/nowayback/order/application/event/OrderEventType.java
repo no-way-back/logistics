@@ -8,6 +8,9 @@ import com.nowayback.order.application.event.payload.OrderPaymentSucceededEventP
 import com.nowayback.order.application.event.payload.StockDecreaseEventPayload;
 import com.nowayback.order.application.event.payload.StockDecreaseFailedEventPayload;
 import com.nowayback.order.application.event.payload.StockDecreaseSucceedEventPayload;
+import com.nowayback.order.application.event.payload.StockIncreaseEventPayload;
+import com.nowayback.order.application.event.payload.StockIncreaseFailedEventPayload;
+import com.nowayback.order.application.event.payload.StockIncreaseSucceedEventPayload;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -48,8 +51,22 @@ public enum OrderEventType implements EventType {
         "ORDER_PAYMENT_FAILED",
         OrderPaymentFailedEventPayload.class,
         "order-payment-failed"
-    )
-    ;
+    ),
+    STOCK_INCREASE(
+        "STOCK_INCREASE",
+        StockIncreaseEventPayload.class,
+        "order-stock-increase"
+    ),
+    STOCK_INCREASE_SUCCEEDED(
+        "STOCK_INCREASE_SUCCEEDED",
+        StockIncreaseSucceedEventPayload.class,
+        "order-stock-increase-succeeded"
+    ),
+    STOCK_INCREASE_FAILED(
+        "STOCK_INCREASE_FAILED",
+        StockIncreaseFailedEventPayload.class,
+        "order-stock-increase-failed"
+    );
 
 
     private final String type;

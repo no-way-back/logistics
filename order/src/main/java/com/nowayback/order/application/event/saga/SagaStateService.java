@@ -14,6 +14,8 @@ import com.nowayback.order.application.event.payload.StockDecreaseEventPayload;
 import com.nowayback.order.application.event.payload.StockDecreaseFailedEventPayload;
 import com.nowayback.order.application.event.payload.StockDecreaseSucceedEventPayload;
 import com.nowayback.order.application.event.payload.StockIncreaseEventPayload;
+import com.nowayback.order.application.event.payload.StockIncreaseFailedEventPayload;
+import com.nowayback.order.application.event.payload.StockIncreaseSucceedEventPayload;
 import com.nowayback.order.application.event.publisher.KafkaEventPublisher;
 import com.nowayback.order.application.exception.OrderApplicationErrorCode;
 import com.nowayback.order.application.exception.OrderApplicationException;
@@ -98,6 +100,17 @@ public class SagaStateService {
         order.failPayment();
 
         publishStockIncreaseEvent(orderId);
+    }
+
+    public void handleStockIncreaseFailed(Event<StockIncreaseFailedEventPayload> event) {
+
+    }
+
+    public void handleStockIncreaseSucceeded(Event<StockIncreaseSucceedEventPayload> event) {
+        log.info("[SagaStateService.handleStockIncreaseSucceeded] {}", event);
+
+        Order order = orderRepository.findById(event.getPayload().getOrderId()).orElseThrow(
+            () -> new OrderApplicationException(OrderApplicationErrorCode.ORDER_NOT_FOUND));
     }
 
     private void publishStockIncreaseEvent(UUID orderId) {

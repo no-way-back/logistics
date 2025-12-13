@@ -38,6 +38,26 @@ public class ProductEventConsumer {
         ack.acknowledge();
     }
 
+    @KafkaListener(topics = "order-stock-increase-succeeded", groupId = "${spring.kafka.consumer.group-id}")
+    public void onIncreaseStockSucceeded(String message, Acknowledgment ack) {
+        log.info("Received stock increase succeeded message='{}'", message);
+
+        Event<? extends EventPayload> event = getEvent(message);
+
+        eventDispatcher.dispatch(event);
+        ack.acknowledge();
+    }
+
+    @KafkaListener(topics = "order-stock-increase-failed", groupId = "${spring.kafka.consumer.group-id}")
+    public void onIncreaseStockFailed(String message, Acknowledgment ack) {
+        log.info("Received stock increase failed message='{}'", message);
+
+        Event<? extends EventPayload> event = getEvent(message);
+
+        eventDispatcher.dispatch(event);
+        ack.acknowledge();
+    }
+
     private static Event<? extends EventPayload> getEvent(String message) {
         EventRaw raw = Event.toRaw(message);
         String typeString = raw.getType();

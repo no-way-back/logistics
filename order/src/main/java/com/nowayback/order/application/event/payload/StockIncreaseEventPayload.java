@@ -7,6 +7,8 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
+@NoArgsConstructor
 public class StockIncreaseEventPayload implements EventPayload {
     private UUID orderId;
     private List<StockIncreaseEventPayload.OrderItemLine> items;
