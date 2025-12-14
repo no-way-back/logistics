@@ -34,8 +34,8 @@ public enum PaymentEventType implements EventType {
     }
 
     @Override
-    public String getType() {
-        return type;
+    public EventType getType() {
+        return this;
     }
 
     @Override

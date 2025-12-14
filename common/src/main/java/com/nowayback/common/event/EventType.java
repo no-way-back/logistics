@@ -1,7 +1,7 @@
 package com.nowayback.common.event;
 
 public interface EventType {
-    String getType();
+    EventType getType();
     Class<?> getPayloadClass();
     String getTopic();
 }

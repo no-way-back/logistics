@@ -1,5 +1,6 @@
 package com.nowayback.order.infrastructure.persistence;
 
+import com.nowayback.common.event.EventType;
 import com.nowayback.order.domain.event.entity.ProcessedEvents;
 import com.nowayback.order.domain.repository.ProcessedEventsRepository;
 import java.util.UUID;
@@ -13,8 +14,8 @@ public class ProcessedEventsRepositoryImpl implements ProcessedEventsRepository 
     private final ProcessedEventsJpaRepository processedEventsJpaRepository;
 
     @Override
-    public boolean existById(UUID eventId) {
-        return processedEventsJpaRepository.existsById(eventId);
+    public int insertIgnore(UUID eventId, String eventType) {
+        return processedEventsJpaRepository.insertIgnore(eventId, eventType);
     }
 
     @Override
