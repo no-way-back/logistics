@@ -8,15 +8,15 @@ COPY build.gradle ./
 COPY gradlew ./
 COPY gradle ./gradle
 COPY common/build.gradle common/build.gradle
-COPY product/build.gradle product/build.gradle
+COPY payment/build.gradle payment/build.gradle
 
 # 의존성 프리-워밍
-RUN chmod +x ./gradlew && ./gradlew :product:dependencies --no-daemon || true
+RUN chmod +x ./gradlew && ./gradlew :payment:dependencies --no-daemon || true
 
 # 실제 소스 복사 후 빌드
 COPY common/ common/
-COPY product/ product/
-RUN ./gradlew :product:bootJar -x test --no-daemon
+COPY payment/ payment/
+RUN ./gradlew :payment:bootJar -x test --no-daemon
 
 # ---- Runtime stage ----
 FROM eclipse-temurin:17-jre-jammy AS runtime
@@ -27,12 +27,12 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY --from=build /app/product/build/libs/*.jar app.jar
+COPY --from=build /app/payment/build/libs/*.jar app.jar
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-  CMD curl -sf http://localhost:18084/actuator/health || exit 1
+  CMD curl -sf http://localhost:18087/actuator/health || exit 1
 
-EXPOSE 18084
+EXPOSE 18087
 
 
 ENTRYPOINT ["java","-Xms512m","-Xmx1024m","-jar","app.jar"]
