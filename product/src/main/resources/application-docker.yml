@@ -21,11 +21,16 @@ spring:
         format_sql: true
         default_schema: product_service
     show_sql: true
+    defer-datasource-initialization: true
 
   kafka:
     bootstrap-servers: kafka:9092
     consumer:
       group-id: product-service
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
 
 eureka:
   client:
